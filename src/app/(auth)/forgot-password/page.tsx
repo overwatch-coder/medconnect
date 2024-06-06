@@ -28,7 +28,7 @@ const ForgotPassword = () => {
           </div>
         </section>
 
-        {/* Login Form */}
+        {/* Forgot Password Form */}
         <section className="md:justify-start flex items-center justify-center">
           <ForgotPasswordForm />
         </section>

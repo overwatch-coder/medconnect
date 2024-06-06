@@ -6,7 +6,7 @@ const AuthLayout = ({
   children: React.ReactNode;
 }>) => {
   return (
-    <section className="flex flex-col items-center justify-center text-white min-h-screen bg-primary-green">
+    <section className="overflow-x-hidden">
       {children}
     </section>
   );

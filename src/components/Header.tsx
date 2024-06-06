@@ -11,6 +11,7 @@ const Header = () => {
   const pathname = usePathname();
   const [scrolled, setScrolled] = useState(false);
 
+  // change header background color onscroll
   useEffect(() => {
     const handleScroll = () => {
       const offset = window.scrollY;
@@ -52,13 +53,13 @@ const Header = () => {
       {/* Desktop Navigation */}
       <nav className="items-center gap-5 hidden md:flex">
         {NAV_ITEMS.map((item, index) => {
-          const active = pathname === item.url;
+          const isActiveLink = pathname === item.url;
           return (
             <Link
               key={index}
               href={item.url}
               className={`${
-                active ? "text-primary-green" : "hover:text-primary-green"
+                isActiveLink ? "text-primary-green" : "hover:text-primary-green"
               }  text-secondary-gray font-semibold`}
             >
               {item.name}

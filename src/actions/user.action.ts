@@ -7,6 +7,8 @@ import {
   forgotPasswordSchema,
   loginSchema,
   resetPasswordSchema,
+  registerSchema,
+  RegisterType,
 } from "@/schema/user.schema";
 
 // login
@@ -30,6 +32,30 @@ export const loginFormSubmit = async (data: LoginType) => {
     data: validatedData.data,
     stack: null,
     message: "Login successful",
+  };
+};
+
+// register
+export const registerFormSubmit = async (data: RegisterType) => {
+  const validatedData = registerSchema.safeParse(data);
+
+  if (!validatedData.success) {
+    return {
+      error: {
+        message: validatedData.error.errors.map((err) => err.message),
+      },
+      success: false,
+      data: null,
+      stack: null,
+      message: "validation error",
+    };
+  }
+
+  return {
+    success: true,
+    data: validatedData.data,
+    stack: null,
+    message: "Registeration successful",
   };
 };
 

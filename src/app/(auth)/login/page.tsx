@@ -13,7 +13,7 @@ export const metadata: Metadata = {
 const Login = () => {
   return (
     <main className="bg-primary-green min-h-screen">
-      <div className="md:grid-cols-2 grid grid-cols-1">
+      <div className="md:grid-cols-2 grid grid-cols-1 relative">
         {/* Login Text Description */}
         <section className="flex flex-col items-center justify-center">
           <div className="flex flex-col gap-10 p-10">

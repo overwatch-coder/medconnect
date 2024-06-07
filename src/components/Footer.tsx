@@ -16,6 +16,7 @@ const Footer = () => {
               alt="footer logo"
               width={80}
               height={80}
+              placeholder="blur"
             />
             <p className="text-white font-extrabold text-4xl">
               Med<span className="text-primary-green">Connect</span>

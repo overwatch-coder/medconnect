@@ -22,6 +22,7 @@ const ForgotPassword = () => {
               width={500}
               height={500}
               quality={100}
+              placeholder="blur"
               loading="lazy"
               className="2xl:w-full object-cover"
             />

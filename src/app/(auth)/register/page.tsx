@@ -24,6 +24,7 @@ const Register = () => {
                 alt="logo"
                 width={80}
                 height={80}
+                placeholder="blur"
               />
               <p className="xl:text-4xl text-4xl font-bold text-white">
                 Med
@@ -55,6 +56,7 @@ const Register = () => {
                 width={500}
                 height={500}
                 quality={100}
+                placeholder="blur"
                 loading="lazy"
                 className="object-contain w-[450px] h-[450px]"
               />

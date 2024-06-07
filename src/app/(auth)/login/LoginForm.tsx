@@ -64,6 +64,7 @@ const LoginForm = () => {
           height={500}
           quality={100}
           loading="lazy"
+          placeholder="blur"
           className="object-cover"
         />
       </div>

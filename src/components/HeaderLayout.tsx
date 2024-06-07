@@ -45,6 +45,7 @@ const HeaderBackgroundLayout = () => {
                   alt={value.name}
                   width={50}
                   height={50}
+                  placeholder="blur"
                   className="object-contain"
                   loading="lazy"
                 />

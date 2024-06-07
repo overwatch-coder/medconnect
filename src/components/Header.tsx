@@ -41,6 +41,7 @@ const Header = () => {
           alt="Logo"
           width={30}
           height={30}
+          placeholder="blur"
         />
         <h1 className="text-2xl flex items-center font-bold text-secondary-gray">
           <span className="text-primary-green">Med</span>Connect

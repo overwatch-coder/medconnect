@@ -11,6 +11,7 @@ const Loading = () => {
         height={120}
         quality={100}
         loading="lazy"
+        placeholder="blur"
         className="object-contain animate-bounce"
       />
       <p className="font-semibold animate-bounce">

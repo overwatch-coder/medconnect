@@ -19,8 +19,8 @@ const Home = () => {
     <div className="bg-primary-green/10 w-full pt-16">
       <div className="flex flex-col gap-12 px-5 md:px-16 xl:px-24 2xl:px-40 pb-8 xl:pb-16">
         {/* Who We Are */}
-        <section>
-          <div className="flex xl:flex-row flex-col justify-between gap-10">
+        <section id="about-us">
+          <div className="flex lg:flex-row flex-col justify-between gap-10">
             <div className="flex flex-col gap-4 w-full">
               <h2 className="font-bold text-3xl text-secondary-gray">
                 Who Are We?
@@ -38,11 +38,16 @@ const Home = () => {
                 to the care they deserve.
               </p>
 
-              <Button className="flex items-center gap-1 bg-secondary-gray px-8 w-fit text-white">
-                <span>Contact Us</span>
-                {/* Arrow */}
-                <ArrowRight size={15} className="text-white" />
-              </Button>
+              <Link href={"/contact-us"}>
+                <Button className="group flex items-center gap-1 bg-secondary-gray px-8 w-fit text-white">
+                  <span>Contact Us</span>
+                  {/* Arrow */}
+                  <ArrowRight
+                    size={15}
+                    className="text-white group-hover:translate-x-1 transition-transform"
+                  />
+                </Button>
+              </Link>
             </div>
 
             <Image
@@ -50,7 +55,7 @@ const Home = () => {
               alt="hero"
               width={500}
               height={500}
-              className="rounded w-full xl:w-1/2 2xl:w-full object-cover"
+              className="rounded w-full lg:w-1/2 2xl:w-full object-cover"
               loading="lazy"
             />
           </div>
@@ -97,7 +102,7 @@ const Home = () => {
         </section>
 
         {/* Our Services */}
-        <section className="pt-5">
+        <section id="services" className="pt-5">
           <div className="flex flex-col gap-8 lg:flex-row justify-between">
             {MEDCONNECT_SERVICES.map((service, index) => (
               <div

@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import React from "react";
+import Link from "next/link";
 
 const Hero = () => {
   return (
@@ -24,9 +25,11 @@ const Hero = () => {
             personalized healthcare solutions.
           </p>
 
-          <Button className="text-secondary-gray bg-white font-semibold hover:text-white w-full md:w-fit px-10">
-            Get Started
-          </Button>
+          <Link href={"/login"}>
+            <Button className="text-secondary-gray bg-white font-semibold hover:text-white w-full md:w-fit px-10">
+              Get Started
+            </Button>
+          </Link>
         </div>
 
         <Image

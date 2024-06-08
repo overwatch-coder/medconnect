@@ -7,11 +7,11 @@ export const NAV_ITEMS = [
   },
   {
     name: "About Us",
-    url: "/about-us",
+    url: "/#about-us",
   },
   {
     name: "Services",
-    url: "/services",
+    url: "/#services",
   },
   {
     name: "Contact Us",

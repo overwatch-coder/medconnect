@@ -1,5 +1,6 @@
 "use server";
 
+import { getErrors } from "@/lib/validate-data";
 import {
   ForgotPasswordType,
   LoginType,
@@ -16,22 +17,14 @@ export const loginFormSubmit = async (data: LoginType) => {
   const validatedData = loginSchema.safeParse(data);
 
   if (!validatedData.success) {
-    return {
-      error: {
-        message: validatedData.error.errors.map((err) => err.message),
-      },
-      success: false,
-      data: null,
-      stack: null,
-      message: "validation error",
-    };
+    return getErrors(validatedData.error);
   }
 
   return {
     success: true,
     data: validatedData.data,
-    stack: null,
     message: "Login successful",
+    errors: null,
   };
 };
 
@@ -40,22 +33,14 @@ export const registerFormSubmit = async (data: RegisterType) => {
   const validatedData = registerSchema.safeParse(data);
 
   if (!validatedData.success) {
-    return {
-      error: {
-        message: validatedData.error.errors.map((err) => err.message),
-      },
-      success: false,
-      data: null,
-      stack: null,
-      message: "validation error",
-    };
+    return getErrors(validatedData.error);
   }
 
   return {
     success: true,
     data: validatedData.data,
-    stack: null,
     message: "Registeration successful",
+    errors: null,
   };
 };
 
@@ -64,23 +49,15 @@ export const forgotPasswordFormSubmit = async (data: ForgotPasswordType) => {
   const validatedData = forgotPasswordSchema.safeParse(data);
 
   if (!validatedData.success) {
-    return {
-      error: {
-        message: validatedData.error.errors.map((err) => err.message),
-      },
-      success: false,
-      data: null,
-      stack: null,
-      message: "validation error",
-    };
+    return getErrors(validatedData.error);
   }
 
   return {
     success: true,
     data: validatedData.data,
-    stack: null,
     message:
       "A password reset link has been sent to the email provided if correct",
+    errors: null,
   };
 };
 
@@ -89,21 +66,13 @@ export const resetPasswordFormSubmit = async (data: ResetPasswordType) => {
   const validatedData = resetPasswordSchema.safeParse(data);
 
   if (!validatedData.success) {
-    return {
-      error: {
-        message: validatedData.error.errors.map((err) => err.message),
-      },
-      success: false,
-      data: null,
-      stack: null,
-      message: "validation error",
-    };
+    return getErrors(validatedData.error);
   }
 
   return {
     success: true,
     data: validatedData.data,
-    stack: null,
     message: "Password Changed successfully",
+    errors: null,
   };
 };

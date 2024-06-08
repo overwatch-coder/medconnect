@@ -49,7 +49,6 @@ const Testimonial = () => {
                     alt="avatar"
                     width={80}
                     height={80}
-                    placeholder="blur"
                     className="object-contain rounded-full"
                   />
 

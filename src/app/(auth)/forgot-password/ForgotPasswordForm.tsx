@@ -31,30 +31,27 @@ const ForgotPasswordForm = () => {
     mode: "all",
   });
 
-  const handleForgotPasswordSubmission: SubmitHandler<
-    ForgotPasswordType
-  > = async (data) => {
-    const result = await forgotPasswordFormSubmit(data);
-    if (!result.success) {
-      return Swal.fire({
-        title: "Oops!",
-        text: Array.isArray(result.error?.message)
-          ? result.error?.message.join(", ")
-          : result.error?.message,
-        icon: "error",
-        timer: 4000,
-        timerProgressBar: true,
-      });
-    }
+  const handleForgotPasswordSubmission: SubmitHandler<ForgotPasswordType> =
+    async (data) => {
+      const result = await forgotPasswordFormSubmit(data);
+      if (!result.success) {
+        return Swal.fire({
+          title: "Oops!",
+          text: result.errors?.join(", "),
+          icon: "error",
+          timer: 4000,
+          timerProgressBar: true,
+        });
+      }
 
-    // toast.success(result.message);
-    reset();
-    setSuccessMessage(result.message);
+      toast.success(result.message);
+      reset();
+      setSuccessMessage(result.message);
 
-    setTimeout(() => {
-      setSuccessMessage("");
-    }, 5000);
-  };
+      setTimeout(() => {
+        setSuccessMessage("");
+      }, 5000);
+    };
 
   return (
     <div className="flex flex-col items-center justify-center w-full h-full max-w-md p-10">
@@ -75,6 +72,7 @@ const ForgotPasswordForm = () => {
           <form
             onSubmit={handleSubmit(handleForgotPasswordSubmission)}
             className="flex flex-col w-full gap-4"
+            method="POST"
           >
             <div className="flex flex-col w-full">
               <label htmlFor="email" className="flex items-center gap-2">

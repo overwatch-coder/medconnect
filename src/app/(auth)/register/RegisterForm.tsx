@@ -40,9 +40,7 @@ const RegisterForm = () => {
     if (!result.success) {
       return Swal.fire({
         title: "Oops!",
-        text: Array.isArray(result.error?.message)
-          ? result.error?.message.join(", ")
-          : result.error?.message,
+        text: result.errors?.join(", "),
         icon: "error",
         timer: 4000,
         timerProgressBar: true,
@@ -65,7 +63,6 @@ const RegisterForm = () => {
           height={500}
           quality={100}
           loading="lazy"
-          placeholder="blur"
           className="object-cover"
         />
       </div>
@@ -78,6 +75,7 @@ const RegisterForm = () => {
         <form
           onSubmit={handleSubmit(handleRegisterSubmission)}
           className="flex flex-col w-full gap-6"
+          method="POST"
         >
           <div className="flex flex-col w-full">
             <label htmlFor="name" className="flex items-center gap-2">

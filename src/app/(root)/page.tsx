@@ -50,7 +50,6 @@ const Home = () => {
               alt="hero"
               width={500}
               height={500}
-              placeholder="blur"
               className="rounded w-full xl:w-1/2 2xl:w-full object-cover"
               loading="lazy"
             />
@@ -110,7 +109,6 @@ const Home = () => {
                   alt={service.name}
                   width={400}
                   height={400}
-                  placeholder="blur"
                   className="w-full h-full object-cover group-hover:scale-105 transition"
                 />
 
@@ -177,13 +175,7 @@ const Home = () => {
                     key={index}
                     className="bg-white shadow-md rounded w-full p-3 flex items-center gap-3"
                   >
-                    <Image
-                      src={icon}
-                      alt={name}
-                      width={20}
-                      height={20}
-                      placeholder="blur"
-                    />
+                    <Image src={icon} alt={name} width={20} height={20} />
                     <p className="font-semibold text-secondary-gray">{name}</p>
                   </div>
                 ))}
@@ -196,7 +188,6 @@ const Home = () => {
             alt="objectives"
             width={500}
             height={500}
-            placeholder="blur"
             className="xl:rounded-ss-3xl w-full object-cover"
           />
         </div>
@@ -249,7 +240,6 @@ const Home = () => {
                       alt={title}
                       width={400}
                       height={400}
-                      placeholder="blur"
                       className="w-full h-full object-cover group-hover:scale-105 transition"
                     />
 
@@ -263,7 +253,6 @@ const Home = () => {
                           alt="avatar"
                           width={80}
                           height={80}
-                          placeholder="blur"
                           className="object-contain rounded-full"
                         />
 

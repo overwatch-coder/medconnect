@@ -34,7 +34,6 @@ const Hero = () => {
           alt="hero"
           width={500}
           height={500}
-          placeholder="blur"
           className="object-contain max-w-[300px] w-full"
           loading="lazy"
         />

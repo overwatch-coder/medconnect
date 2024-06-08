@@ -30,7 +30,6 @@ const MobileNav = () => {
                 alt="Logo"
                 width={50}
                 height={50}
-                placeholder="blur"
               />
               <h1 className="text-3xl flex items-center font-bold text-white">
                 <span className="text-primary-green">Med</span>Connect

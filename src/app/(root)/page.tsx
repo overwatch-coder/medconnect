@@ -85,7 +85,7 @@ const Home = () => {
                 populations.
               </p>
 
-              <Link href={"#"} className="flex items-center gap-2">
+              <Link href={"#core_values"} className="flex items-center gap-2">
                 <Button className="px-2 py-0.5 rounded w-fit">
                   <ArrowRight
                     size={20}
@@ -127,12 +127,12 @@ const Home = () => {
         </section>
       </div>
 
-      {/* Our Objectives */}
-      <section className="pt-10">
-        <div className="flex flex-col xl:flex-row relative">
+      {/* Our Objectives */}+
+      <section className="pt-10">+
+        <div className="flex lg:flex-row flex-col justify-between relative">
           <div className="flex flex-col gap-4 w-full">
-            <div className="flex items-center gap-3 px-5 md:px-16 xl:px-24 2xl:px-40">
-              <FaCircle size={50} className="text-primary-green" />
+            <div className="flex gap-3 px-5 md:px-16 xl:px-24 2xl:px-40">
+              <FaCircle size={30} className="text-primary-green" />
 
               <div className="flex flex-col gap-1 text-secondary-gray">
                 <p className="font-light">
@@ -146,7 +146,10 @@ const Home = () => {
               </div>
             </div>
 
-            <div className="bg-primary-green flex flex-col justify-center py-20 h-full">
+            <div
+              id="core_values"
+              className="bg-primary-green flex flex-col justify-center py-20 h-full"
+            >
               <div className="flex flex-col gap-4 px-5 md:px-16 xl:px-24 2xl:px-40">
                 <h2 className="text-white font-bold text-3xl">
                   Committed To Building A Positive, Safe, Patient Focused Care
@@ -174,7 +177,7 @@ const Home = () => {
 
             {/* Objectives */}
             <div className="px-5 md:px-16 xl:absolute xl:bottom-20 xl:-translate-x-1/2 xl:left-1/2 xl:px-10 pt-2 pb-8 xl:pt-0 xl:pb-0">
-              <div className="flex flex-col gap-2 xl:gap-5">
+              <div className="flex flex-col gap-5 xl:gap-5">
                 {MEDCONNECT_OBJECTIVES.map(({ icon, name }, index) => (
                   <div
                     key={index}
@@ -193,7 +196,7 @@ const Home = () => {
             alt="objectives"
             width={500}
             height={500}
-            className="xl:rounded-ss-3xl w-full object-cover"
+            className="w-full object-cover rounded-tl-3xl"
           />
         </div>
       </section>

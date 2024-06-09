@@ -80,7 +80,7 @@ const RegisterForm = () => {
           <div className="flex flex-col w-full">
             <label htmlFor="name" className="flex items-center gap-2">
               <IoPerson size={15} className="text-secondary-gray" />
-              <span className="text-secondary-gray">Name</span>
+              <span className="text-secondary-gray">Compound Name</span>
             </label>
             <input
               type="text"

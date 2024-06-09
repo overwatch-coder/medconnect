@@ -191,7 +191,7 @@ const Contact = () => {
                     )}
                   </div>
 
-                  <SubmitButton pending={pending} reset={reset} />
+                  <SubmitButton pending={pending}/>
                 </form>
               )}
             </div>

@@ -79,7 +79,7 @@ const LoginForm = () => {
           <div className="flex flex-col w-full">
             <label htmlFor="username" className="flex items-center gap-2">
               <IoPerson size={15} className="text-secondary-gray" />
-              <span className="text-secondary-gray">Username</span>
+              <span className="text-secondary-gray">Compound Name</span>
             </label>
             <input
               type="text"
@@ -141,7 +141,7 @@ const LoginForm = () => {
 
           <LoginSubmitButton pending={pending} />
 
-          <div className="flex flex-row-reverse justify-between gap-3 py-2">
+          {/* <div className="flex flex-row-reverse justify-between gap-3 py-2">
             <div className="flex items-center gap-2">
               <span className="text-secondary-gray text-sm">
                 Don&apos;t have an account yet?{" "}
@@ -160,7 +160,7 @@ const LoginForm = () => {
             >
               Go Back
             </Link>
-          </div>
+          </div> */}
         </form>
       </div>
     </div>

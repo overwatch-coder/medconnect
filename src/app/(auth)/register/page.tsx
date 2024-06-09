@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
 import { Metadata } from "next";
 import Image from "next/image";
+import Link from "next/link";
 import React from "react";
 
 export const metadata: Metadata = {
@@ -41,10 +42,16 @@ const Register = () => {
                 Healthcare Through Technology
               </h2>
 
-              <Button className="hover:border-0 md:w-fit flex items-center w-full gap-3 px-10 py-3 text-center bg-transparent border border-white">
-                <span className="text-white">Know More</span>
-                <ArrowRight className="text-white" size={20} />
-              </Button>
+              <Link href={"/#about-us"} className="group">
+                <Button className="flex items-center gap-1 bg-transparent border border-white hover:border-0 px-8 w-fit text-white">
+                  <span>Know More</span>
+                  {/* Arrow */}
+                  <ArrowRight
+                    size={20}
+                    className="text-white group-hover:translate-x-1 transition-transform"
+                  />
+                </Button>
+              </Link>
             </div>
 
             {/* Register Image - Only on large devices */}

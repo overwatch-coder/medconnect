@@ -15,41 +15,61 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { IoPerson } from "react-icons/io5";
 import { Eye, EyeOff, LockIcon } from "lucide-react";
 import Image from "next/image";
+import { useMutation } from "@tanstack/react-query";
+import { useUserAtom } from "@/hooks";
+import CustomErrorElement from "@/components/CustomErrorElement";
 
 const LoginForm = () => {
+  const [user, setUser] = useUserAtom();
+
   const [showPassword, setShowPassword] = useState(false);
+  const [submitFormErrors, setSubmitFormErrors] = useState<string[]>([]);
+
   const router = useRouter();
+
   const searchParams = useSearchParams();
   const redirectUrl = searchParams.has("redirect")
     ? `${searchParams.get("redirect")}`
-    : "/";
+    : "/dashboard";
 
   const {
     register,
     reset,
-    formState: { errors, isSubmitting: pending },
+    formState: { errors },
     handleSubmit,
   } = useForm<LoginType>({
     resolver: zodResolver(loginSchema),
     mode: "all",
   });
 
-  const handleLoginSubmission: SubmitHandler<LoginType> = async (data) => {
-    const result = await loginFormSubmit(data);
-    if (!result.success) {
-      return Swal.fire({
-        title: "Oops!",
-        text: result.errors?.join(", "),
-        icon: "error",
-        timer: 4000,
-        timerProgressBar: true,
-      });
-    }
+  // submit login form
+  const mutation = useMutation({
+    mutationKey: ["user"],
+    mutationFn: loginFormSubmit,
+    onSettled: (result) => {
+      if (!result?.success) {
+        setSubmitFormErrors(result?.errors!);
+        reset({ password: "" });
+        return;
+      }
 
-    toast.success(result.message);
-    reset();
-    router.replace(redirectUrl);
+      setUser({
+        token: result?.data?.token,
+        user: null,
+      });
+      reset();
+      toast.success(result?.message);
+      router.replace(redirectUrl);
+    },
+  });
+
+  const handleLoginSubmission: SubmitHandler<LoginType> = async (data) => {
+    mutation.mutate(data);
   };
+
+  if (user.token) {
+    return router.replace("/dashboard");
+  }
 
   return (
     <div className="flex flex-col items-center justify-center w-full h-full max-w-md p-10">
@@ -76,19 +96,21 @@ const LoginForm = () => {
           className="flex flex-col w-full gap-6"
           method="POST"
         >
+          <CustomErrorElement errors={submitFormErrors} />
+
           <div className="flex flex-col w-full">
-            <label htmlFor="username" className="flex items-center gap-2">
+            <label htmlFor="compoundName" className="flex items-center gap-2">
               <IoPerson size={15} className="text-secondary-gray" />
               <span className="text-secondary-gray">Compound Name</span>
             </label>
             <input
               type="text"
               className="text-secondary-gray ring-0 border-b-secondary-gray w-full px-2 py-1 border-b-2 outline-none"
-              {...register("username")}
+              {...register("compoundName")}
             />
-            {errors?.username?.message && (
+            {errors?.compoundName?.message && (
               <p className="py-2 text-xs text-red-500">
-                {errors.username.message}
+                {errors.compoundName.message}
               </p>
             )}
           </div>
@@ -139,7 +161,7 @@ const LoginForm = () => {
             </Link>
           </div>
 
-          <LoginSubmitButton pending={pending} />
+          <LoginSubmitButton pending={mutation.isPending} />
 
           {/* <div className="flex flex-row-reverse justify-between gap-3 py-2">
             <div className="flex items-center gap-2">

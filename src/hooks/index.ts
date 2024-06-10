@@ -1,10 +1,10 @@
-import { useQuery } from "@tanstack/react-query";
+import { User } from "@/schema/user.schema";
+import { useAtom } from "jotai";
+import { atomWithStorage } from "jotai/utils";
 
-export const useFetchQuery = async (queryKey: string, fetchFn: any) => {
-  const query = useQuery({
-    queryKey: [queryKey],
-    queryFn: fetchFn,
-  });
+export const userAtom = atomWithStorage("user", {
+  token: null as string | null,
+  user: null as Omit<User, "password"> | null,
+});
 
-  return query;
-};
+export const useUserAtom = () => useAtom(userAtom);

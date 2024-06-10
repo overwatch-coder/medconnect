@@ -12,52 +12,73 @@ import { forgotPasswordSchema, ForgotPasswordType } from "@/schema/user.schema";
 import { forgotPasswordFormSubmit } from "@/actions/user.action";
 import { Button } from "@/components/ui/button";
 import { IoPerson } from "react-icons/io5";
+import { useMutation } from "@tanstack/react-query";
+import CustomErrorElement from "@/components/CustomErrorElement";
+import { useUserAtom } from "@/hooks";
 
 const ForgotPasswordForm = () => {
+  const [user, _] = useUserAtom();
+
+  // state
   const [successMessage, setSuccessMessage] = useState("");
+  const [submitFormErrors, setSubmitFormErrors] = useState<string[]>([]);
+
+  // routes & params
   const router = useRouter();
   const searchParams = useSearchParams();
   const redirectUrl = searchParams.has("redirect")
     ? `${searchParams.get("redirect")}`
-    : "/";
+    : "/login";
 
   const {
     register,
     reset,
-    formState: { errors, isSubmitting: pending },
+    formState: { errors },
     handleSubmit,
   } = useForm<ForgotPasswordType>({
     resolver: zodResolver(forgotPasswordSchema),
     mode: "all",
   });
 
-  const handleForgotPasswordSubmission: SubmitHandler<ForgotPasswordType> =
-    async (data) => {
-      const result = await forgotPasswordFormSubmit(data);
-      if (!result.success) {
-        return Swal.fire({
-          title: "Oops!",
-          text: result.errors?.join(", "),
-          icon: "error",
-          timer: 4000,
-          timerProgressBar: true,
-        });
+  // submit login form
+  const mutation = useMutation({
+    mutationFn: forgotPasswordFormSubmit,
+    onSettled: (result) => {
+      if (!result?.success) {
+        setSubmitFormErrors(result?.errors!);
+        return;
       }
 
-      toast.success(result.message);
       reset();
-      setSuccessMessage(result.message);
+      setSuccessMessage(result?.message);
+    },
+  });
 
-      setTimeout(() => {
-        setSuccessMessage("");
-      }, 5000);
+  const handleForgotPasswordSubmission: SubmitHandler<ForgotPasswordType> =
+    async (data) => {
+      mutation.mutate(data);
     };
 
+  if (user.token) {
+    return router.replace("/dashboard");
+  }
+
   return (
-    <div className="flex flex-col items-center justify-center w-full h-full max-w-md p-10">
+    <div
+      className={`flex flex-col items-center justify-center w-full h-full ${
+        successMessage ? "max-w-md" : "max-w-xl"
+      } p-10`}
+    >
       {successMessage ? (
-        <div className="w-full p-5 text-center bg-white rounded shadow">
-          {successMessage}
+        <div className="w-full py-5 px-2 flex flex-col items-center gap-3 bg-green-300 rounded shadow">
+          <p className="text-center leading-loose">{successMessage}</p>
+          <Button
+            onClick={() => setSuccessMessage("")}
+            variant={"default"}
+            className="text-white py-2 px-4"
+          >
+            Go Back
+          </Button>
         </div>
       ) : (
         <div className="z-20 flex flex-col w-full gap-5">
@@ -68,6 +89,8 @@ const ForgotPasswordForm = () => {
           <p className="text-start text-secondary-gray font-semibold">
             Enter the email address associated with the account.
           </p>
+
+          <CustomErrorElement errors={submitFormErrors} />
 
           <form
             onSubmit={handleSubmit(handleForgotPasswordSubmission)}
@@ -94,7 +117,7 @@ const ForgotPasswordForm = () => {
               )}
             </div>
 
-            <ForgotPasswordFormSubmitButton pending={pending} />
+            <ForgotPasswordFormSubmitButton pending={mutation.isPending} />
 
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">

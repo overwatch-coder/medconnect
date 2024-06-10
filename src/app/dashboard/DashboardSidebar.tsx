@@ -7,15 +7,48 @@ import { Separator } from "@/components/ui/separator";
 import { MEDCONNECT_DASHBOARD_LINKS } from "@/constants";
 import { Button } from "@/components/ui/button";
 import { RiLogoutCircleLine } from "react-icons/ri";
+import { useUserAtom } from "@/hooks";
+import { axiosInstance as axios } from "@/lib/utils";
+import { ResponseData } from "@/types/index";
+import { toast } from "react-toastify";
 
 const DashboardSidebar = () => {
+  const [user, setUser] = useUserAtom();
   const pathname = usePathname();
   const router = useRouter();
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
     // TODO: handle logout
+    const res = await axios.post(
+      "/auth/logout",
+      {},
+      {
+        headers: {
+          Authorization: `Bearer ${user.token}`,
+        },
+      }
+    );
+
+    const data: ResponseData = res.data;
+
+    if (!data.success) {
+      toast.error(data.message);
+      return;
+    }
+
+    toast.success(data.message);
+
+    setUser({
+      token: null,
+      user: null,
+    });
+
     router.push("/login");
   };
+
+  if (!user.token) {
+    return router.replace("/login");
+  }
 
   return (
     <section className="flex flex-col items-center sm:items-start gap-3 px-5 h-full bg-secondary-gray w-[70px] sm:w-[250px] fixed top-0 left-0 pb-7 overflow-y-scroll scrollbar-hide">

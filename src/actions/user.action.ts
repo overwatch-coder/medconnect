@@ -1,7 +1,7 @@
 "use server";
 
+import { getErrors } from "@/lib/parse-error";
 import { axiosInstance as axios } from "@/lib/utils";
-import { getErrors } from "@/lib/validate-data";
 import {
   ForgotPasswordType,
   LoginType,
@@ -12,21 +12,35 @@ import {
   registerSchema,
   RegisterType,
 } from "@/schema/user.schema";
+import { ResponseData } from "@/types/index";
 
 // login
 export const loginFormSubmit = async (data: LoginType) => {
-  const validatedData = loginSchema.safeParse(data);
+  try {
+    // validate login data
+    const validatedData = loginSchema.safeParse(data);
 
-  if (!validatedData.success) {
-    return getErrors(validatedData.error);
+    if (!validatedData.success) {
+      return getErrors({}, true, validatedData.error);
+    }
+
+    // submit data
+    const res = await axios.post("/auth/login", validatedData.data);
+
+    const resData: ResponseData = res.data;
+
+    // return the data response
+    return {
+      success: resData.success,
+      message: resData.message,
+      data: resData.success ? resData.data : null,
+      errors: !resData.success ? [resData.message] : [],
+    };
+  } catch (error: any) {
+    console.log("login submit error => ", { error });
+
+    return getErrors(error, false);
   }
-
-  return {
-    success: true,
-    data: validatedData.data,
-    message: "Login successful",
-    errors: null,
-  };
 };
 
 // register
@@ -34,7 +48,11 @@ export const registerFormSubmit = async (data: RegisterType) => {
   const validatedData = registerSchema.safeParse(data);
 
   if (!validatedData.success) {
-    return getErrors(validatedData.error);
+    return {
+      success: false,
+      data: null,
+      message: "Validation Error",
+    };
   }
 
   return {
@@ -47,33 +65,59 @@ export const registerFormSubmit = async (data: RegisterType) => {
 
 // forgot-passowrd
 export const forgotPasswordFormSubmit = async (data: ForgotPasswordType) => {
-  const validatedData = forgotPasswordSchema.safeParse(data);
+  try {
+    // validate data and check for errors
+    const validatedData = forgotPasswordSchema.safeParse(data);
 
-  if (!validatedData.success) {
-    return getErrors(validatedData.error);
+    if (!validatedData.success) {
+      return getErrors({}, true, validatedData.error);
+    }
+
+    // submit data to backend
+    const res = await axios.post("/auth/forgot-password", validatedData.data);
+
+    const resData: ResponseData = res.data;
+
+    // return the data response
+    return {
+      success: resData.success,
+      message: resData.message,
+      data: resData.success ? resData.data : null,
+      errors: !resData.success ? [resData.message] : [],
+    };
+  } catch (error: any) {
+    console.log("forgot password submit error => ", { error });
+
+    return getErrors(error, false);
   }
-
-  return {
-    success: true,
-    data: validatedData.data,
-    message:
-      "A password reset link has been sent to the email provided if correct",
-    errors: null,
-  };
 };
 
 // reset-passowrd
 export const resetPasswordFormSubmit = async (data: ResetPasswordType) => {
-  const validatedData = resetPasswordSchema.safeParse(data);
+  try {
+    // validate data and check for errors
+    const validatedData = resetPasswordSchema.safeParse(data);
 
-  if (!validatedData.success) {
-    return getErrors(validatedData.error);
+    if (!validatedData.success) {
+      return getErrors({}, true, validatedData.error);
+    }
+
+    // submit data to backend
+    const { confirmPassword, ...dataToSubmit } = validatedData.data;
+    const res = await axios.post("/auth/reset-password", dataToSubmit);
+
+    const resData: ResponseData = res.data;
+
+    // return the data response
+    return {
+      success: resData.success,
+      message: resData.message,
+      data: resData.success ? resData.data : null,
+      errors: !resData.success ? [resData.message] : [],
+    };
+  } catch (error: any) {
+    console.log("reset password submit error => ", { error });
+
+    return getErrors(error, false);
   }
-
-  return {
-    success: true,
-    data: validatedData.data,
-    message: "Password Changed successfully",
-    errors: null,
-  };
 };

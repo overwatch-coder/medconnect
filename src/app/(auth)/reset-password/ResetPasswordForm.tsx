@@ -12,43 +12,63 @@ import { resetPasswordSchema, ResetPasswordType } from "@/schema/user.schema";
 import { resetPasswordFormSubmit } from "@/actions/user.action";
 import { Button } from "@/components/ui/button";
 import { Eye, EyeOff, LockIcon } from "lucide-react";
+import { IoPerson } from "react-icons/io5";
+import CustomErrorElement from "@/components/CustomErrorElement";
+import { useMutation } from "@tanstack/react-query";
+import { useUserAtom } from "@/hooks";
 
 const ResetPasswordForm = () => {
+  const [user, _] = useUserAtom();
+
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [submitFormErrors, setSubmitFormErrors] = useState<string[]>([]);
+
   const router = useRouter();
   const searchParams = useSearchParams();
   const redirectUrl = searchParams.has("redirect")
     ? `${searchParams.get("redirect")}`
-    : "/";
+    : "/login";
 
   const {
     register,
     reset,
-    formState: { errors, isSubmitting: pending },
+    formState: { errors },
     handleSubmit,
   } = useForm<ResetPasswordType>({
     resolver: zodResolver(resetPasswordSchema),
     mode: "all",
   });
 
-  const handleForgotPasswordSubmission: SubmitHandler<ResetPasswordType> =
-    async (data) => {
-      const result = await resetPasswordFormSubmit(data);
-      if (!result.success) {
-        return Swal.fire({
-          title: "Oops!",
-          text: result.errors?.join(", "),
-          icon: "error",
-          timer: 4000,
-          timerProgressBar: true,
-        });
+  const mutation = useMutation({
+    mutationFn: resetPasswordFormSubmit,
+    onSettled: (result) => {
+      if (!result?.success) {
+        setSubmitFormErrors(result?.errors!);
+        reset({ password: "", confirmPassword: "" });
+        return;
       }
 
-      toast.success(result.message);
       reset();
+      toast.success(result?.message);
       router.replace(redirectUrl);
+    },
+  });
+
+  const handleForgotPasswordSubmission: SubmitHandler<ResetPasswordType> =
+    async (data) => {
+      mutation.mutate(data);
     };
+
+  const token = searchParams.has("token") ? searchParams.get("token") : null;
+
+  if (!token || token == "" || token === null) {
+    return router.replace("/login");
+  }
+
+  if (user.token) {
+    return router.replace("/dashboard");
+  }
 
   return (
     <div className="md:max-w-md flex flex-col items-center justify-center w-full h-full">
@@ -56,6 +76,8 @@ const ResetPasswordForm = () => {
         <h3 className="text-secondary-gray text-4xl font-bold text-center">
           Reset Password
         </h3>
+
+        <CustomErrorElement errors={submitFormErrors} />
 
         <p className="text-secondary-gray font-semibold text-center">
           Enter new password to reset the old password{" "}
@@ -66,6 +88,30 @@ const ResetPasswordForm = () => {
           className="flex flex-col w-full gap-4"
           method="POST"
         >
+          {/* Email */}
+          <div className="flex flex-col w-full">
+            <label htmlFor="email" className="flex items-center gap-2">
+              <IoPerson size={15} className="text-secondary-gray" />
+              <span className="text-secondary-gray">Email</span>
+            </label>
+
+            <input
+              type="text"
+              className="text-secondary-gray ring-0 border-b-secondary-gray w-full px-2 py-1 bg-transparent border-b-2 outline-none"
+              placeholder="Enter your email address"
+              {...register("email")}
+            />
+
+            {errors?.email?.message && (
+              <p className="py-2 text-xs text-red-500">
+                {errors.email.message}
+              </p>
+            )}
+          </div>
+
+          {/* token value from search params */}
+          <input type="hidden" value={token} {...register("token")} />
+
           {/* Password */}
           <div className="flex flex-col w-full">
             <label htmlFor="password" className="flex items-center gap-2">
@@ -82,6 +128,7 @@ const ResetPasswordForm = () => {
                 )}
               </span>
             </label>
+
             <input
               type={showPassword ? "text" : "password"}
               className="text-secondary-gray focus:border-b-2 ring-0 border-b-secondary-gray placeholder:text-xs w-full px-2 py-1 border-b outline-none"
@@ -127,7 +174,7 @@ const ResetPasswordForm = () => {
             )}
           </div>
 
-          <ResetPasswordFormSubmitButton pending={pending} />
+          <ResetPasswordFormSubmitButton pending={mutation.isPending} />
 
           <div className="flex items-center justify-center text-center">
             <Link

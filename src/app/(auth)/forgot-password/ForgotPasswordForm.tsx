@@ -26,9 +26,6 @@ const ForgotPasswordForm = () => {
   // routes & params
   const router = useRouter();
   const searchParams = useSearchParams();
-  const redirectUrl = searchParams.has("redirect")
-    ? `${searchParams.get("redirect")}`
-    : "/login";
 
   const {
     register,
@@ -60,7 +57,7 @@ const ForgotPasswordForm = () => {
     };
 
   if (user.token) {
-    return router.replace("/dashboard");
+    router.replace("/dashboard");
   }
 
   return (

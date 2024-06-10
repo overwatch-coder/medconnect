@@ -67,7 +67,7 @@ const ResetPasswordForm = () => {
   }
 
   if (user.token) {
-    return router.replace("/dashboard");
+    router.replace("/dashboard");
   }
 
   return (

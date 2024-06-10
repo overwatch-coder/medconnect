@@ -1,7 +1,7 @@
 import DashboardSidebar from "@/app/dashboard/DashboardSidebar";
 import { Metadata } from "next";
 import React from "react";
-import Header from "@/components/Header";
+import DashboardHeader from "@/app/dashboard/DashboardHeader";
 
 type DashboardLayoutProps = {
   children: React.ReactNode;
@@ -21,11 +21,11 @@ export const metadata: Metadata = {
 const DashboardLayout = async ({ children }: DashboardLayoutProps) => {
   return (
     <section className="flex flex-col md:flex-row justify-between gap-5 relative">
-      {/* Show only on desktop and tablets */}
       <DashboardSidebar />
 
-      <main className="flex flex-col w-full flex-grow ml-[70px] sm:ml-[250px] mb-auto md:mb-0">
-        {children}
+      <main className="flex flex-col w-full min-h-screen flex-grow ml-[70px] md:ml-[250px] bg-secondary-gray/10 overflow-y-scroll scrollbar-hide">
+        <DashboardHeader />
+        <div className="px-3">{children}</div>
       </main>
     </section>
   );

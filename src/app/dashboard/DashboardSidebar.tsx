@@ -19,8 +19,8 @@ const DashboardSidebar = () => {
 
   return (
     <section className="flex flex-col items-center sm:items-start gap-3 px-5 h-full bg-secondary-gray w-[70px] sm:w-[250px] fixed top-0 left-0 pb-7 overflow-y-scroll scrollbar-hide">
-      <div className="flex flex-col gap-3 pt-7 pb-5">
-        <Link href={"/"} className="flex items-center gap-3">
+      <div className="flex flex-col gap-3 pt-10 pb-5">
+        <Link href={"/"} className="flex items-center gap-3 pb-2">
           <Image
             src="/assets/icons/logo-green.svg"
             alt="medconnect logo"

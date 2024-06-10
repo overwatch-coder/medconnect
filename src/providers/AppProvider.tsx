@@ -1,8 +1,11 @@
 "use client";
 
 import React from "react";
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { QueryClientProvider } from "@tanstack/react-query";
+import { queryClient } from "@/lib/utils";
 
 const AppProvider = ({
   children,
@@ -10,10 +13,11 @@ const AppProvider = ({
   children: React.ReactNode;
 }>) => {
   return (
-    <div>
+    <QueryClientProvider client={queryClient}>
       {children}
       <ToastContainer />
-    </div>
+      <ReactQueryDevtools initialIsOpen={false} />
+    </QueryClientProvider>
   );
 };
 

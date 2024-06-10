@@ -1,5 +1,6 @@
 "use server";
 
+import { axiosInstance as axios } from "@/lib/utils";
 import { getErrors } from "@/lib/validate-data";
 import {
   ForgotPasswordType,

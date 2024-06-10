@@ -1,5 +1,15 @@
 import { IoCheckmarkCircle } from "react-icons/io5";
+import {
+  MdOutlinePersonalInjury,
+  MdOutlineDashboard,
+  MdOutlineShowChart,
+} from "react-icons/md";
+import { FaSearchPlus } from "react-icons/fa";
+import { BsPrescription } from "react-icons/bs";
+import { TbReport } from "react-icons/tb";
+import { UserRoundPlus, CalendarPlus2 } from "lucide-react";
 
+// HOMEPAGE DATA
 export const NAV_ITEMS = [
   {
     name: "Home",
@@ -209,5 +219,45 @@ export const MEDCONNECT_TESTIMONIALS = [
     author: "Emma Brown",
     avatar: "https://randomuser.me/api/portraits/women/65.jpg",
     jobTitle: "Farmer",
+  },
+];
+
+// DASHBOARD DATA
+export const MEDCONNECT_DASHBOARD_LINKS = [
+  { name: "Dashboard", path: "/dashboard", icon: MdOutlineDashboard },
+  {
+    name: "Patients",
+    path: "/dashboard/patients",
+    icon: MdOutlinePersonalInjury,
+  },
+  {
+    name: "Appointments",
+    path: "/dashboard/appointments",
+    icon: CalendarPlus2,
+  },
+  {
+    name: "Prescriptions",
+    path: "/dashboard/prescriptions",
+    icon: BsPrescription,
+  },
+  {
+    name: "Diagnostic Support",
+    path: "/dashboard/diagnostic-support",
+    icon: FaSearchPlus,
+  },
+  {
+    name: "Health Officials",
+    path: "/dashboard/health-officials",
+    icon: UserRoundPlus,
+  },
+  {
+    name: "Disease Analysis",
+    path: "/dashboard/disease-analysis",
+    icon: MdOutlineShowChart,
+  },
+  {
+    name: "Reports",
+    path: "/dashboard/reports",
+    icon: TbReport,
   },
 ];

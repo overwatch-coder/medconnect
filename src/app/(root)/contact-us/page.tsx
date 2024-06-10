@@ -5,32 +5,47 @@ import { Mail, MapPin, PhoneCall } from "lucide-react";
 import React, { useState } from "react";
 import { contactFormSchema, ContactFormType } from "@/schema/contact.schema";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm, UseFormReset } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import Link from "next/link";
 import ClipLoader from "react-spinners/ClipLoader";
+import { useMutation } from "@tanstack/react-query";
+import CustomErrorElement from "@/components/CustomErrorElement";
+import { contactFormSubmit } from "@/actions/contact.action";
 
 const Contact = () => {
   const [formSubmitted, setFormSubmitted] = useState(false);
+  const [submitFormErrors, setSubmitFormErrors] = useState<string[]>([]);
 
   const {
     register,
     handleSubmit,
-    formState: { errors, isSubmitting: pending },
+    formState: { errors },
     reset,
   } = useForm<ContactFormType>({
     resolver: zodResolver(contactFormSchema),
   });
 
-  const contactFormSubmit = async (data: ContactFormType) => {
-    console.log(data);
+  // submit login form
+  const mutation = useMutation({
+    mutationFn: contactFormSubmit,
+    onSettled: (result) => {
+      if (!result?.success) {
+        setSubmitFormErrors(result?.errors!);
+        return;
+      }
 
-    setFormSubmitted(true);
+      setFormSubmitted(true);
 
-    reset();
+      reset();
 
-    setTimeout(() => {
-      setFormSubmitted(false);
-    }, 5000);
+      setTimeout(() => {
+        setFormSubmitted(false);
+      }, 5000);
+    },
+  });
+
+  const contactFormSubmission = async (data: ContactFormType) => {
+    mutation.mutate(data);
   };
 
   return (
@@ -53,10 +68,12 @@ const Contact = () => {
                 </div>
               ) : (
                 <form
-                  onSubmit={handleSubmit(contactFormSubmit)}
+                  onSubmit={handleSubmit(contactFormSubmission)}
                   className="flex flex-col gap-10"
                   method="POST"
                 >
+                  <CustomErrorElement errors={submitFormErrors} />
+
                   {/* Name */}
                   <div className="flex flex-col">
                     <label
@@ -137,7 +154,7 @@ const Contact = () => {
 
                     <select
                       id="service"
-                      {...register("service")}
+                      {...register("inquiryType")}
                       className="w-full rounded bg-transparent border-b-2 border-b-white/80 focus:border-b-white text-white py-2 focus:outline-none"
                     >
                       <option className="text-black">Select one</option>
@@ -161,9 +178,9 @@ const Contact = () => {
                       </option>
                     </select>
 
-                    {errors.service && (
+                    {errors.inquiryType && (
                       <p className="text-red-500 text-xs py-2">
-                        {errors.service.message}
+                        {errors.inquiryType.message}
                       </p>
                     )}
                   </div>
@@ -191,7 +208,7 @@ const Contact = () => {
                     )}
                   </div>
 
-                  <SubmitButton pending={pending}/>
+                  <SubmitButton pending={mutation.isPending} />
                 </form>
               )}
             </div>

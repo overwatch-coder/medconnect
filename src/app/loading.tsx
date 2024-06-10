@@ -14,7 +14,7 @@ const Loading = () => {
         className="object-contain animate-bounce"
       />
       <p className="font-semibold animate-bounce">
-        <span className="text-green-700 text-2xl">MedConnect</span>
+        <span className="text-secondary-gray text-3xl">MedConnect</span>
       </p>
     </div>
   );

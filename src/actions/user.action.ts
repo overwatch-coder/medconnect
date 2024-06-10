@@ -1,7 +1,7 @@
 "use server";
 
 import { getErrors } from "@/lib/parse-error";
-import { axiosInstance as axios } from "@/lib/utils";
+import { axiosInstance } from "@/lib/utils";
 import {
   ForgotPasswordType,
   LoginType,
@@ -25,7 +25,7 @@ export const loginFormSubmit = async (data: LoginType) => {
     }
 
     // submit data
-    const res = await axios.post("/auth/login", validatedData.data);
+    const res = await axiosInstance.post("/auth/login", validatedData.data);
 
     const resData: ResponseData = res.data;
 
@@ -74,7 +74,10 @@ export const forgotPasswordFormSubmit = async (data: ForgotPasswordType) => {
     }
 
     // submit data to backend
-    const res = await axios.post("/auth/forgot-password", validatedData.data);
+    const res = await axiosInstance.post(
+      "/auth/forgot-password",
+      validatedData.data
+    );
 
     const resData: ResponseData = res.data;
 
@@ -104,7 +107,7 @@ export const resetPasswordFormSubmit = async (data: ResetPasswordType) => {
 
     // submit data to backend
     const { confirmPassword, ...dataToSubmit } = validatedData.data;
-    const res = await axios.post("/auth/reset-password", dataToSubmit);
+    const res = await axiosInstance.post("/auth/reset-password", dataToSubmit);
 
     const resData: ResponseData = res.data;
 

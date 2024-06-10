@@ -14,7 +14,7 @@ export const contactFormSchema = z.object({
     .string({ required_error: "Company is required" })
     .min(3, { message: "Company must be between 3 and 50 characters long." })
     .max(50, { message: "Company must be between 3 and 50 characters long." }),
-  service: z.string().default("Contact Us"),
+  inquiryType: z.string().default("Contact Us"),
 });
 
 export type ContactFormType = z.infer<typeof contactFormSchema>;

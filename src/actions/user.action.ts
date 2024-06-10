@@ -9,15 +9,15 @@ import {
   forgotPasswordSchema,
   loginSchema,
   resetPasswordSchema,
-  registerSchema,
-  RegisterType,
+  userSchema,
+  CreateUserType,
 } from "@/schema/user.schema";
 import { ResponseData } from "@/types/index";
 
 // login
 export const loginFormSubmit = async (data: LoginType) => {
   try {
-    // validate login data
+    // validate data and check for errors
     const validatedData = loginSchema.safeParse(data);
 
     if (!validatedData.success) {
@@ -43,24 +43,38 @@ export const loginFormSubmit = async (data: LoginType) => {
   }
 };
 
-// register
-export const registerFormSubmit = async (data: RegisterType) => {
-  const validatedData = registerSchema.safeParse(data);
+// create a new user
+export const createUserFormSubmit = async (data: CreateUserType) => {
+  try {
+    // validate data and check for errors
+    const validatedData = userSchema.omit({ _id: true }).safeParse(data);
 
-  if (!validatedData.success) {
+    if (!validatedData.success) {
+      return getErrors({}, true, validatedData.error);
+    }
+
+    const services = validatedData.data.availableServices;
+
+    // submit data
+    const res = await axiosInstance.post("/users", {
+      ...validatedData.data,
+      availableServices: services ? services.split(",") : [],
+    });
+
+    const resData: ResponseData = res.data;
+
+    // return the data response
     return {
-      success: false,
-      data: null,
-      message: "Validation Error",
+      success: resData.success,
+      message: resData.message,
+      data: resData.success ? resData.data : null,
+      errors: !resData.success ? [resData.message] : [],
     };
-  }
+  } catch (error: any) {
+    console.log("create user submit error => ", { error });
 
-  return {
-    success: true,
-    data: validatedData.data,
-    message: "Registeration successful",
-    errors: null,
-  };
+    return getErrors(error, false);
+  }
 };
 
 // forgot-passowrd

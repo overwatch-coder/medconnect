@@ -4,7 +4,10 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { Separator } from "@/components/ui/separator";
-import { MEDCONNECT_DASHBOARD_LINKS } from "@/constants";
+import {
+  MEDCONNECT_DASHBOARD_LINKS,
+  MEDCONNECT_SUPER_ADMIN_DASHBOARD_LINKS,
+} from "@/constants";
 import { Button } from "@/components/ui/button";
 import { RiLogoutCircleLine } from "react-icons/ri";
 import { useUserAtom } from "@/hooks";
@@ -83,6 +86,13 @@ const DashboardSidebar = () => {
     router.replace("/login");
   }
 
+  // get correct dashboard links
+  // TODO: Change condition to user roles instead of compound name
+  const dashboardLinks =
+    user.user?.compoundName.toLowerCase() === "admin"
+      ? MEDCONNECT_SUPER_ADMIN_DASHBOARD_LINKS
+      : MEDCONNECT_DASHBOARD_LINKS;
+
   return (
     <section className="flex flex-col items-center lg:items-start gap-3 px-5 h-full bg-secondary-gray w-[70px] lg:w-[250px] fixed top-0 left-0 pb-7 overflow-y-scroll scrollbar-hide">
       <div className="flex flex-col gap-3 pt-10 pb-5">
@@ -103,7 +113,7 @@ const DashboardSidebar = () => {
 
       {/* Dashboard Menu Items */}
       <ul className="flex flex-col gap-6 mb-auto">
-        {MEDCONNECT_DASHBOARD_LINKS.map((link) => {
+        {dashboardLinks.map((link) => {
           const activePath = pathname === link.path;
 
           return (

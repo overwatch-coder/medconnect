@@ -4,9 +4,10 @@ import {
   MdOutlineDashboard,
   MdOutlineShowChart,
 } from "react-icons/md";
-import { FaSearchPlus } from "react-icons/fa";
+import { FaSearchPlus, FaClinicMedical } from "react-icons/fa";
 import { BsPrescription } from "react-icons/bs";
 import { TbReport } from "react-icons/tb";
+import { GrSystem } from "react-icons/gr";
 import { UserRoundPlus, CalendarPlus2 } from "lucide-react";
 
 // HOMEPAGE DATA
@@ -254,6 +255,35 @@ export const MEDCONNECT_DASHBOARD_LINKS = [
     name: "Disease Analysis",
     path: "/dashboard/disease-analysis",
     icon: MdOutlineShowChart,
+  },
+  {
+    name: "Reports",
+    path: "/dashboard/reports",
+    icon: TbReport,
+  },
+];
+
+export const MEDCONNECT_SUPER_ADMIN_DASHBOARD_LINKS = [
+  { name: "Dashboard", path: "/dashboard", icon: MdOutlineDashboard },
+  {
+    name: "Compounds",
+    path: "/dashboard/compounds",
+    icon: FaClinicMedical,
+  },
+  {
+    name: "Health Officials",
+    path: "/dashboard/health-officials",
+    icon: UserRoundPlus,
+  },
+  {
+    name: "Compound Management",
+    path: "/dashboard/compound-management",
+    icon: BsPrescription,
+  },
+  {
+    name: "System Analytics",
+    path: "/dashboard/system-analytics",
+    icon: GrSystem,
   },
   {
     name: "Reports",

@@ -19,13 +19,25 @@ const DashboardSidebar = () => {
   const pathname = usePathname();
   const router = useRouter();
 
-  const { error } = useQuery({
+  const { data } = useQuery({
     queryKey: ["user"],
     queryFn: async () => {
       const result = await currentUser(user.userId!, user.token!);
 
       if (!result.success) {
-        throw new Error(result.message);
+        if (result.errors && result?.errors[0]!.includes("Forbidden")) {
+          toast.info("Session expired. Please login again to continue");
+
+          setUser({
+            token: null,
+            user: null,
+            userId: null,
+          });
+
+          router.replace("/login?redirect=/dashboard");
+        }
+
+        throw new Error(result?.errors ? result.errors[0] : result.message);
       }
 
       setUser({
@@ -36,10 +48,11 @@ const DashboardSidebar = () => {
 
       return result;
     },
+    refetchInterval: 1 * (60 * 60 * 1000),
   });
 
-  if (error) {
-    toast.error(error.message);
+  if (data?.errors) {
+    toast.error(data.errors[0]);
   }
 
   // handle logout
@@ -57,12 +70,7 @@ const DashboardSidebar = () => {
 
     const data: ResponseData = res.data;
 
-    if (!data.success) {
-      toast.error(data.message);
-      return;
-    }
-
-    toast.success(data.message);
+    data.success ? toast.success(data.message) : toast.error(data.message);
 
     setUser({
       token: null,
@@ -73,11 +81,10 @@ const DashboardSidebar = () => {
 
   if (!user.token) {
     router.replace("/login");
-    return;
   }
 
   return (
-    <section className="flex flex-col items-center sm:items-start gap-3 px-5 h-full bg-secondary-gray w-[70px] sm:w-[250px] fixed top-0 left-0 pb-7 overflow-y-scroll scrollbar-hide">
+    <section className="flex flex-col items-center lg:items-start gap-3 px-5 h-full bg-secondary-gray w-[70px] lg:w-[250px] fixed top-0 left-0 pb-7 overflow-y-scroll scrollbar-hide">
       <div className="flex flex-col gap-3 pt-10 pb-5">
         <Link href={"/"} className="flex items-center gap-3 pb-2">
           <Image
@@ -87,7 +94,7 @@ const DashboardSidebar = () => {
             height={50}
             className="object-contain"
           />
-          <p className="text-white font-extrabold text-2xl hidden sm:block">
+          <p className="text-white font-extrabold text-2xl hidden lg:block">
             Med<span className="text-primary-green">Connect</span>
           </p>
         </Link>
@@ -117,7 +124,7 @@ const DashboardSidebar = () => {
                     : "group-hover:text-primary-green text-white"
                 }`}
               />
-              <span className="hidden sm:block">{link.name}</span>
+              <span className="hidden lg:block">{link.name}</span>
             </Link>
           );
         })}
@@ -130,7 +137,7 @@ const DashboardSidebar = () => {
       >
         <div className="flex items-center gap-4 font-bold">
           <RiLogoutCircleLine size={25} color="white" />
-          <span className="text-white text-lg hidden sm:block">Logout</span>
+          <span className="text-white text-lg hidden lg:block">Logout</span>
         </div>
       </Button>
     </section>

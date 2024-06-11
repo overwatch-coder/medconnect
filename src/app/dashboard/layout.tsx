@@ -20,12 +20,23 @@ export const metadata: Metadata = {
 
 const DashboardLayout = async ({ children }: DashboardLayoutProps) => {
   return (
-    <section className="flex flex-col md:flex-row justify-between gap-5 relative">
+    <section className="flex flex-col lg:flex-row justify-between gap-5 w-full">
       <DashboardSidebar />
 
-      <main className="flex flex-col w-full min-h-screen flex-grow ml-[70px] md:ml-[250px] bg-secondary-gray/10 overflow-y-scroll scrollbar-hide">
+      <main className="flex flex-col w-full min-h-screen flex-grow ml-[70px] lg:ml-[250px] overflow-y-scroll scrollbar-hide relative">
+        {/* Header */}
         <DashboardHeader />
-        <div className="px-3">{children}</div>
+
+        {/* Content */}
+        <div className="px-3 mb-auto">{children}</div>
+
+        {/* Footer */}
+        <div className="py-2 px-3">
+          <p className="text-secondary-gray font-semibold">
+            &copy; Copyright CampusGuardian {new Date().getFullYear()} . All
+            rights reserved
+          </p>
+        </div>
       </main>
     </section>
   );

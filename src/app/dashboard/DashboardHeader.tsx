@@ -19,7 +19,7 @@ const DashboardHeader = () => {
         </h2>
 
         {/* MobileNav */}
-        <div className="md:hidden me-[70px] md:me-0">
+        <div className="md:hidden me-[10px] md:me-0">
           <DashboardMobileHeader />
         </div>
 

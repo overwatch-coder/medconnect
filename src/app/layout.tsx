@@ -28,7 +28,7 @@ export default function AppLayout({
       <body
         className={cn(
           sofia.className,
-          "scroll-smooth overflow-x-hidden scrollbar-hide"
+          "scroll-smooth overflow-x-hidden bg-secondary-gray/10 scrollbar-hide"
         )}
       >
         <AppProvider>{children}</AppProvider>

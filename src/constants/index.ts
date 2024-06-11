@@ -261,3 +261,244 @@ export const MEDCONNECT_DASHBOARD_LINKS = [
     icon: TbReport,
   },
 ];
+
+export const MEDCONNECT_DASHBOARD_UPCOMING_APPOINTMENTS = [
+  {
+    patientName: "David Davis",
+    patientID: "PID5683",
+    assignedHO: "Dr. Murphy",
+    appointmentDate: "2023-05-22",
+    appointmentTime: "15:20",
+  },
+  {
+    patientName: "Hank Martinez",
+    patientID: "PID1342",
+    assignedHO: "Dr. Lee",
+    appointmentDate: "2023-09-14",
+    appointmentTime: "14:50",
+  },
+  {
+    patientName: "Alice Brown",
+    patientID: "PID2487",
+    assignedHO: "Dr. Johnson",
+    appointmentDate: "2023-11-03",
+    appointmentTime: "10:30",
+  },
+  {
+    patientName: "Eve Johnson",
+    patientID: "PID0783",
+    assignedHO: "Dr. Smith",
+    appointmentDate: "2023-03-12",
+    appointmentTime: "13:10",
+  },
+  {
+    patientName: "Grace Lee",
+    patientID: "PID6854",
+    assignedHO: "Dr. Patel",
+    appointmentDate: "2023-02-18",
+    appointmentTime: "12:40",
+  },
+  {
+    patientName: "Carol Garcia",
+    patientID: "PID2197",
+    assignedHO: "Dr. Smith",
+    appointmentDate: "2023-10-30",
+    appointmentTime: "09:20",
+  },
+  {
+    patientName: "John Clark",
+    patientID: "PID9512",
+    assignedHO: "Dr. Johnson",
+    appointmentDate: "2023-01-23",
+    appointmentTime: "11:00",
+  },
+  {
+    patientName: "Jane Garcia",
+    patientID: "PID3771",
+    assignedHO: "Dr. Patel",
+    appointmentDate: "2023-08-16",
+    appointmentTime: "16:30",
+  },
+  {
+    patientName: "Bob Brown",
+    patientID: "PID4329",
+    assignedHO: "Dr. Lee",
+    appointmentDate: "2023-06-11",
+    appointmentTime: "11:50",
+  },
+  {
+    patientName: "Carol White",
+    patientID: "PID8457",
+    assignedHO: "Dr. Murphy",
+    appointmentDate: "2023-07-27",
+    appointmentTime: "14:20",
+  },
+  {
+    patientName: "Frank Davis",
+    patientID: "PID0913",
+    assignedHO: "Dr. Patel",
+    appointmentDate: "2023-05-09",
+    appointmentTime: "12:10",
+  },
+  {
+    patientName: "Alice Martinez",
+    patientID: "PID5281",
+    assignedHO: "Dr. Johnson",
+    appointmentDate: "2023-04-19",
+    appointmentTime: "15:40",
+  },
+  {
+    patientName: "John Lee",
+    patientID: "PID7884",
+    assignedHO: "Dr. Smith",
+    appointmentDate: "2023-03-05",
+    appointmentTime: "10:10",
+  },
+  {
+    patientName: "Eve Clark",
+    patientID: "PID6378",
+    assignedHO: "Dr. Murphy",
+    appointmentDate: "2023-09-24",
+    appointmentTime: "09:50",
+  },
+  {
+    patientName: "Hank Johnson",
+    patientID: "PID2843",
+    assignedHO: "Dr. Patel",
+    appointmentDate: "2023-01-09",
+    appointmentTime: "13:50",
+  },
+  {
+    patientName: "Jane White",
+    patientID: "PID9842",
+    assignedHO: "Dr. Lee",
+    appointmentDate: "2023-12-08",
+    appointmentTime: "10:00",
+  },
+  {
+    patientName: "Frank Smith",
+    patientID: "PID3124",
+    assignedHO: "Dr. Murphy",
+    appointmentDate: "2023-11-15",
+    appointmentTime: "14:40",
+  },
+  {
+    patientName: "David Clark",
+    patientID: "PID4703",
+    assignedHO: "Dr. Patel",
+    appointmentDate: "2023-02-28",
+    appointmentTime: "16:00",
+  },
+  {
+    patientName: "Grace Johnson",
+    patientID: "PID1298",
+    assignedHO: "Dr. Smith",
+    appointmentDate: "2023-10-04",
+    appointmentTime: "15:10",
+  },
+  {
+    patientName: "Carol Lee",
+    patientID: "PID6832",
+    assignedHO: "Dr. Johnson",
+    appointmentDate: "2023-07-11",
+    appointmentTime: "13:20",
+  },
+];
+
+export const MEDCONNECT_DASHBOARD_REPORTS = [
+  {
+    title: "Monthly Patient Visits",
+    description: "A summary of patient visits in the last month.",
+  },
+  {
+    title: "Medication Inventory",
+    description: "Current stock levels of all medications.",
+  },
+  {
+    title: "Financial Summary",
+    description:
+      "Overview of financial performance including revenue and expenses.",
+  },
+  {
+    title: "Patient Satisfaction Survey",
+    description: "Results from the latest patient satisfaction survey.",
+  },
+  {
+    title: "Staff Performance",
+    description: "Assessment of staff performance for the past quarter.",
+  },
+  {
+    title: "Annual Health Outcomes",
+    description: "Yearly report on patient health outcomes and improvements.",
+  },
+  {
+    title: "Emergency Room Statistics",
+    description: "Detailed statistics on ER visits and outcomes.",
+  },
+  {
+    title: "Outpatient Services Utilization",
+    description: "Analysis of outpatient services and their usage.",
+  },
+  {
+    title: "Research and Development",
+    description: "Summary of ongoing research projects and developments.",
+  },
+  {
+    title: "Community Outreach",
+    description: "Report on community outreach programs and their impact.",
+  },
+];
+
+export const MEDCONNECT_DASHBOARD_RECENT_ACTIVITIES = [
+  {
+    title: "New Patient Registered",
+    description: "John Doe has registered as a new patient.",
+    timeAgo: "9 min ago",
+  },
+  {
+    title: "Appointment Scheduled",
+    description: "Jane Smith scheduled an appointment with Dr. Johnson.",
+    timeAgo: "20 min ago",
+  },
+  {
+    title: "Medication Restocked",
+    description: "Paracetamol has been restocked in the pharmacy.",
+    timeAgo: "45 min ago",
+  },
+  {
+    title: "Lab Results Available",
+    description: "Lab results for patient Alice Brown are now available.",
+    timeAgo: "1 hour ago",
+  },
+  {
+    title: "New Staff Member",
+    description: "Dr. Emily White has joined the cardiology department.",
+    timeAgo: "2 hours ago",
+  },
+  {
+    title: "System Maintenance Completed",
+    description:
+      "The scheduled system maintenance has been completed successfully.",
+    timeAgo: "3 hours ago",
+  },
+  {
+    title: "Health Seminar",
+    description: "A health seminar on diabetes management was conducted.",
+    timeAgo: "5 hours ago",
+  },
+  {
+    title: "Emergency Surgery",
+    description: "Emergency surgery was performed on patient Bob Green.",
+    timeAgo: "7 hours ago",
+  },
+  {
+    title: "Vaccination Drive",
+    description: "A vaccination drive was held in the community center.",
+    timeAgo: "9 hours ago",
+  },
+  {
+    title: "Medical Records Updated",
+    description: "Medical records for patient Carol Davis have been updated.",
+    timeAgo: "10 hours ago",
+  },
+];

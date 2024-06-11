@@ -15,10 +15,11 @@ import { useUserAtom } from "@/hooks";
 
 const DashboardMobileHeader = () => {
   const [user] = useUserAtom();
+  const isSuperAdmin = user.user?.compoundName === "admin";
 
   return (
     <Sheet>
-      <SheetTrigger className="">
+      <SheetTrigger>
         <Menu size={25} className="text-secondary-gray" />
       </SheetTrigger>
 
@@ -90,9 +91,11 @@ const DashboardMobileHeader = () => {
           />
           <p className="flex flex-col gap-1 text-white md:text-secondary-gray">
             <span className="font-bold text-lg capitalize">
-              {user?.user?.compoundName ?? "MedConnect"}
+              {isSuperAdmin ? "MedConnect" : user.user?.compoundName ?? "Guest"}
             </span>
-            <span className="font-medium text-base">C.H.P.S. Compound</span>
+            <span className="font-medium text-base">
+              {isSuperAdmin ? "Super Admin" : "C.H.P.S. Compound"}
+            </span>
           </p>
         </div>
       </SheetContent>

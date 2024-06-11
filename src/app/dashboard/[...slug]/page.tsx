@@ -1,6 +1,13 @@
+import DashboardContentHeader from "@/app/dashboard/DashboardContentHeader";
 import React from "react";
 
-const DashboardType = ({ params: { slug } }: { params: { slug: string } }) => {
+type DashboardTypeProps = {
+  params: {
+    slug: string;
+  };
+};
+
+const DashboardType = ({ params: { slug } }: DashboardTypeProps) => {
   const pathname = `${slug}`;
 
   const routeHeader = /-/.test(pathname)
@@ -10,16 +17,7 @@ const DashboardType = ({ params: { slug } }: { params: { slug: string } }) => {
   return (
     <div className="flex flex-col gap-5 w-full">
       {/* Header */}
-      <section className="flex items-center justify-between py-3">
-        <h2 className="text-secondary-gray capitalize text-xl font-semibold">
-          {routeHeader}
-        </h2>
-        <p className="text-secondary-gray font-light italic">
-          {new Date().toLocaleDateString("en", {
-            dateStyle: "long",
-          })}
-        </p>
-      </section>
+      <DashboardContentHeader headerTitle={routeHeader} showDate={false} />
 
       <section className="flex flex-col gap-5"></section>
     </div>

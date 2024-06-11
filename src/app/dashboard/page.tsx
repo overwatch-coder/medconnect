@@ -11,19 +11,13 @@ import {
   MEDCONNECT_DASHBOARD_RECENT_ACTIVITIES,
   MEDCONNECT_DASHBOARD_REPORTS,
 } from "@/constants";
+import DashboardContentHeader from "@/app/dashboard/DashboardContentHeader";
 
 const Dashboard = () => {
   return (
     <div className="flex flex-col gap-5 w-full">
       {/* Header */}
-      <section className="flex items-center justify-between py-3">
-        <h2 className="text-secondary-gray text-xl font-semibold">Dashboard</h2>
-        <p className="text-secondary-gray font-light italic">
-          {new Date().toLocaleDateString("en", {
-            dateStyle: "long",
-          })}
-        </p>
-      </section>
+      <DashboardContentHeader headerTitle="Dashboard" showDate={true} />
 
       {/* First Row */}
       <section className="flex flex-col md:flex-row w-full gap-5">

@@ -6,13 +6,16 @@ import { MdOutlineQuestionMark } from "react-icons/md";
 import DashboardMobileHeader from "@/app/dashboard/DashboardMobileHeader";
 import Link from "next/link";
 import Image from "next/image";
+import { useUserAtom } from "@/hooks";
 
 const DashboardHeader = () => {
+  const [user] = useUserAtom();
   return (
     <header className="w-full py-3 px-3 md:px-4 bg-white z-50">
       <div className="flex items-center justify-between relative">
-        <h2 className="text-xl md:text-2xl text-secondary-gray font-extrabold">
-          Kwabenya <br className="md:hidden" /> CHPS Compound
+        <h2 className="text-xl capitalize md:text-2xl text-secondary-gray font-extrabold">
+          {user.user?.compoundName ?? "MedConnect"} <br className="md:hidden" />{" "}
+          CHPS Compound
         </h2>
 
         {/* MobileNav */}
@@ -53,7 +56,9 @@ const DashboardHeader = () => {
               height={40}
             />
             <p className="flex flex-col gap-1 text-secondary-gray">
-              <span className="font-bold">Kwabenya</span>
+              <span className="font-bold capitalize">
+                {user.user?.compoundName ?? "MedConnect"}
+              </span>
               <span className="font-medium text-sm">C.H.P.S. Compound</span>
             </p>
           </div>

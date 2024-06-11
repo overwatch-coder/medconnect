@@ -6,16 +6,15 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import { NAV_ITEMS } from "@/constants";
 import { Menu, Settings, Bell } from "lucide-react";
 import { MdOutlineQuestionMark } from "react-icons/md";
 import Image from "next/image";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
 import { Separator } from "@/components/ui/separator";
+import { useUserAtom } from "@/hooks";
 
 const DashboardMobileHeader = () => {
-  const pathname = usePathname();
+  const [user] = useUserAtom();
 
   return (
     <Sheet>
@@ -90,7 +89,9 @@ const DashboardMobileHeader = () => {
             height={70}
           />
           <p className="flex flex-col gap-1 text-white md:text-secondary-gray">
-            <span className="font-bold text-lg">Kwabenya</span>
+            <span className="font-bold text-lg capitalize">
+              {user?.user?.compoundName ?? "MedConnect"}
+            </span>
             <span className="font-medium text-base">C.H.P.S. Compound</span>
           </p>
         </div>

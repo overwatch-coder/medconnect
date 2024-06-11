@@ -14,6 +14,31 @@ import {
 } from "@/schema/user.schema";
 import { ResponseData } from "@/types/index";
 
+// get current user data
+export const currentUser = async (userId: string, token: string) => {
+  try {
+    const res = await axiosInstance.get(`/users/${userId}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    const resData: ResponseData = res.data;
+
+    // return the data response
+    return {
+      success: resData.success,
+      message: resData.message,
+      data: resData.success ? resData.data : null,
+      errors: !resData.success ? [resData.message] : [],
+    };
+  } catch (error: any) {
+    console.log("current user error => ", { error });
+
+    return getErrors(error, false);
+  }
+};
+
 // login
 export const loginFormSubmit = async (data: LoginType) => {
   try {

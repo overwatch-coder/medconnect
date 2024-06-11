@@ -11,12 +11,38 @@ import { useUserAtom } from "@/hooks";
 import { axiosInstance } from "@/lib/utils";
 import { ResponseData } from "@/types/index";
 import { toast } from "react-toastify";
+import { useQuery } from "@tanstack/react-query";
+import { currentUser } from "@/actions/user.action";
 
 const DashboardSidebar = () => {
   const [user, setUser] = useUserAtom();
   const pathname = usePathname();
   const router = useRouter();
 
+  const { error } = useQuery({
+    queryKey: ["user"],
+    queryFn: async () => {
+      const result = await currentUser(user.userId!, user.token!);
+
+      if (!result.success) {
+        throw new Error(result.message);
+      }
+
+      setUser({
+        token: user.token,
+        user: result.data,
+        userId: user.userId,
+      });
+
+      return result;
+    },
+  });
+
+  if (error) {
+    toast.error(error.message);
+  }
+
+  // handle logout
   const handleLogout = async () => {
     // TODO: handle logout
     const res = await axiosInstance.post(
@@ -41,13 +67,13 @@ const DashboardSidebar = () => {
     setUser({
       token: null,
       user: null,
+      userId: null,
     });
-
-    router.push("/login");
   };
 
   if (!user.token) {
-    return router.replace("/login");
+    router.replace("/login");
+    return;
   }
 
   return (

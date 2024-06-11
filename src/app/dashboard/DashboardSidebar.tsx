@@ -8,14 +8,12 @@ import {
   MEDCONNECT_DASHBOARD_LINKS,
   MEDCONNECT_SUPER_ADMIN_DASHBOARD_LINKS,
 } from "@/constants";
-import { Button } from "@/components/ui/button";
-import { RiLogoutCircleLine } from "react-icons/ri";
+
 import { useUserAtom } from "@/hooks";
-import { axiosInstance } from "@/lib/utils";
-import { ResponseData } from "@/types/index";
 import { toast } from "react-toastify";
 import { useQuery } from "@tanstack/react-query";
 import { currentUser } from "@/actions/user.action";
+import LogoutModal from "@/app/dashboard/LogoutModal";
 
 const DashboardSidebar = () => {
   const [user, setUser] = useUserAtom();
@@ -57,30 +55,6 @@ const DashboardSidebar = () => {
   if (data?.errors) {
     toast.error(data.errors[0]);
   }
-
-  // handle logout
-  const handleLogout = async () => {
-    // TODO: handle logout
-    const res = await axiosInstance.post(
-      "/auth/logout",
-      {},
-      {
-        headers: {
-          Authorization: `Bearer ${user.token}`,
-        },
-      }
-    );
-
-    const data: ResponseData = res.data;
-
-    data.success ? toast.success(data.message) : toast.error(data.message);
-
-    setUser({
-      token: null,
-      user: null,
-      userId: null,
-    });
-  };
 
   if (!user.token) {
     router.replace("/login");
@@ -140,16 +114,7 @@ const DashboardSidebar = () => {
         })}
       </ul>
 
-      <Button
-        onClick={handleLogout}
-        variant={"link"}
-        className="flex flex-col items-start mt-16 hover:no-underline hover:scale-105 transition"
-      >
-        <div className="flex items-center gap-4 font-bold">
-          <RiLogoutCircleLine size={25} color="white" />
-          <span className="text-white text-lg hidden lg:block">Logout</span>
-        </div>
-      </Button>
+      <LogoutModal />
     </section>
   );
 };

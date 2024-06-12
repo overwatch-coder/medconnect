@@ -65,6 +65,7 @@ const RegisterForm = () => {
   const handleCreateUserSubmission: SubmitHandler<CreateUserType> = async (
     data
   ) => {
+    setSubmitFormErrors([]);
     mutation.mutate(data);
   };
 

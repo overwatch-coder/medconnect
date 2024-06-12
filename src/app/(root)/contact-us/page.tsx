@@ -45,6 +45,7 @@ const Contact = () => {
   });
 
   const contactFormSubmission = async (data: ContactFormType) => {
+    setSubmitFormErrors([]);
     mutation.mutate(data);
   };
 

@@ -64,6 +64,7 @@ const LoginForm = () => {
   });
 
   const handleLoginSubmission: SubmitHandler<LoginType> = async (data) => {
+    setSubmitFormErrors([]);
     mutation.mutate(data);
   };
 

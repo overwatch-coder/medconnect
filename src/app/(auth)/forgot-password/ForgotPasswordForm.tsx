@@ -53,6 +53,7 @@ const ForgotPasswordForm = () => {
 
   const handleForgotPasswordSubmission: SubmitHandler<ForgotPasswordType> =
     async (data) => {
+      setSubmitFormErrors([]);
       mutation.mutate(data);
     };
 

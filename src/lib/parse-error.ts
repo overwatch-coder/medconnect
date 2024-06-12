@@ -15,7 +15,7 @@ export const getErrors = (
   }
 
   return {
-    errors: [error?.response.data.message ?? error?.message] as string[],
+    errors: [error?.response?.data.message || error?.message] as string[],
     success: false,
     data: null,
     message: error?.message as string,

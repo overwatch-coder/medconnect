@@ -3,6 +3,7 @@ import { Sofia_Sans } from "next/font/google";
 import "./globals.css";
 import { cn } from "@/lib/utils";
 import AppProvider from "@/providers/AppProvider";
+import JotaiProvider from "@/providers/JotaiProvider";
 
 const sofia = Sofia_Sans({
   weight: ["400", "500", "600", "700", "800", "900"],
@@ -31,7 +32,9 @@ export default function AppLayout({
           "scroll-smooth overflow-x-hidden bg-secondary-gray/10 scrollbar-hide"
         )}
       >
-        <AppProvider>{children}</AppProvider>
+        <JotaiProvider>
+          <AppProvider>{children}</AppProvider>
+        </JotaiProvider>
       </body>
     </html>
   );

@@ -17,11 +17,17 @@ const AppProvider = ({
   const [user] = useUserAtom();
   const pathname = usePathname();
 
-  if (pathname.startsWith("/dashboard")) {
-    if (user.token === null) {
-      window.location.href = "/login?redirect=/dashboard";
+  useEffect(() => {
+    if (typeof window === "undefined") {
+      return;
     }
-  }
+
+    if (pathname.startsWith("/dashboard")) {
+      if (user.token === null) {
+        window.location.href = "/login?redirect=/dashboard";
+      }
+    }
+  }, [user.token, pathname]);
 
   return (
     <QueryClientProvider client={queryClient}>

@@ -4,7 +4,7 @@ import { MEDCONNECT_DASHBOARD_NOTIFICATIONS } from "@/constants";
 import NotificationTable from "@/app/dashboard/notifications/NotificationTable";
 import { Metadata } from "next";
 
-const metadata: Metadata = {
+export const metadata: Metadata = {
   title: "Notifications - MedConnect",
   description: "View all your notifications with ease",
   icons: {

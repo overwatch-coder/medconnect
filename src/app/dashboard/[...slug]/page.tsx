@@ -7,6 +7,21 @@ type DashboardTypeProps = {
   };
 };
 
+export const generateMetadata = ({ params: { slug } }: DashboardTypeProps) => {
+  const pathname = `${slug}`;
+  const routeHeader = /-/.test(pathname)
+    ? pathname.replace(/-/g, " ")
+    : pathname;
+
+  return {
+    title: `${routeHeader} - MedConnect`,
+    description: `Welcome to the ${routeHeader} page of your MedConnect dashboard.`,
+    icons: {
+      icon: "/favicon.ico",
+    },
+  };
+};
+
 const DashboardType = ({ params: { slug } }: DashboardTypeProps) => {
   const pathname = `${slug}`;
 

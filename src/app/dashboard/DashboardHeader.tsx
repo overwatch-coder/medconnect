@@ -15,7 +15,7 @@ const DashboardHeader = () => {
   const pathname = usePathname();
 
   return (
-    <header className="w-full py-2 px-3 md:px-4 bg-white z-50">
+    <header className="w-full py-5 px-3 md:px-4 bg-white z-50">
       <div className="flex items-center justify-between relative">
         <h2 className="text-xl capitalize md:text-2xl text-secondary-gray font-extrabold">
           {isSuperAdmin ? "MedConnect" : user.user?.compoundName ?? "Guest"}{" "}

@@ -20,8 +20,8 @@ const Dashboard = () => {
       <DashboardContentHeader headerTitle="Dashboard" showDate={true} />
 
       {/* First Row */}
-      <section className="flex flex-col md:flex-row w-full gap-5">
-        <div className="flex flex-col gap-5 w-full">
+      <section className="grid grid-cols-1 md:grid-cols-3 w-full gap-5">
+        <div className="flex flex-col gap-5 w-full col-span-1 md:col-span-2">
           <div className="grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-4 gap-5">
             {/* Total Patients */}
             <div className="bg-white rounded-md p-4 col-span-1 md:col-span-2 flex flex-col gap-3  w-full">
@@ -156,7 +156,7 @@ const Dashboard = () => {
         </div>
 
         {/* Diagnosis Analysis */}
-        <aside className="rounded-md shadow bg-white w-full md:w-1/2 h-full md:h-fit">
+        <aside className="rounded-md shadow bg-white w-full h-full min-h-full col-span-1">
           <h2 className="flex items-center justify-between gap-2 px-3 py-3">
             <span className="text-secondary-gray font-medium">
               Diagnosis Analysis(Patients Satisfaction)
@@ -183,7 +183,7 @@ const Dashboard = () => {
               <span className="text-primary-green">80%</span>
             </div>
 
-            <button className="group flex items-center justify-end w-full gap-3">
+            <button className="group flex items-center justify-end w-full gap-3 mt-8">
               <span className="group-hover:font-semibold">
                 Start a new diagnosis
               </span>

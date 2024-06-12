@@ -1,3 +1,5 @@
+"use client";
+
 import {
   Sheet,
   SheetContent,
@@ -12,10 +14,12 @@ import Image from "next/image";
 import Link from "next/link";
 import { Separator } from "@/components/ui/separator";
 import { useUserAtom } from "@/hooks";
+import { usePathname } from "next/navigation";
 
 const DashboardMobileHeader = () => {
   const [user] = useUserAtom();
   const isSuperAdmin = user.user?.compoundName === "admin";
+  const pathname = usePathname();
 
   return (
     <Sheet>
@@ -43,13 +47,26 @@ const DashboardMobileHeader = () => {
 
           <SheetDescription>
             {/* Dashboard Menu Items */}
-            <ul className="flex flex-col gap-6 mb-auto">
+            <div className="flex flex-col gap-6 mb-auto">
               <Link
-                href={"#"}
+                href={"/dashboard/notifications"}
                 className="hover:scale-105 transition p-4 rounded md:rounded-full bg-white/30 md:bg-primary-gray/10 flex items-center gap-3 relative"
               >
-                <Bell size={20} className="text-white md:text-primary-gray" />
-                <span className="md:hidden text-white text-base">
+                <Bell
+                  size={20}
+                  className={`${
+                    pathname === "/dashboard/notifications"
+                      ? "text-primary-green"
+                      : "text-white"
+                  }`}
+                />
+                <span
+                  className={`md:hidden ${
+                    pathname === "/dashboard/notifications"
+                      ? "text-primary-green"
+                      : "text-white"
+                  } text-base`}
+                >
                   Notifications
                 </span>
                 <span className="text-white bg-red-500 rounded-full text-sm absolute top-5 right-2 md:top-0 md:right-0 h-5 w-5 text-center flex flex-col items-center">
@@ -58,27 +75,51 @@ const DashboardMobileHeader = () => {
               </Link>
 
               <Link
-                href={"#"}
+                href={"/dashboard/help"}
                 className="hover:scale-105 transition p-4 rounded md:rounded-full bg-white/30 md:bg-primary-gray/10 flex items-center gap-3"
               >
                 <MdOutlineQuestionMark
                   size={20}
-                  className="text-white md:text-primary-gray"
+                  className={`${
+                    pathname === "/dashboard/help"
+                      ? "text-primary-green"
+                      : "text-white"
+                  }`}
                 />
-                <span className="md:hidden text-white text-base">Help</span>
+                <span
+                  className={`md:hidden ${
+                    pathname === "/dashboard/help"
+                      ? "text-primary-green"
+                      : "text-white"
+                  } text-base`}
+                >
+                  Help
+                </span>
               </Link>
 
               <Link
-                href={"#"}
+                href={"/dashboard/settings"}
                 className="hover:scale-105 transition p-4 rounded md:rounded-full bg-white/30 md:bg-primary-gray/10 flex items-center gap-3"
               >
                 <Settings
                   size={20}
-                  className="text-white md:text-primary-gray"
+                  className={`${
+                    pathname === "/dashboard/settings"
+                      ? "text-primary-green"
+                      : "text-white"
+                  }}`}
                 />
-                <span className="md:hidden text-white text-base">Settings</span>
+                <span
+                  className={`md:hidden ${
+                    pathname === "/dashboard/settings"
+                      ? "text-primary-green"
+                      : "text-white"
+                  } text-base`}
+                >
+                  Settings
+                </span>
               </Link>
-            </ul>
+            </div>
           </SheetDescription>
         </SheetHeader>
 

@@ -7,10 +7,12 @@ import DashboardMobileHeader from "@/app/dashboard/DashboardMobileHeader";
 import Link from "next/link";
 import Image from "next/image";
 import { useUserAtom } from "@/hooks";
+import { usePathname } from "next/navigation";
 
 const DashboardHeader = () => {
   const [user] = useUserAtom();
   const isSuperAdmin = user.user?.compoundName === "admin";
+  const pathname = usePathname();
 
   return (
     <header className="w-full py-2 px-3 md:px-4 bg-white z-50">
@@ -28,27 +30,48 @@ const DashboardHeader = () => {
 
         <ul className="hidden items-center gap-6 md:flex">
           <Link
-            href={"#"}
+            href={"/dashboard/notifications"}
             className="hover:scale-105 transition p-4 rounded-full bg-primary-gray/10 flex flex-col items-center relative"
           >
-            <Bell size={15} className="text-primary-gray" />
+            <Bell
+              size={15}
+              className={
+                pathname === "/dashboard/notifications"
+                  ? "text-primary-green"
+                  : "text-secondary-gray"
+              }
+            />
             <span className="text-white bg-red-500 rounded-full text-sm absolute top-0 right-0 h-5 w-5 text-center flex flex-col items-center">
               4
             </span>
           </Link>
 
           <Link
-            href={"#"}
+            href={"/dashboard/help"}
             className="hover:scale-105 transition p-4 rounded-full bg-primary-gray/10 flex flex-col items-center"
           >
-            <MdOutlineQuestionMark size={15} className="text-primary-gray" />
+            <MdOutlineQuestionMark
+              size={15}
+              className={
+                pathname === "/dashboard/help"
+                  ? "text-primary-green"
+                  : "text-secondary-gray"
+              }
+            />
           </Link>
 
           <Link
-            href={"#"}
+            href={"/dashboard/settings"}
             className="hover:scale-105 transition p-4 rounded-full bg-primary-gray/10 flex flex-col items-center"
           >
-            <Settings size={15} className="text-primary-gray" />
+            <Settings
+              size={15}
+              className={
+                pathname === "/dashboard/settings"
+                  ? "text-primary-green"
+                  : "text-secondary-gray"
+              }
+            />
           </Link>
 
           <div className="rounded-md bg-primary-gray/10 py-1 px-3 flex items-center gap-3">

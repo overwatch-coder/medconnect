@@ -532,3 +532,166 @@ export const MEDCONNECT_DASHBOARD_RECENT_ACTIVITIES = [
     timeAgo: "10 hours ago",
   },
 ];
+
+export const MEDCONNECT_DASHBOARD_NOTIFICATIONS = [
+  {
+    type: "Appointment Scheduled",
+    title: "Appointment has been scheduled",
+    description:
+      "An appointment has been scheduled for Jane Smith with Dr. Johnson on 12th June at 3 PM.",
+    timeAgo: "9 min ago",
+    typeColor: "#00ff00",
+  },
+  {
+    type: "New Patient Added",
+    title: "New Patient has been added successfully",
+    description:
+      "A new patient, John Doe, has been registered into the system. Please ensure all details are verified and updated.",
+    timeAgo: "30 min ago",
+    typeColor: "#ff0000",
+  },
+  {
+    type: "System Maintenance",
+    title: "Scheduled System Maintenance",
+    description:
+      "The system will undergo maintenance on 15th June from 1 AM to 3 AM. Please save your work to avoid data loss.",
+    timeAgo: "1 hour ago",
+    typeColor: "#0000ff",
+  },
+  {
+    type: "Training Session",
+    title: "CPR Training Session",
+    description:
+      "A CPR training session will be held on 20th June at 10 AM in the training room. All staff are encouraged to attend.",
+    timeAgo: "2 hours ago",
+    typeColor: "#ffa500",
+  },
+  {
+    type: "Patient Discharged",
+    title: "Patient Discharge Notice",
+    description:
+      "Patient Carol White has been successfully discharged. Ensure all discharge paperwork is completed.",
+    timeAgo: "3 hours ago",
+    typeColor: "#ff0000",
+  },
+  {
+    type: "System Update",
+    title: "System Update Completed",
+    description:
+      "The system update has been completed successfully. Please restart your devices to apply the changes.",
+    timeAgo: "4 hours ago",
+    typeColor: "#0000ff",
+  },
+  {
+    type: "Community Event",
+    title: "Health Fair Participation",
+    description:
+      "Our hospital will be participating in the community health fair on 30th June. Volunteers are needed. Sign up at the front desk.",
+    timeAgo: "5 hours ago",
+    typeColor: "#ffa500",
+  },
+  {
+    type: "Emergency Alert",
+    title: "Emergency Surgery Required",
+    description:
+      "Patient Bob Brown requires emergency surgery. Dr. Patel has been notified and is preparing for the procedure.",
+    timeAgo: "6 hours ago",
+    typeColor: "#ff0000",
+  },
+  {
+    type: "Appointment Reminder",
+    title: "Appointment Reminder",
+    description:
+      "Reminder: Patient Michael Davis has an appointment with Dr. Patel tomorrow at 2 PM.",
+    timeAgo: "7 hours ago",
+    typeColor: "#00ff00",
+  },
+  {
+    type: "Security Alert",
+    title: "Security Update",
+    description:
+      "A security update has been applied to the hospital network. Please restart your devices to ensure the update is applied.",
+    timeAgo: "8 hours ago",
+    typeColor: "#0000ff",
+  },
+  {
+    type: "Patient Feedback Received",
+    title: "Positive Patient Feedback",
+    description:
+      "We have received positive feedback from patient Emily Brown. Great job team! Keep up the excellent work.",
+    timeAgo: "9 hours ago",
+    typeColor: "#ff0000",
+  },
+  {
+    type: "Follow-up Scheduled",
+    title: "Follow-up Appointment Scheduled",
+    description:
+      "A follow-up appointment has been scheduled for patient David Brown with Dr. Murphy on 20th June.",
+    timeAgo: "10 hours ago",
+    typeColor: "#00ff00",
+  },
+  {
+    type: "Staff Meeting Reminder",
+    title: "Staff Meeting at 5 PM",
+    description:
+      "Reminder: There is a staff meeting scheduled today at 5 PM in the conference room. Attendance is mandatory.",
+    timeAgo: "11 hours ago",
+    typeColor: "#ffa500",
+  },
+  {
+    type: "System Downtime Alert",
+    title: "System Downtime Alert",
+    description:
+      "The system will be down for an update on 18th June from 12 AM to 2 AM. Please plan your tasks accordingly.",
+    timeAgo: "12 hours ago",
+    typeColor: "#0000ff",
+  },
+  {
+    type: "Appointment Rescheduled",
+    title: "Appointment has been rescheduled",
+    description:
+      "The appointment for patient Alice Johnson with Dr. Lee has been rescheduled to 15th June at 10 AM.",
+    timeAgo: "13 hours ago",
+    typeColor: "#00ff00",
+  },
+  {
+    type: "New Equipment Arrived",
+    title: "New MRI Machine Installed",
+    description:
+      "A new MRI machine has been installed in the radiology department. Training sessions will be conducted next week.",
+    timeAgo: "14 hours ago",
+    typeColor: "#ffa500",
+  },
+  {
+    type: "Patient Transfer",
+    title: "Patient Transfer Notice",
+    description:
+      "Patient Sarah Davis has been transferred to another facility for specialized care. Ensure all records are updated.",
+    timeAgo: "15 hours ago",
+    typeColor: "#ff0000",
+  },
+  {
+    type: "Appointment Canceled",
+    title: "Appointment Canceled",
+    description:
+      "The appointment for patient Sarah Williams with Dr. Smith on 10th June has been canceled.",
+    timeAgo: "16 hours ago",
+    typeColor: "#00ff00",
+  },
+  {
+    type: "System Backup Completed",
+    title: "System Backup Completed",
+    description:
+      "The scheduled system backup has been completed successfully. All data is secure.",
+    timeAgo: "17 hours ago",
+    typeColor: "#0000ff",
+  },
+  {
+    type: "Fundraising Event",
+    title: "Charity Gala Announcement",
+    description:
+      "Join us for the annual charity gala on 5th July. All proceeds will go towards hospital improvements.",
+    timeAgo: "18 hours ago",
+    typeColor: "#ffa500",
+  },
+];

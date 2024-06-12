@@ -241,7 +241,10 @@ const Dashboard = () => {
             </span>
             <p className="flex items-center gap-2">
               <GrPowerCycle size={20} className="text-red-500 cursor-pointer" />
-              <Trash2 className="text-secondary-gray/50 cursor-pointer" />
+              <Trash2
+                size={20}
+                className="text-secondary-gray/50 cursor-pointer"
+              />
             </p>
           </h2>
 
@@ -254,22 +257,26 @@ const Dashboard = () => {
                   key={idx}
                   className="flex flex-col gap-3 text-secondary-gray"
                 >
-                  <div className="flex flex-col sm:flex-row gap-3 sm:items-center justify-between">
+                  <div className="flex gap-3 items-center justify-between">
                     <div className="flex items-center gap-3">
                       <IoCheckboxOutline
                         size={30}
                         className="text-secondary-gray"
                       />
 
-                      <div>
+                      <div className="flex flex-col gap-2">
                         <h3 className="font-semibold">{activity.title}</h3>
                         <p className="text-sm font-light opacity-50">
                           {activity.description}
                         </p>
+
+                        <p className="sm:hidden text-secondary-gray/50 text-sm font-semibold">
+                          {activity.timeAgo}
+                        </p>
                       </div>
                     </div>
 
-                    <p className="text-secondary-gray/50 text-sm font-semibold">
+                    <p className="hidden sm:block text-secondary-gray/50 text-sm font-semibold">
                       {activity.timeAgo}
                     </p>
                   </div>

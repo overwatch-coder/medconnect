@@ -153,7 +153,7 @@ const SuperAdminDashboard = () => {
 
           <div className="flex flex-col h-full items-center gap-3 px-3 py-5">
             {/* Graph */}
-            <div className="flex flex-col items-center pt-5">
+            <div className="flex flex-col items-center pt-5 w-full h-full">
               <DoughnutChart
                 labels={[
                   "Patient Visits",
@@ -191,7 +191,7 @@ const SuperAdminDashboard = () => {
 
           <div className="flex flex-col items-center gap-3 px-3 py-5 w-full h-full">
             {/* Graph Goes Here */}
-            <div className="flex flex-col items-center w-ful h-full pt-5">
+            <div className="flex flex-col items-center w-full h-full pt-5">
               <LineChart
                 labels={[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]}
                 datasets={[

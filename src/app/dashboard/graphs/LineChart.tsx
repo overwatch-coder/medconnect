@@ -1,7 +1,29 @@
 "use client";
 
 import React from "react";
-import { CChart } from "@coreui/react-chartjs";
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Title,
+  Tooltip,
+  Legend,
+  ChartData,
+  ChartOptions,
+} from "chart.js";
+import { Line } from "react-chartjs-2";
+
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Title,
+  Tooltip,
+  Legend
+);
 
 type DataSet = {
   label: string;
@@ -31,48 +53,43 @@ const LineChart = ({
   scalesYTickColor,
   scalesYGridColor,
 }: LineChartProps) => {
-  return (
-    <CChart
-      type="line"
-      data={{
-        labels: labels,
-        datasets: datasets.map((data) => ({
-          ...data,
-          borderWidth: 1,
-          fill: false,
-        })),
-      }}
-      className="w-full h-full"
-      options={{
-        plugins: {
-          legend: {
-            labels: {
-              color: legendLabelsColor,
-            },
-            position: "bottom",
-          },
+  const lineChartData: ChartData<"line"> = {
+    labels: labels,
+    datasets: datasets,
+  };
+
+  const lineChartOptions: ChartOptions<"line"> = {
+    responsive: true,
+    maintainAspectRatio: true,
+    plugins: {
+      legend: {
+        position: "bottom",
+        labels: {
+          color: legendLabelsColor,
         },
-        scales: {
-          x: {
-            grid: {
-              color: scalesXGridColor,
-            },
-            ticks: {
-              color: scalesXTickColor,
-            },
-          },
-          y: {
-            grid: {
-              color: scalesYGridColor,
-            },
-            ticks: {
-              color: scalesYTickColor,
-            },
-          },
+      },
+    },
+    scales: {
+      x: {
+        grid: {
+          color: scalesXGridColor,
         },
-      }}
-    />
-  );
+        ticks: {
+          color: scalesXTickColor,
+        },
+      },
+      y: {
+        grid: {
+          color: scalesYGridColor,
+        },
+        ticks: {
+          color: scalesYTickColor,
+        },
+      },
+    },
+  };
+
+  return <Line data={lineChartData} options={lineChartOptions} />;
 };
 
 export default LineChart;

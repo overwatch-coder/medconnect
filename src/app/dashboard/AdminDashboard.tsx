@@ -214,7 +214,7 @@ const AdminDashboard = () => {
 
           <div className="flex flex-col h-full items-center gap-3 px-3 py-5">
             {/* Graph */}
-            <div className="flex flex-col items-center">
+            <div className="flex flex-col items-center w-full h-full pt-5">
               <DoughnutChart
                 labels={["Excellent", "Good", "Average", "Poor"]}
                 data={[40, 20, 80, 10]}

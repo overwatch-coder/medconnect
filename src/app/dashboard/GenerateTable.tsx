@@ -1,9 +1,8 @@
 "use client";
-import React, { useState } from "react";
+import React from "react";
 import {
   Table,
   TableBody,
-  TableCell,
   TableHead,
   TableHeader,
   TableRow,
@@ -17,22 +16,25 @@ import {
   PaginationPrevious,
 } from "@/components/ui/pagination";
 
-import { MEDCONNECT_DASHBOARD_UPCOMING_APPOINTMENTS as appointmentData } from "@/constants";
+type GenerateTableProps = {
+  data: any[];
+  tableHeaderNames: string[];
+  currentPage: number;
+  setCurrentPage: React.Dispatch<React.SetStateAction<number>>;
+  dataPerPage: number;
+  children: React.ReactNode;
+};
 
-const UpcomingAppointment = () => {
-  const [currentPage, setCurrentPage] = useState(1);
-  const appointmentsPerPage = 5;
-
+const GenerateTable = ({
+  data,
+  tableHeaderNames,
+  currentPage,
+  setCurrentPage,
+  dataPerPage,
+  children,
+}: GenerateTableProps) => {
   // Calculate the number of pages
-  const totalPages = Math.ceil(appointmentData.length / appointmentsPerPage);
-
-  // Get current appointments for the page
-  const indexOfLastAppointment = currentPage * appointmentsPerPage;
-  const indexOfFirstAppointment = indexOfLastAppointment - appointmentsPerPage;
-  const currentAppointments = appointmentData.slice(
-    indexOfFirstAppointment,
-    indexOfLastAppointment
-  );
+  const totalPages = Math.ceil(data.length / dataPerPage);
 
   // Handle page change
   const handlePageChange = (pageNumber: number) => setCurrentPage(pageNumber);
@@ -42,39 +44,17 @@ const UpcomingAppointment = () => {
       <Table className="w-full">
         <TableHeader>
           <TableRow>
-            <TableHead className="text-primary-gray/40">Patient Name</TableHead>
-            <TableHead className="text-primary-gray/40">
-              Assigned H.O.
-            </TableHead>
-            <TableHead className="text-primary-gray/40">
-              Appointment Date
-            </TableHead>
-            <TableHead className="text-primary-gray/40">
-              Appointment Time
-            </TableHead>
+            {tableHeaderNames.map((table, index) => (
+              <TableHead key={index} className="text-primary-gray/40">
+                {table}
+              </TableHead>
+            ))}
           </TableRow>
         </TableHeader>
 
-        <TableBody>
-          {currentAppointments.map((app) => (
-            <TableRow key={app.patientID}>
-              <TableCell className="text-secondary-gray font-semibold">
-                {app.patientName}
-              </TableCell>
-              <TableCell className="text-secondary-gray font-semibold">
-                {app.assignedHO}
-              </TableCell>
-              <TableCell className="text-secondary-gray font-semibold">
-                {app.appointmentDate}
-              </TableCell>
-              <TableCell className="text-secondary-gray font-semibold">
-                {app.appointmentTime}
-              </TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
+        <TableBody>{children}</TableBody>
       </Table>
-      <UpcomingAppointmentPagination
+      <GenerateTablePagination
         currentPage={currentPage}
         totalPages={totalPages}
         onPageChange={handlePageChange}
@@ -83,7 +63,7 @@ const UpcomingAppointment = () => {
   );
 };
 
-const UpcomingAppointmentPagination = ({
+const GenerateTablePagination = ({
   currentPage,
   totalPages,
   onPageChange,
@@ -149,4 +129,4 @@ const UpcomingAppointmentPagination = ({
   );
 };
 
-export default UpcomingAppointment;
+export default GenerateTable;

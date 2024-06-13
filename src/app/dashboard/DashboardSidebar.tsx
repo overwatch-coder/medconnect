@@ -43,7 +43,13 @@ const DashboardSidebar = () => {
 
       setUser({
         token: user.token,
-        user: result.data,
+        user: {
+          ...result.data,
+          availableServices:
+            result.data.availableServices.length > 0
+              ? result.data.availableServices.join(", ")
+              : "",
+        },
         userId: user.userId,
       });
 

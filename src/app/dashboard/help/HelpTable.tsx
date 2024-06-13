@@ -50,7 +50,7 @@ const HelpTable = ({ tickets }: HelpTableProps) => {
             type="text"
             name="search"
             id="search"
-            className="w-full rounded-lg py-2 ps-3 pe-4 border border-secondary-gray/70 focus:border-2 focus:border-secondary-gray outline-none"
+            className="w-full rounded-lg py-2 bg-transparent ps-3 pe-4 border border-secondary-gray/70 focus:border-2 focus:border-secondary-gray outline-none"
             placeholder="find a ticket"
             value={searchTicket}
             onChange={handleSearch}

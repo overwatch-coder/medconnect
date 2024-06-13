@@ -1,16 +1,8 @@
 "use client";
-import { Trash2, X } from "lucide-react";
+import { Trash2 } from "lucide-react";
 import React, { useState } from "react";
 import { GrCheckbox, GrCheckboxSelected, GrPowerCycle } from "react-icons/gr";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogClose,
-} from "@/components/ui/dialog";
-import ProgressBar from "@ramonak/react-progress-bar";
+import NotificationModal from "@/components/NotificationModal";
 
 type NotificationTableProps = {
   notifications: {
@@ -67,7 +59,7 @@ const NotificationTable = ({ notifications }: NotificationTableProps) => {
     setShowDeleteModal(true);
     setTimeout(() => {
       setShowDeleteModal(false);
-    }, 5000);
+    }, 4000);
   };
 
   return (
@@ -154,50 +146,14 @@ const NotificationTable = ({ notifications }: NotificationTableProps) => {
         ))}
       </div>
 
-      <NotificationDeletedModal openModal={showDeleteModal} />
+      <NotificationModal
+        openModal={showDeleteModal}
+        title="Notification deleted"
+        description="The selected message(s) have been deleted successfully"
+        progressBgColor="#D00D2D4D"
+      />
     </section>
   );
 };
 
 export default NotificationTable;
-
-const NotificationDeletedModal = ({ openModal }: { openModal: boolean }) => {
-  return (
-    <Dialog open={openModal}>
-      <DialogContent id="hide" className="flex flex-col gap-4">
-        <DialogHeader>
-          <DialogTitle className="flex items-center justify-between">
-            <span className="text-xl text-secondary-gray font-bold">
-              Notification deleted
-            </span>
-            <DialogClose>
-              <X
-                className="border border-red-500 text-red-500 rounded-full"
-                size={25}
-              />
-            </DialogClose>
-          </DialogTitle>
-
-          <DialogDescription className="flex flex-col gap-5 w-full">
-            <p className="text-secondary-gray font-semibold">
-              The selected message(s) have been deleted successfully
-            </p>
-
-            <div className="">
-              <ProgressBar
-                completed={100}
-                bgColor="#D00D2D4D"
-                labelColor="#ffffff"
-                transitionDuration="1s"
-                animateOnRender={true}
-                maxCompleted={100}
-                customLabel="."
-                height="5px"
-              />
-            </div>
-          </DialogDescription>
-        </DialogHeader>
-      </DialogContent>
-    </Dialog>
-  );
-};

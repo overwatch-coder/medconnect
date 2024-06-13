@@ -156,7 +156,7 @@ const Dashboard = () => {
         </div>
 
         {/* Diagnosis Analysis */}
-        <aside className="rounded-md shadow bg-white w-full h-full min-h-full col-span-1">
+        <aside className="rounded-md shadow bg-white w-full h-full min-h-full col-span-1 relative">
           <h2 className="flex items-center justify-between gap-2 px-3 py-3">
             <span className="text-secondary-gray font-medium">
               Diagnosis Analysis(Patients Satisfaction)
@@ -166,8 +166,8 @@ const Dashboard = () => {
 
           <hr className="w-full bg-secondary-gray h-0.5" />
 
-          <div className="flex flex-col items-center gap-3 px-3 py-5">
-            {/* Graph Goes Here */}
+          <div className="flex flex-col h-full items-center gap-3 px-3 py-5">
+            {/* Graph */}
             <div className="flex flex-col items-center">
               <DoughnutChart
                 labels={["Excellent", "Good", "Average", "Poor"]}
@@ -176,22 +176,25 @@ const Dashboard = () => {
               />
             </div>
 
-            <div className="w-full p-3 bg-secondary-gray/10 flex items-center justify-center gap-3 rounded-md">
-              <p className="capitalize font-semibold text-secondary-gray">
-                Patient Satisfactory Rate
-              </p>
-              <span className="text-primary-green">80%</span>
-            </div>
+            {/* Stats */}
+            <div className="flex flex-col gap-4 justify-end md:absolute md:bottom-10">
+              <div className="w-full p-3 bg-secondary-gray/10 flex items-center justify-end gap-3 rounded-md">
+                <p className="capitalize font-semibold text-secondary-gray">
+                  Patient Satisfactory Rate
+                </p>
+                <span className="text-primary-green">80%</span>
+              </div>
 
-            <button className="group flex items-center justify-end w-full gap-3 mt-8">
-              <span className="group-hover:font-semibold">
-                Start a new diagnosis
-              </span>
-              <BsChatText
-                size={20}
-                className="text-primary-green group-hover:text-secondary-gray"
-              />
-            </button>
+              <button className="group flex items-center justify-end w-full gap-3">
+                <span className="group-hover:font-semibold">
+                  Start a new diagnosis
+                </span>
+                <BsChatText
+                  size={20}
+                  className="text-primary-green group-hover:text-secondary-gray"
+                />
+              </button>
+            </div>
           </div>
         </aside>
       </section>

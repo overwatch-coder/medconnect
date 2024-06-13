@@ -35,7 +35,7 @@ const DashboardSidebar = () => {
             userId: null,
           });
 
-          router.replace("/login?redirect=/dashboard");
+          return router.replace("/login?redirect=/dashboard");
         }
 
         throw new Error(result?.errors ? result.errors[0] : result.message);
@@ -62,8 +62,8 @@ const DashboardSidebar = () => {
     toast.error(data.errors[0]);
   }
 
-  if (!user.token) {
-    router.replace("/login");
+  if (!user.token || user.token === null) {
+    return router.replace("/login?redirect=/dashboard");
   }
 
   // get correct dashboard links

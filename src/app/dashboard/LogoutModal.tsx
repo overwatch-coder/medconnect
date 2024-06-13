@@ -17,9 +17,11 @@ import { useUserAtom } from "@/hooks";
 import { ResponseData } from "@/types/index";
 import { toast } from "react-toastify";
 import { X } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 const LogoutModal = () => {
   const [user, setUser] = useUserAtom();
+  const router = useRouter();
 
   // handle logout
   const handleLogout = async () => {
@@ -42,6 +44,8 @@ const LogoutModal = () => {
       user: null,
       userId: null,
     });
+
+    router.replace("/login");
   };
 
   return (

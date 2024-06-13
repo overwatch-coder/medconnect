@@ -9,7 +9,7 @@ import { useForm, SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "react-toastify";
 import { loginSchema, LoginType } from "@/schema/user.schema";
-import { currentUser, loginFormSubmit } from "@/actions/user.action";
+import { loginFormSubmit } from "@/actions/user.action";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { IoPerson } from "react-icons/io5";
@@ -69,7 +69,7 @@ const LoginForm = () => {
   };
 
   if (user.token) {
-    router.replace(redirectUrl);
+    return router.replace(redirectUrl);
   }
 
   return (

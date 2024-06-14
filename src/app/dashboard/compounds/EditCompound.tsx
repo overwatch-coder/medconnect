@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import { MEDCONNECT_SUPER_ADMIN_DASHBOARD_COMPOUNDS_WITH_ACTIONS as compoundsData } from "@/constants";
 import { X } from "lucide-react";
 import {
   Dialog,
@@ -20,18 +21,34 @@ import ClipLoader from "react-spinners/ClipLoader";
 import ImagePreview from "@/components/ImagePreview";
 import AccountSettingsForm from "@/app/dashboard/settings/AccountSettingsForm";
 import { FormSectionHeader } from "@/app/dashboard/compounds/add-new/AddCompoundForm";
+import { useRouter } from "next/navigation";
+import { toast } from "react-toastify";
+import NotificationModal from "@/components/NotificationModal";
 
 type EditCompoundModalProps = {
   openModal: boolean;
   setShowEditCompoundModal: React.Dispatch<React.SetStateAction<boolean>>;
+  compoundId: string;
+  setEditCompoundId: React.Dispatch<React.SetStateAction<string>>;
 };
 
 const EditCompoundModal = ({
   openModal,
   setShowEditCompoundModal,
+  compoundId,
+  setEditCompoundId,
 }: EditCompoundModalProps) => {
+  const router = useRouter();
+
   const [profilePicture, setProfilePicture] =
     useState<ArrayLike<File | DataTransferItem>>();
+  const [showEditNotificationModal, setShowEditNotificationModal] =
+    useState(false);
+
+  // get selected compound data to be edited
+  const compoundData = compoundsData.find(
+    (compound) => compound.compoundId.toLowerCase() === compoundId.toLowerCase()
+  );
 
   const {
     register,
@@ -45,17 +62,37 @@ const EditCompoundModal = ({
 
   const submitEditCompound: SubmitHandler<SettingsType> = async (data) => {
     console.log({ data, profilePicture });
+    setShowEditNotificationModal(true);
+    setTimeout(() => {
+      setShowEditNotificationModal(false);
+    }, 4000);
+    setShowEditCompoundModal(false);
   };
+
+  if (!compoundData) {
+    toast.error("Compound not found");
+    router.replace("/dashboard/compounds");
+    return;
+  }
 
   return (
     <Dialog open={openModal}>
-      <DialogContent id="hide" className="flex flex-col gap-4">
-        <DialogHeader>
+      <DialogContent
+        id="hide"
+        className="flex flex-col gap-4 w-full max-w-[90vw] max-h-[95vh] h-full oveflow-hidden"
+      >
+        <DialogHeader className="overflow-y-scroll scrollbar-hide">
           <DialogTitle className="flex items-center justify-between">
             <span className="text-xl md:text-2xl text-secondary-gray font-bold">
               Edit Compound Details
             </span>
-            <DialogClose onClick={() => setShowEditCompoundModal(false)}>
+            <DialogClose
+              onClick={() => {
+                setEditCompoundId("");
+                setShowEditCompoundModal(false);
+                reset();
+              }}
+            >
               <X
                 className="border border-red-500 text-red-500 rounded-full"
                 size={25}
@@ -114,11 +151,7 @@ const EditCompoundModal = ({
                 <div className="flex flex-col gap-5 p-4 rounded-md border border-secondary-gray/50 w-full">
                   <FormSectionHeader title="General Information" />
 
-                  <form
-                    onSubmit={handleSubmit(submitEditCompound)}
-                    className="flex flex-col gap-5 px-2 md:px-5"
-                    method="POST"
-                  >
+                  <div className="flex flex-col gap-5 px-2 md:px-5">
                     <div className="flex flex-col gap-4 w-full md:flex-row items-center justify-between">
                       <AccountSettingsForm
                         labelName="Compound Name"
@@ -126,7 +159,7 @@ const EditCompoundModal = ({
                         errorExists={Boolean(errors.compoundName)}
                         errorMessage={errors.compoundName?.message || ""}
                         register={register}
-                        value={""}
+                        value={compoundData.compoundName}
                         placeholderText="Enter your compound name"
                       />
 
@@ -136,7 +169,7 @@ const EditCompoundModal = ({
                         errorExists={Boolean(errors.location)}
                         errorMessage={errors.location?.message || ""}
                         register={register}
-                        value={""}
+                        value={compoundData.location}
                         placeholderText="Enter your location"
                       />
 
@@ -146,7 +179,7 @@ const EditCompoundModal = ({
                         errorExists={Boolean(errors.region)}
                         errorMessage={errors.region?.message || ""}
                         register={register}
-                        value={""}
+                        value={compoundData.region}
                         placeholderText="Enter your region"
                       />
                     </div>
@@ -182,18 +215,14 @@ const EditCompoundModal = ({
                         placeholderText="Enter available services"
                       />
                     </div>
-                  </form>
+                  </div>
                 </div>
 
                 {/* Additional Information */}
                 <div className="flex flex-col gap-5 p-4 rounded-md border border-secondary-gray/50 w-full">
                   <FormSectionHeader title="Additional Information" />
 
-                  <form
-                    onSubmit={handleSubmit(submitEditCompound)}
-                    className="flex flex-col gap-5 px-2 md:px-5"
-                    method="POST"
-                  >
+                  <div className="flex flex-col gap-5 px-2 md:px-5">
                     <div className="flex flex-col gap-4 w-full md:flex-row items-center justify-between">
                       <AccountSettingsForm
                         labelName="Operating Hours"
@@ -261,7 +290,7 @@ const EditCompoundModal = ({
                         placeholderText="Enter emergency contact"
                       />
                     </div>
-                  </form>
+                  </div>
                 </div>
 
                 {/* Notification Preferences */}
@@ -271,11 +300,7 @@ const EditCompoundModal = ({
                   <h3 className="text-primary-gray/50 ps-2 md:ps-5">
                     Notification Preferences
                   </h3>
-                  <form
-                    onSubmit={handleSubmit(submitEditCompound)}
-                    className="flex flex-col gap-5 px-2 md:px-5"
-                    method="POST"
-                  >
+                  <div className="flex flex-col gap-5 px-2 md:px-5">
                     <div className="items-top flex space-x-2">
                       <input
                         type="checkbox"
@@ -291,7 +316,7 @@ const EditCompoundModal = ({
                         </label>
                       </div>
                     </div>
-                  </form>
+                  </div>
                 </div>
 
                 {/* Submit form button */}
@@ -299,12 +324,20 @@ const EditCompoundModal = ({
                   pending={pending}
                   reset={reset}
                   setShowEditCompoundModal={setShowEditCompoundModal}
+                  setEditCompoundId={setEditCompoundId}
                 />
               </div>
             </form>
           </DialogDescription>
         </DialogHeader>
       </DialogContent>
+
+      <NotificationModal
+        openModal={showEditNotificationModal}
+        title="Compound Details Updated"
+        description="Your details has been updated successfully"
+        progressBgColor="#40E0D080"
+      />
     </Dialog>
   );
 };
@@ -315,16 +348,19 @@ const EditCompoundButton = ({
   pending,
   reset,
   setShowEditCompoundModal,
+  setEditCompoundId,
 }: {
   pending: boolean;
   reset: () => void;
   setShowEditCompoundModal: React.Dispatch<React.SetStateAction<boolean>>;
+  setEditCompoundId: React.Dispatch<React.SetStateAction<string>>;
 }) => {
   return (
     <div className="flex gap-5 flex-row items-center justify-end">
       <Button
         disabled={pending}
         onClick={() => {
+          setEditCompoundId("");
           setShowEditCompoundModal(false);
           reset();
         }}

@@ -26,7 +26,7 @@ import DeleteCompound from "@/app/dashboard/compounds/DeleteCompound";
 import EditCompoundModal from "@/app/dashboard/compounds/EditCompound";
 import { useRouter } from "next/navigation";
 
-type CompoundsDataType = {
+export type CompoundsDataType = {
   compoundName: string;
   compoundId: string;
   location: string;
@@ -179,6 +179,7 @@ const GetCompoundsTable = ({
   const router = useRouter();
   const [markedCompoundIds, setMarkedCompoundIds] = useState<string[]>([]);
   const [editCompoundModal, setEditCompoundModal] = useState(false);
+  const [editCompoundId, setEditCompoundId] = useState("");
 
   // handle mark compound
   const handleMarkCompound = (id: string) => {
@@ -282,7 +283,10 @@ const GetCompoundsTable = ({
             </TableCell>
             <TableCell className="flex items-center gap-4">
               <Edit
-                onClick={() => setEditCompoundModal(true)}
+                onClick={() => {
+                  setEditCompoundId(data.compoundId);
+                  setEditCompoundModal(true);
+                }}
                 size={15}
                 className="text-secondary-gray cursor-pointer"
               />
@@ -299,6 +303,8 @@ const GetCompoundsTable = ({
       <EditCompoundModal
         setShowEditCompoundModal={setEditCompoundModal}
         openModal={editCompoundModal}
+        compoundId={editCompoundId}
+        setEditCompoundId={setEditCompoundId}
       />
     </Table>
   );

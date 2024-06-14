@@ -1,11 +1,12 @@
 "use client";
-
+import { MEDCONNECT_SUPER_ADMIN_DASHBOARD_COMPOUNDS_WITH_ACTIONS as compoundsData } from "@/constants";
 import { FormSectionHeader } from "@/app/dashboard/compounds/add-new/AddCompoundForm";
 import { useUserAtom } from "@/hooks";
 import { ArrowLeft } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import React from "react";
+import { toast } from "react-toastify";
 
 type CompoundDetailsProps = {
   id: string;
@@ -15,6 +16,15 @@ const CompoundDetails = ({ id }: CompoundDetailsProps) => {
   const [user] = useUserAtom();
   const isSuperAdmin = user.user?.compoundName === "admin";
   const router = useRouter();
+  const compoundData = compoundsData.find(
+    (compound) => compound.compoundId === id
+  );
+
+  if (!compoundData) {
+    toast.error("Compound not found");
+    router.push("/dashboard/compounds");
+    return;
+  }
 
   return (
     <section className="flex flex-col rounded w-full scrollbar-hide">
@@ -29,8 +39,8 @@ const CompoundDetails = ({ id }: CompoundDetailsProps) => {
           />
 
           <p className="text-white text-center font-medium">
-            {isSuperAdmin ? "MedConnect" : user.user?.compoundName} CHPS
-            Compound ({id.toUpperCase()})
+            {compoundData.compoundName} CHPS Compound (
+            {compoundData.compoundId.toUpperCase()})
           </p>
         </div>
       </div>
@@ -47,20 +57,19 @@ const CompoundDetails = ({ id }: CompoundDetailsProps) => {
           />
           <p className="flex flex-col gap-1 text-white md:text-secondary-gray">
             <span className="font-bold text-lg capitalize">
-              {isSuperAdmin ? "MedConnect" : user.user?.compoundName ?? "Guest"}{" "}
-              C.H.P.S. Compound
+              {compoundData.compoundName} C.H.P.S. Compound
             </span>
             {user.user?.region && (
               <span className="text-primary-gray/50 font-semibold">
-                {user.user.region}{" "}
-                {user.user.region.toLowerCase().includes("region")
+                {compoundData.region}{" "}
+                {compoundData.region.toLowerCase().includes("region")
                   ? ""
                   : "Region"}
               </span>
             )}
-            {user.user?.location && (
+            {compoundData.location && (
               <span className="font-light text-primary-gray/50 text-sm">
-                {user.user.location}
+                {compoundData.location}
               </span>
             )}
           </p>
@@ -73,11 +82,11 @@ const CompoundDetails = ({ id }: CompoundDetailsProps) => {
           <div className="flex flex-col gap-4">
             <div className="grid grid-cols-2 text-secondary-gray/70">
               <h2>Compound Name</h2>
-              <p>{user.user?.compoundName}</p>
+              <p>{compoundData.compoundName}</p>
             </div>
             <div className="grid grid-cols-2 text-secondary-gray/70">
               <h2>Location</h2>
-              <p>{user.user?.location}</p>
+              <p>{compoundData.location}</p>
             </div>
             <div className="grid grid-cols-2 text-secondary-gray/70">
               <h2>District</h2>

@@ -26,7 +26,7 @@ const NotificationModal = ({
 }: NotificationModalProps) => {
   return (
     <Dialog open={openModal}>
-      <DialogContent id="hide" className="flex flex-col gap-4">
+      <DialogContent id="hide" className="flex flex-col gap-4 py-10">
         <DialogHeader>
           <DialogTitle className="flex items-center justify-between">
             <span className="text-xl text-secondary-gray font-bold">

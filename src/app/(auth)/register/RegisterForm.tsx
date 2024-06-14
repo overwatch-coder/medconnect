@@ -52,9 +52,7 @@ const RegisterForm = () => {
       }
 
       setUser({
-        token: user.token,
         user: result?.data,
-        userId: result?.data?._id,
       });
       reset();
       toast.success(result?.message);

@@ -2,7 +2,6 @@
 
 import React, { useState } from "react";
 import ClipLoader from "react-spinners/ClipLoader";
-import Swal from "sweetalert2";
 import Link from "next/link";
 import { useSearchParams, useRouter } from "next/navigation";
 import { useForm, SubmitHandler } from "react-hook-form";
@@ -53,11 +52,6 @@ const LoginForm = () => {
         return;
       }
 
-      setUser({
-        token: result?.data?.token,
-        user: null,
-        userId: result?.data?._id,
-      });
       reset();
       toast.success(result?.message);
     },
@@ -67,10 +61,6 @@ const LoginForm = () => {
     setSubmitFormErrors([]);
     mutation.mutate(data);
   };
-
-  if (user.token) {
-    return router.replace(redirectUrl);
-  }
 
   return (
     <div className="flex flex-col items-center justify-center w-full h-full max-w-md p-10">

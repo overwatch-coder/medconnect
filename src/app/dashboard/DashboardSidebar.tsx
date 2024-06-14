@@ -12,7 +12,7 @@ import {
 import { useUserAtom } from "@/hooks";
 import { toast } from "react-toastify";
 import { useQuery } from "@tanstack/react-query";
-import { currentUser } from "@/actions/user.action";
+import { currentUser, removeUserFromCookies } from "@/actions/user.action";
 import LogoutModal from "@/app/dashboard/LogoutModal";
 
 const DashboardSidebar = () => {
@@ -23,26 +23,23 @@ const DashboardSidebar = () => {
   const { data } = useQuery({
     queryKey: ["user"],
     queryFn: async () => {
-      const result = await currentUser(user.userId!, user.token!);
+      const result = await currentUser();
 
       if (!result.success) {
         if (result.errors && result?.errors[0]!.includes("Forbidden")) {
-          toast.info("Session expired. Please login again to continue");
+          toast.info("Session expired. Please log in again to continue");
 
           setUser({
-            token: null,
             user: null,
-            userId: null,
           });
 
-          return router.replace("/login?redirect=/dashboard");
+          await removeUserFromCookies();
         }
 
         throw new Error(result?.errors ? result.errors[0] : result.message);
       }
 
       setUser({
-        token: user.token,
         user: {
           ...result.data,
           availableServices:
@@ -50,7 +47,6 @@ const DashboardSidebar = () => {
               ? result.data.availableServices.join(", ")
               : "",
         },
-        userId: user.userId,
       });
 
       return result;
@@ -60,10 +56,6 @@ const DashboardSidebar = () => {
 
   if (data?.errors) {
     toast.error(data.errors[0]);
-  }
-
-  if (!user.token || user.token === null) {
-    return router.replace("/login?redirect=/dashboard");
   }
 
   // get correct dashboard links

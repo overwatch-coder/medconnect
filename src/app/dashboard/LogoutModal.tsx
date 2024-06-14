@@ -10,14 +10,13 @@ import {
   DialogTrigger,
   DialogClose,
 } from "@/components/ui/dialog";
-import { axiosInstance } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { RiLogoutCircleLine } from "react-icons/ri";
 import { useUserAtom } from "@/hooks";
-import { ResponseData } from "@/types/index";
 import { toast } from "react-toastify";
 import { X } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { logout, removeUserFromCookies } from "@/actions/user.action";
 
 const LogoutModal = () => {
   const [user, setUser] = useUserAtom();
@@ -25,41 +24,24 @@ const LogoutModal = () => {
 
   // handle logout
   const handleLogout = async () => {
-    const res = await axiosInstance.post(
-      "/auth/logout",
-      {},
-      {
-        headers: {
-          Authorization: `Bearer ${user.token}`,
-        },
-      }
-    );
-
-    const data: ResponseData = res.data;
+    const data = await logout();
 
     data.success ? toast.success(data.message) : toast.error(data.message);
 
-    setUser({
-      token: null,
-      user: null,
-      userId: null,
-    });
+    await removeUserFromCookies();
 
-    router.replace("/login");
+    setUser({
+      user: null,
+    });
   };
 
   return (
     <Dialog>
-      <DialogTrigger>
-        <Button
-          variant={"link"}
-          className="flex flex-col items-start mt-16 hover:no-underline hover:scale-105 transition"
-        >
-          <div className="flex items-center gap-4 font-bold">
-            <RiLogoutCircleLine size={25} color="white" />
-            <span className="text-white text-lg hidden lg:block">Logout</span>
-          </div>
-        </Button>
+      <DialogTrigger className="flex flex-col items-start mt-16 hover:no-underline hover:scale-105 transition">
+        <p className="flex items-center gap-4 font-bold">
+          <RiLogoutCircleLine size={25} color="white" />
+          <span className="text-white text-lg hidden lg:block">Logout</span>
+        </p>
       </DialogTrigger>
 
       <DialogContent id="hide" className="flex flex-col gap-4">
@@ -81,14 +63,14 @@ const LogoutModal = () => {
               Are you sure you want to logout?
             </p>
 
-            <div className="flex items-center justify-end">
+            <p className="flex items-center justify-end">
               <Button
                 onClick={handleLogout}
                 className="text-white bg-primary-green md:px-10 py-3 w-full md:w-fit"
               >
                 Confirm
               </Button>
-            </div>
+            </p>
           </DialogDescription>
         </DialogHeader>
       </DialogContent>

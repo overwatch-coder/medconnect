@@ -13,13 +13,52 @@ import {
   CreateUserType,
 } from "@/schema/user.schema";
 import { ResponseData } from "@/types/index";
+import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
+
+// save user data to cookies
+export const saveUserToCookies = async (token: string, userId: string) => {
+  const cookieStore = cookies();
+
+  cookieStore.set("user", JSON.stringify({ token, userId }), {
+    httpOnly: true,
+    sameSite: "strict",
+    path: "/",
+    expires: new Date(Date.now() + 60 * 60 * 1000), // 1 hour
+  });
+};
+
+// remove user data from cookies
+export const removeUserFromCookies = async () => {
+  const cookieStore = cookies();
+  cookieStore.delete("user");
+};
+
+// get user data from cookies
+export const getUserFromCookies = async () => {
+  const cookieStore = cookies();
+
+  const user = cookieStore.get("user");
+
+  if (!user?.value) {
+    return null;
+  }
+
+  return JSON.parse(user.value) as { token: string; userId: string };
+};
 
 // get current user data
-export const currentUser = async (userId: string, token: string) => {
+export const currentUser = async () => {
   try {
-    const res = await axiosInstance.get(`/users/${userId}`, {
+    const user = await getUserFromCookies();
+
+    if (!user) {
+      throw new Error("Not authenticated, please login");
+    }
+
+    const res = await axiosInstance.get(`/users/${user.userId}`, {
       headers: {
-        Authorization: `Bearer ${token}`,
+        Authorization: `Bearer ${user.token}`,
       },
     });
 
@@ -39,6 +78,25 @@ export const currentUser = async (userId: string, token: string) => {
   }
 };
 
+// logout
+export const logout = async () => {
+  const user = await getUserFromCookies();
+
+  const res = await axiosInstance.post(
+    "/auth/logout",
+    {},
+    {
+      headers: {
+        Authorization: `Bearer ${user?.token}`,
+      },
+    }
+  );
+
+  const resData: ResponseData = res.data;
+
+  return resData;
+};
+
 // login
 export const loginFormSubmit = async (data: LoginType) => {
   try {
@@ -53,6 +111,10 @@ export const loginFormSubmit = async (data: LoginType) => {
     const res = await axiosInstance.post("/auth/login", validatedData.data);
 
     const resData: ResponseData = res.data;
+
+    if (resData.success) {
+      await saveUserToCookies(resData.data.token, resData.data._id);
+    }
 
     // return the data response
     return {

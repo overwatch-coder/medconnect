@@ -2,7 +2,6 @@
 
 import React, { useState } from "react";
 import ClipLoader from "react-spinners/ClipLoader";
-import Swal from "sweetalert2";
 import Link from "next/link";
 import { useSearchParams, useRouter } from "next/navigation";
 import { useForm, SubmitHandler } from "react-hook-form";
@@ -64,7 +63,8 @@ const ResetPasswordForm = () => {
   const token = searchParams.has("token") ? searchParams.get("token") : null;
 
   if (!token || token == "" || token === null) {
-    return router.replace("/login");
+    router.replace("/login");
+    return;
   }
 
   return (

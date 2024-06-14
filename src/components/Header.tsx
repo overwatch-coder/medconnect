@@ -6,8 +6,10 @@ import Link from "next/link";
 import MobileNav from "@/components/MobileNav";
 import { NAV_ITEMS } from "@/constants";
 import { usePathname } from "next/navigation";
+import { useUserAtom } from "@/hooks";
 
 const Header = () => {
+  const [user] = useUserAtom();
   const pathname = usePathname();
   const [scrolled, setScrolled] = useState(false);
 
@@ -47,9 +49,6 @@ const Header = () => {
         </h1>
       </Link>
 
-      {/* Hamburger Menu */}
-      <button className="md:hidden"></button>
-
       {/* Desktop Navigation */}
       <nav className="items-center gap-5 hidden md:flex">
         {NAV_ITEMS.map((item, index) => {
@@ -67,10 +66,10 @@ const Header = () => {
           );
         })}
         <Link
-          href={"/login"}
+          href={user.user ? "/dashboard" : "/login"}
           className="bg-primary-green hover:scale-105 transition text-white rounded px-8 py-2"
         >
-          Login
+          {user.user ? "Dashboard" : "Login"}
         </Link>
       </nav>
 

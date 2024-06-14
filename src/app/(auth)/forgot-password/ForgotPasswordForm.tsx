@@ -121,7 +121,7 @@ const ForgotPasswordForm = () => {
                 <Link
                   href="#"
                   onClick={() => {}}
-                  className="text-primary-green hover:underline w-fit text-sm font-semibold"
+                  className="text-secondary-gray hover:underline w-fit text-sm font-bold"
                 >
                   Resend
                 </Link>

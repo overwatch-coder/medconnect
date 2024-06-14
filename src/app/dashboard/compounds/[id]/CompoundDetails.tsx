@@ -6,7 +6,6 @@ import { ArrowLeft } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import React from "react";
-import { toast } from "react-toastify";
 
 type CompoundDetailsProps = {
   id: string;
@@ -20,8 +19,8 @@ const CompoundDetails = ({ id }: CompoundDetailsProps) => {
     (compound) => compound.compoundId === id
   );
 
+  // no compound found
   if (!compoundData) {
-    toast.error("Compound not found");
     router.push("/dashboard/compounds");
     return;
   }

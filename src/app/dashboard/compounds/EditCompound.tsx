@@ -22,7 +22,6 @@ import ImagePreview from "@/components/ImagePreview";
 import AccountSettingsForm from "@/app/dashboard/settings/AccountSettingsForm";
 import { FormSectionHeader } from "@/app/dashboard/compounds/add-new/AddCompoundForm";
 import { useRouter } from "next/navigation";
-import { toast } from "react-toastify";
 import NotificationModal from "@/components/NotificationModal";
 
 type EditCompoundModalProps = {
@@ -69,9 +68,9 @@ const EditCompoundModal = ({
     setShowEditCompoundModal(false);
   };
 
+  // no compound found
   if (!compoundData) {
-    toast.error("Compound not found");
-    router.replace("/dashboard/compounds");
+    router.push("/dashboard/compounds");
     return;
   }
 

@@ -154,8 +154,8 @@ const LoginForm = () => {
 
           <LoginSubmitButton pending={mutation.isPending} />
 
-          {/* <div className="flex flex-row-reverse justify-between gap-3 py-2">
-            <div className="flex items-center gap-2">
+          <div className="flex flex-col items-center gap-3 py-2">
+            {/* <div className="flex items-center gap-2">
               <span className="text-secondary-gray text-sm">
                 Don&apos;t have an account yet?{" "}
               </span>
@@ -165,15 +165,15 @@ const LoginForm = () => {
               >
                 Register
               </Link>
-            </div>
+            </div> */}
 
             <Link
               href="/"
               className="text-secondary-gray hover:underline w-fit ps-5 text-sm"
             >
-              Go Back
+              Go Home
             </Link>
-          </div> */}
+          </div>
         </form>
       </div>
     </div>

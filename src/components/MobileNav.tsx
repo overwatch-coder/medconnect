@@ -7,6 +7,7 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { NAV_ITEMS } from "@/constants";
+import { useUserAtom } from "@/hooks";
 import { Menu } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -14,6 +15,7 @@ import { usePathname } from "next/navigation";
 
 const MobileNav = () => {
   const pathname = usePathname();
+  const [user] = useUserAtom();
 
   return (
     <Sheet>
@@ -58,10 +60,10 @@ const MobileNav = () => {
               })}
 
               <Link
-                href={"/login"}
+                href={user.user ? "/dashboard" : "/login"}
                 className="bg-transparent border-primary-green border hover:scale-105 transition text-white rounded px-5 py-2 w-full text-xl text-center"
               >
-                Login
+                {user.user ? "Dashboard" : "Login"}
               </Link>
             </nav>
           </SheetDescription>

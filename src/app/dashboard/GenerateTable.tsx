@@ -17,12 +17,13 @@ import {
 } from "@/components/ui/pagination";
 
 type GenerateTableProps = {
+  children: React.ReactNode;
   data: any[];
   tableHeaderNames: string[];
-  currentPage: number;
-  setCurrentPage: React.Dispatch<React.SetStateAction<number>>;
-  dataPerPage: number;
-  children: React.ReactNode;
+  currentPage?: number;
+  setCurrentPage?: React.Dispatch<React.SetStateAction<number>>;
+  dataPerPage?: number;
+  showPagination?: boolean;
 };
 
 const GenerateTable = ({
@@ -32,12 +33,19 @@ const GenerateTable = ({
   setCurrentPage,
   dataPerPage,
   children,
+  showPagination = true,
 }: GenerateTableProps) => {
   // Calculate the number of pages
-  const totalPages = Math.ceil(data.length / dataPerPage);
+  const totalPages = dataPerPage
+    ? Math.ceil(data.length / dataPerPage)
+    : data.length;
 
   // Handle page change
-  const handlePageChange = (pageNumber: number) => setCurrentPage(pageNumber);
+  const handlePageChange = (pageNumber: number) => {
+    if (setCurrentPage && currentPage) {
+      setCurrentPage(pageNumber);
+    }
+  };
 
   return (
     <>
@@ -54,11 +62,15 @@ const GenerateTable = ({
 
         <TableBody>{children}</TableBody>
       </Table>
-      <GenerateTablePagination
-        currentPage={currentPage}
-        totalPages={totalPages}
-        onPageChange={handlePageChange}
-      />
+
+      {/* Pagination */}
+      {showPagination && (
+        <GenerateTablePagination
+          currentPage={currentPage || 0}
+          totalPages={totalPages}
+          onPageChange={handlePageChange}
+        />
+      )}
     </>
   );
 };

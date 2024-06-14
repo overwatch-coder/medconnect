@@ -1001,3 +1001,96 @@ export const MEDCONNECT_SUPER_ADMIN_DASHBOARD_COMPOUNDS = [
     region: "Eastern",
   },
 ];
+
+export const MEDCONNECT_SUPER_ADMIN_DASHBOARD_COMPOUNDS_WITH_ACTIONS = [
+  {
+    compoundName: "Korle Bu Teaching Hospital",
+    compoundId: "GH001",
+    location: "Guggisberg Ave, Accra",
+    region: "Greater Accra",
+  },
+  {
+    compoundName: "Komfo Anokye Teaching Hospital",
+    compoundId: "GH002",
+    location: "Okomfo Anokye Rd, Kumasi",
+    region: "Ashanti",
+  },
+  {
+    compoundName: "Tamale Teaching Hospital",
+    compoundId: "GH003",
+    location: "Off Hospital Rd, Tamale",
+    region: "Northern",
+  },
+  {
+    compoundName: "Cape Coast Teaching Hospital",
+    compoundId: "GH004",
+    location: "Cape Coast",
+    region: "Central",
+  },
+  {
+    compoundName: "Ho Teaching Hospital",
+    compoundId: "GH005",
+    location: "Ho",
+    region: "Volta",
+  },
+  {
+    compoundName: "Bolgatanga Regional Hospital",
+    compoundId: "GH006",
+    location: "Bolgatanga",
+    region: "Upper East",
+  },
+  {
+    compoundName: "Wa Regional Hospital",
+    compoundId: "GH007",
+    location: "Wa",
+    region: "Upper West",
+  },
+  {
+    compoundName: "Koforidua Regional Hospital",
+    compoundId: "GH008",
+    location: "Koforidua",
+    region: "Eastern",
+  },
+  {
+    compoundName: "Effia Nkwanta Regional Hospital",
+    compoundId: "GH009",
+    location: "Sekondi-Takoradi",
+    region: "Western",
+  },
+  {
+    compoundName: "Ridge Hospital",
+    compoundId: "GH010",
+    location: "Ridge, Accra",
+    region: "Greater Accra",
+  },
+  {
+    compoundName: "37 Military Hospital",
+    compoundId: "GH011",
+    location: "Accra",
+    region: "Greater Accra",
+  },
+  {
+    compoundName: "Sunyani Regional Hospital",
+    compoundId: "GH012",
+    location: "Sunyani",
+    region: "Bono",
+  },
+  {
+    compoundName: "Tema General Hospital",
+    compoundId: "GH013",
+    location: "Tema",
+    region: "Greater Accra",
+  },
+  {
+    compoundName: "Axim Government Hospital",
+    compoundId: "GH014",
+    location: "Axim",
+    region: "Western",
+  },
+  {
+    compoundName: "Holy Family Hospital",
+    compoundId: "GH015",
+    location: "Techiman",
+    region: "Bono East",
+  },
+];

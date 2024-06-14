@@ -48,14 +48,7 @@ const TicketTable = ({ filteredTickets }: TicketTableProps) => {
 
         <TableBody className="scrollbar-hide">
           {filteredTickets.map((ticket, index) => (
-            <TableRow
-              key={ticket.ticketId}
-              // className={
-              //   index % 4 < 2
-              //     ? ""
-              //     : "bg-secondary-gray/30 hover:bg-secondary-gray/30"
-              // }
-            >
+            <TableRow key={ticket.ticketId}>
               <TableCell className="text-secondary-gray font-semibold">
                 {ticket.ticketId}
               </TableCell>

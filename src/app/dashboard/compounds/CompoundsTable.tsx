@@ -24,6 +24,7 @@ import {
 import { GrCheckbox, GrCheckboxSelected } from "react-icons/gr";
 import DeleteCompound from "@/app/dashboard/compounds/DeleteCompound";
 import EditCompoundModal from "@/app/dashboard/compounds/EditCompound";
+import { useRouter } from "next/navigation";
 
 type CompoundsDataType = {
   compoundName: string;
@@ -33,7 +34,7 @@ type CompoundsDataType = {
 };
 
 const CompoundsTable = () => {
-  const [sortCompoundsBy, setSortCompoundsBy] = useState("Region");
+  const [sortCompoundsBy, setSortCompoundsBy] = useState("Compound ID");
   const [searchTerm, setSearchTerm] = useState("");
   const [filteredCompoundsData, setFilteredCompoundsData] =
     useState<CompoundsDataType[]>(compoundsData);
@@ -175,6 +176,7 @@ const GetCompoundsTable = ({
   filteredCompoundsData,
   setFilteredCompoundsData,
 }: CompoundsTableProps) => {
+  const router = useRouter();
   const [markedCompoundIds, setMarkedCompoundIds] = useState<string[]>([]);
   const [editCompoundModal, setEditCompoundModal] = useState(false);
 
@@ -243,22 +245,31 @@ const GetCompoundsTable = ({
       <TableBody>
         {filteredCompoundsData.map((data, idx) => (
           <TableRow key={idx}>
-            <TableCell
-              onClick={() => handleMarkCompound(data.compoundId)}
-              className="text-secondary-gray font-semibold flex items-center gap-2"
-            >
-              {markedCompoundIds.includes(data.compoundId) ? (
-                <GrCheckboxSelected
-                  size={15}
-                  className="text-secondary-gray cursor-pointer flex items-center gap-2"
-                />
-              ) : (
-                <GrCheckbox
-                  size={15}
-                  className="text-secondary-gray cursor-pointer flex items-center gap-2"
-                />
-              )}
-              <span>{data.compoundName}</span>
+            <TableCell className="text-secondary-gray font-semibold flex items-center gap-2">
+              <span
+                onClick={() => handleMarkCompound(data.compoundId)}
+                className="cursor-pointer"
+              >
+                {markedCompoundIds.includes(data.compoundId) ? (
+                  <GrCheckboxSelected
+                    size={15}
+                    className="text-secondary-gray cursor-pointer flex items-center gap-2"
+                  />
+                ) : (
+                  <GrCheckbox
+                    size={15}
+                    className="text-secondary-gray cursor-pointer flex items-center gap-2"
+                  />
+                )}
+              </span>
+              <span
+                onClick={() =>
+                  router.push(`/dashboard/compounds/${data.compoundId}`)
+                }
+                className="hover:underline cursor-pointer"
+              >
+                {data.compoundName}
+              </span>
             </TableCell>
             <TableCell className="text-secondary-gray font-semibold">
               {data.compoundId}

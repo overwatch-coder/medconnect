@@ -34,6 +34,8 @@ const DashboardSidebar = () => {
           });
 
           await removeUserFromCookies();
+
+          router.replace(`/login?redirect=${pathname}`);
         }
 
         throw new Error(result?.errors ? result.errors[0] : result.message);
@@ -86,8 +88,32 @@ const DashboardSidebar = () => {
       {/* Dashboard Menu Items */}
       <ul className="flex flex-col gap-6 mb-auto">
         {dashboardLinks.map((link) => {
-          const activePath = pathname === link.path;
+          if (link.path === "/dashboard") {
+            const isDashboardActive = pathname === link.path;
+            return (
+              <Link
+                key={link.path}
+                href={link.path}
+                className={`${
+                  isDashboardActive
+                    ? "bg-white text-primary-green rounded"
+                    : "hover:rounded text-white hover:bg-white hover:text-primary-green"
+                } px-3 py-2 font-semibold hover:scale-105 transition flex items-center gap-3 group`}
+              >
+                <link.icon
+                  size={25}
+                  className={`${
+                    isDashboardActive
+                      ? "text-primary-green"
+                      : "group-hover:text-primary-green text-white"
+                  }`}
+                />
+                <span className="hidden lg:block">{link.name}</span>
+              </Link>
+            );
+          }
 
+          const activePath = pathname.startsWith(link.path);
           return (
             <Link
               key={link.path}

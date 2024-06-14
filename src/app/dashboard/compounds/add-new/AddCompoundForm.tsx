@@ -2,21 +2,21 @@
 
 import AccountSettingsForm from "@/app/dashboard/settings/AccountSettingsForm";
 import ImagePreview from "@/components/ImagePreview";
-import NotificationModal from "@/components/NotificationModal";
 import { Button } from "@/components/ui/button";
 import { useUserAtom } from "@/hooks";
 import { SettingsType, settingsSchema } from "@/schema/setting.schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { FileDrop } from "@instructure/ui-file-drop";
-import { Edit, Upload } from "lucide-react";
-import Image from "next/image";
+import { Upload } from "lucide-react";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import ClipLoader from "react-spinners/ClipLoader";
+import { toast } from "react-toastify";
 
 const AddCompoundForm = () => {
   const [user, setUser] = useUserAtom();
+  const router = useRouter();
   const [profilePicture, setProfilePicture] =
     useState<ArrayLike<File | DataTransferItem>>();
 
@@ -31,10 +31,9 @@ const AddCompoundForm = () => {
 
   const submitAddCompound: SubmitHandler<SettingsType> = async (data) => {
     console.log({ data });
-  };
-
-  const handleAccountAdd = () => {
-    console.log("Add account");
+    toast.success("Compound added successfully");
+    const compoundId = "mck001";
+    router.replace(`/dashboard/compounds/${compoundId}`);
   };
 
   return (
@@ -48,16 +47,16 @@ const AddCompoundForm = () => {
       </div>
 
       {/* Account Settings */}
-      <div className="flex flex-col gap-5 px-3 pt-5 pb-10 bg-white h-full">
+      <form
+        onSubmit={handleSubmit(submitAddCompound)}
+        method="POST"
+        className="flex flex-col gap-5 px-3 pt-5 pb-10 bg-white h-full"
+      >
         {/* General Information */}
         <div className="flex flex-col gap-5 p-4 rounded-md border border-secondary-gray/50 w-full">
           <FormSectionHeader title="General Information" />
 
-          <form
-            onSubmit={handleSubmit(submitAddCompound)}
-            className="flex flex-col gap-5 px-2 md:px-5"
-            method="POST"
-          >
+          <div className="flex flex-col gap-5 px-2 md:px-5">
             <div className="flex flex-col gap-4 w-full md:flex-row items-center justify-between">
               <AccountSettingsForm
                 labelName="Compound Name"
@@ -121,18 +120,14 @@ const AddCompoundForm = () => {
                 placeholderText="Enter available services"
               />
             </div>
-          </form>
+          </div>
         </div>
 
         {/* Additional Information */}
         <div className="flex flex-col gap-5 p-4 rounded-md border border-secondary-gray/50 w-full">
           <FormSectionHeader title="Additional Information" />
 
-          <form
-            onSubmit={handleSubmit(submitAddCompound)}
-            className="flex flex-col gap-5 px-2 md:px-5"
-            method="POST"
-          >
+          <div className="flex flex-col gap-5 px-2 md:px-5">
             <div className="flex flex-col gap-4 w-full md:flex-row items-center justify-between">
               <AccountSettingsForm
                 labelName="Operating Hours"
@@ -196,7 +191,7 @@ const AddCompoundForm = () => {
                 placeholderText="Enter emergency contact"
               />
             </div>
-          </form>
+          </div>
         </div>
 
         {/* Upload Profile Picture */}
@@ -236,17 +231,15 @@ const AddCompoundForm = () => {
           </div>
         </div>
 
-        <AddCompoundFormButton
-          pending={pending}
-          handleAccountAdd={handleAccountAdd}
-        />
-      </div>
+        <AddCompoundFormButton pending={pending} />
+      </form>
     </section>
   );
 };
 
 export default AddCompoundForm;
 
+// Form Section Header
 export const FormSectionHeader = ({ title }: { title: string }) => {
   return (
     <div className="flex items-center justify-between gap-5">
@@ -255,13 +248,8 @@ export const FormSectionHeader = ({ title }: { title: string }) => {
   );
 };
 
-const AddCompoundFormButton = ({
-  handleAccountAdd,
-  pending,
-}: {
-  handleAccountAdd: () => void;
-  pending: boolean;
-}) => {
+// Add Compound Form Button
+const AddCompoundFormButton = ({ pending }: { pending: boolean }) => {
   const router = useRouter();
   return (
     <div className="flex items-center justify-end w-full py-5">
@@ -277,7 +265,6 @@ const AddCompoundFormButton = ({
         </Button>
 
         <Button
-          onClick={handleAccountAdd}
           variant={"default"}
           type="submit"
           disabled={pending}

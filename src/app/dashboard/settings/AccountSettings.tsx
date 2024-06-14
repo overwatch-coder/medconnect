@@ -14,8 +14,8 @@ import ClipLoader from "react-spinners/ClipLoader";
 
 const AccountSettings = () => {
   const [user, setUser] = useUserAtom();
-  const [showAccountUpdateModal, setShowAccountUpdateModal] = useState(false);
   const isSuperAdmin = user.user?.compoundName === "admin";
+  const [showAccountUpdateModal, setShowAccountUpdateModal] = useState(false);
 
   const {
     register,

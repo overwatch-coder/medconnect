@@ -118,7 +118,7 @@ const Footer = () => {
 
       <hr className="my-10 border-primary-green border" />
       <p className="text-center text-white font-light text-sm">
-        Copyright © {new Date().getFullYear()} MedConnect. All rights reserved.
+        Copyright © {new Date().getFullYear()} Campus Guardian. All rights reserved.
       </p>
     </footer>
   );

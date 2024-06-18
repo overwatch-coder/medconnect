@@ -1277,3 +1277,515 @@ export const MEDCONNECT_DASHBOARD_PATIENTS = [
     image: "https://randomuser.me/api/portraits/women/10.jpg",
   },
 ];
+
+export const MEDCONNECT_DASHBOARD_APPOINTEMENTS = [
+  {
+    time: "09:00 AM",
+    date: "2024-06-01",
+    patientName: "Kwame Mensah",
+    age: 45,
+    phoneNumber: "+233 24 123 4567",
+    assignedHO: "Dr. Yaw Boateng",
+  },
+  {
+    time: "10:30 AM",
+    date: "2024-06-02",
+    patientName: "Akua Nyamekye",
+    age: 30,
+    phoneNumber: "+233 24 234 5678",
+    assignedHO: "Dr. Ama Serwaa",
+  },
+  {
+    time: "11:15 AM",
+    date: "2024-06-03",
+    patientName: "Yaw Boateng",
+    age: 60,
+    phoneNumber: "+233 24 345 6789",
+    assignedHO: "Dr. Kojo Agyeman",
+  },
+  {
+    time: "02:00 PM",
+    date: "2024-06-04",
+    patientName: "Ama Serwaa",
+    age: 27,
+    phoneNumber: "+233 24 456 7890",
+    assignedHO: "Dr. Efua Adjei",
+  },
+  {
+    time: "03:30 PM",
+    date: "2024-06-05",
+    patientName: "Kofi Owusu",
+    age: 50,
+    phoneNumber: "+233 24 567 8901",
+    assignedHO: "Dr. Kofi Darko",
+  },
+  {
+    time: "08:45 AM",
+    date: "2024-06-06",
+    patientName: "Abena Osei",
+    age: 34,
+    phoneNumber: "+233 24 678 9012",
+    assignedHO: "Dr. Abena Kumi",
+  },
+  {
+    time: "09:30 AM",
+    date: "2024-06-07",
+    patientName: "Kojo Agyeman",
+    age: 41,
+    phoneNumber: "+233 24 789 0123",
+    assignedHO: "Dr. Kwame Anane",
+  },
+  {
+    time: "10:00 AM",
+    date: "2024-06-08",
+    patientName: "Efua Adjei",
+    age: 29,
+    phoneNumber: "+233 24 890 1234",
+    assignedHO: "Dr. Akua Agyapong",
+  },
+  {
+    time: "11:45 AM",
+    date: "2024-06-09",
+    patientName: "Yaw Kyei",
+    age: 53,
+    phoneNumber: "+233 24 901 2345",
+    assignedHO: "Dr. Yaw Opoku",
+  },
+  {
+    time: "01:30 PM",
+    date: "2024-06-10",
+    patientName: "Esi Gyamfi",
+    age: 40,
+    phoneNumber: "+233 24 012 3456",
+    assignedHO: "Dr. Efua Owusu",
+  },
+  {
+    time: "02:15 PM",
+    date: "2024-06-11",
+    patientName: "Kwesi Nkrumah",
+    age: 37,
+    phoneNumber: "+233 24 123 4568",
+    assignedHO: "Dr. Kwame Mensah",
+  },
+  {
+    time: "03:00 PM",
+    date: "2024-06-12",
+    patientName: "Akosua Yeboah",
+    age: 33,
+    phoneNumber: "+233 24 234 5679",
+    assignedHO: "Dr. Akua Nyamekye",
+  },
+  {
+    time: "04:30 PM",
+    date: "2024-06-13",
+    patientName: "Yaw Amankwa",
+    age: 52,
+    phoneNumber: "+233 24 345 6780",
+    assignedHO: "Dr. Yaw Boateng",
+  },
+  {
+    time: "08:00 AM",
+    date: "2024-06-14",
+    patientName: "Ama Obeng",
+    age: 26,
+    phoneNumber: "+233 24 456 7891",
+    assignedHO: "Dr. Ama Serwaa",
+  },
+  {
+    time: "09:15 AM",
+    date: "2024-06-15",
+    patientName: "Kofi Darko",
+    age: 48,
+    phoneNumber: "+233 24 567 8902",
+    assignedHO: "Dr. Kojo Agyeman",
+  },
+  {
+    time: "10:45 AM",
+    date: "2024-06-16",
+    patientName: "Abena Kumi",
+    age: 39,
+    phoneNumber: "+233 24 678 9013",
+    assignedHO: "Dr. Efua Adjei",
+  },
+  {
+    time: "11:30 AM",
+    date: "2024-06-17",
+    patientName: "Kwame Anane",
+    age: 55,
+    phoneNumber: "+233 24 789 0124",
+    assignedHO: "Dr. Kofi Darko",
+  },
+  {
+    time: "12:00 PM",
+    date: "2024-06-18",
+    patientName: "Akua Agyapong",
+    age: 42,
+    phoneNumber: "+233 24 890 1235",
+    assignedHO: "Dr. Abena Kumi",
+  },
+  {
+    time: "01:00 PM",
+    date: "2024-06-19",
+    patientName: "Yaw Opoku",
+    age: 31,
+    phoneNumber: "+233 24 901 2346",
+    assignedHO: "Dr. Kwame Anane",
+  },
+  {
+    time: "02:45 PM",
+    date: "2024-06-20",
+    patientName: "Efua Owusu",
+    age: 36,
+    phoneNumber: "+233 24 012 3457",
+    assignedHO: "Dr. Akua Agyapong",
+  },
+];
+
+export const MEDCONNECT_DASHBOARD_DIAGNOSTIC_SUPPORT = [
+  {
+    compoundName: "Koforidua Central",
+    title: "Fever and Headache",
+    description: "Patient is experiencing high fever and severe headache.",
+    time: "10:30 AM",
+    chats: [
+      {
+        doctor: "Dr. Yaw Boateng",
+        message: "Good morning, can you describe your symptoms?",
+        time: "10:30 AM",
+      },
+      {
+        user: "Ama Serwaa",
+        message:
+          "I've been having a high fever and severe headache since last night.",
+        time: "10:32 AM",
+      },
+      {
+        doctor: "Dr. Yaw Boateng",
+        message: "Any other symptoms like nausea or dizziness?",
+        time: "10:35 AM",
+      },
+      {
+        user: "Ama Serwaa",
+        message: "Yes, I've been feeling a bit dizzy.",
+        time: "10:37 AM",
+      },
+      {
+        doctor: "Dr. Yaw Boateng",
+        message:
+          "I recommend taking paracetamol and resting. If the symptoms persist, visit the clinic.",
+        time: "10:40 AM",
+      },
+    ],
+  },
+  {
+    compoundName: "Takoradi Estate",
+    title: "Stomach Pain",
+    description: "Patient reports severe stomach pain and discomfort.",
+    time: "01:45 PM",
+    chats: [
+      {
+        doctor: "Dr. Akua Nyamekye",
+        message: "Hello, what seems to be the problem?",
+        time: "01:45 PM",
+      },
+      {
+        user: "Kofi Owusu",
+        message: "I've been having severe stomach pain since this morning.",
+        time: "01:47 PM",
+      },
+      {
+        doctor: "Dr. Akua Nyamekye",
+        message: "Have you eaten anything unusual or felt this pain before?",
+        time: "01:50 PM",
+      },
+      {
+        user: "Kofi Owusu",
+        message:
+          "No, nothing unusual. This is the first time I'm experiencing this.",
+        time: "01:52 PM",
+      },
+      {
+        doctor: "Dr. Akua Nyamekye",
+        message:
+          "Try to drink plenty of water and avoid solid foods for a few hours. If the pain worsens, visit the hospital.",
+        time: "01:55 PM",
+      },
+    ],
+  },
+  {
+    compoundName: "Tema Harbour",
+    title: "Skin Rash",
+    description: "Patient has developed a red, itchy rash on the arms.",
+    time: "09:15 AM",
+    chats: [
+      {
+        doctor: "Dr. Kojo Agyeman",
+        message: "Good morning, how can I assist you today?",
+        time: "09:15 AM",
+      },
+      {
+        user: "Esi Gyamfi",
+        message: "I've developed a red, itchy rash on my arms.",
+        time: "09:17 AM",
+      },
+      {
+        doctor: "Dr. Kojo Agyeman",
+        message:
+          "Have you used any new products or been in contact with any allergens?",
+        time: "09:20 AM",
+      },
+      {
+        user: "Esi Gyamfi",
+        message: "I started using a new lotion a couple of days ago.",
+        time: "09:22 AM",
+      },
+      {
+        doctor: "Dr. Kojo Agyeman",
+        message:
+          "Stop using the lotion and apply hydrocortisone cream to the rash. If it doesn't improve, please see a dermatologist.",
+        time: "09:25 AM",
+      },
+    ],
+  },
+  {
+    compoundName: "Kumasi Ridge",
+    title: "Back Pain",
+    description: "Patient complains of lower back pain for the past few days.",
+    time: "02:30 PM",
+    chats: [
+      {
+        doctor: "Dr. Efua Adjei",
+        message: "Hello, what seems to be the issue?",
+        time: "02:30 PM",
+      },
+      {
+        user: "Yaw Amankwa",
+        message: "I've been having lower back pain for the past few days.",
+        time: "02:32 PM",
+      },
+      {
+        doctor: "Dr. Efua Adjei",
+        message: "Did you lift anything heavy or make any sudden movements?",
+        time: "02:35 PM",
+      },
+      {
+        user: "Yaw Amankwa",
+        message: "I did move some heavy furniture over the weekend.",
+        time: "02:37 PM",
+      },
+      {
+        doctor: "Dr. Efua Adjei",
+        message:
+          "Apply ice to the affected area and take an over-the-counter pain reliever. If the pain persists, schedule an appointment.",
+        time: "02:40 PM",
+      },
+    ],
+  },
+  {
+    compoundName: "Cape Coast Gardens",
+    title: "Sore Throat",
+    description: "Patient has a sore throat and difficulty swallowing.",
+    time: "11:00 AM",
+    chats: [
+      {
+        doctor: "Dr. Kofi Darko",
+        message: "Good morning, what brings you here today?",
+        time: "11:00 AM",
+      },
+      {
+        user: "Ama Obeng",
+        message: "I have a sore throat and difficulty swallowing.",
+        time: "11:02 AM",
+      },
+      {
+        doctor: "Dr. Kofi Darko",
+        message: "Do you have a fever or any other symptoms?",
+        time: "11:05 AM",
+      },
+      {
+        user: "Ama Obeng",
+        message: "No fever, just the sore throat.",
+        time: "11:07 AM",
+      },
+      {
+        doctor: "Dr. Kofi Darko",
+        message:
+          "Gargle with warm salt water and stay hydrated. If it doesn't improve in a few days, visit the clinic.",
+        time: "11:10 AM",
+      },
+    ],
+  },
+  {
+    compoundName: "Ho Polytechnic",
+    title: "Chest Pain",
+    description: "Patient experiencing intermittent chest pain.",
+    time: "03:45 PM",
+    chats: [
+      {
+        doctor: "Dr. Abena Kumi",
+        message: "Hello, how can I help you today?",
+        time: "03:45 PM",
+      },
+      {
+        user: "Kwame Anane",
+        message: "I've been having intermittent chest pain.",
+        time: "03:47 PM",
+      },
+      {
+        doctor: "Dr. Abena Kumi",
+        message:
+          "Is the pain sharp or dull, and does it radiate to other parts of your body?",
+        time: "03:50 PM",
+      },
+      {
+        user: "Kwame Anane",
+        message: "It's a dull pain and sometimes it radiates to my left arm.",
+        time: "03:52 PM",
+      },
+      {
+        doctor: "Dr. Abena Kumi",
+        message:
+          "Please visit the nearest hospital immediately for an ECG and further evaluation.",
+        time: "03:55 PM",
+      },
+    ],
+  },
+  {
+    compoundName: "Accra High Street",
+    title: "Allergic Reaction",
+    description: "Patient reports swelling and itching after eating seafood.",
+    time: "12:30 PM",
+    chats: [
+      {
+        doctor: "Dr. Kwame Mensah",
+        message: "Good afternoon, how can I assist?",
+        time: "12:30 PM",
+      },
+      {
+        user: "Akua Agyapong",
+        message: "I have swelling and itching after eating seafood.",
+        time: "12:32 PM",
+      },
+      {
+        doctor: "Dr. Kwame Mensah",
+        message: "Do you have any difficulty breathing or other symptoms?",
+        time: "12:35 PM",
+      },
+      {
+        user: "Akua Agyapong",
+        message: "No, just the swelling and itching.",
+        time: "12:37 PM",
+      },
+      {
+        doctor: "Dr. Kwame Mensah",
+        message:
+          "Take an antihistamine like Benadryl and avoid seafood. If symptoms worsen, seek emergency care.",
+        time: "12:40 PM",
+      },
+    ],
+  },
+  {
+    compoundName: "Tamale North",
+    title: "Joint Pain",
+    description:
+      "Patient complains of joint pain and stiffness in the mornings.",
+    time: "08:30 AM",
+    chats: [
+      {
+        doctor: "Dr. Yaw Boateng",
+        message: "Good morning, what can I help you with today?",
+        time: "08:30 AM",
+      },
+      {
+        user: "Yaw Opoku",
+        message: "I've been having joint pain and stiffness in the mornings.",
+        time: "08:32 AM",
+      },
+      {
+        doctor: "Dr. Yaw Boateng",
+        message:
+          "Which joints are affected, and how long have you had these symptoms?",
+        time: "08:35 AM",
+      },
+      {
+        user: "Yaw Opoku",
+        message: "Mostly my knees and hands. It's been about a week.",
+        time: "08:37 AM",
+      },
+      {
+        doctor: "Dr. Yaw Boateng",
+        message:
+          "Try taking an anti-inflammatory medication and doing gentle stretches. If it persists, schedule an appointment.",
+        time: "08:40 AM",
+      },
+    ],
+  },
+  {
+    compoundName: "Sunyani West",
+    title: "Earache",
+    description: "Patient reports ear pain and slight hearing loss.",
+    time: "05:00 PM",
+    chats: [
+      {
+        doctor: "Dr. Akua Nyamekye",
+        message: "Good evening, what brings you here today?",
+        time: "05:00 PM",
+      },
+      {
+        user: "Akosua Yeboah",
+        message: "I have ear pain and slight hearing loss.",
+        time: "05:02 PM",
+      },
+      {
+        doctor: "Dr. Akua Nyamekye",
+        message: "Any discharge or other symptoms?",
+        time: "05:05 PM",
+      },
+      {
+        user: "Akosua Yeboah",
+        message: "No discharge, just the pain and hearing loss.",
+        time: "05:07 PM",
+      },
+      {
+        doctor: "Dr. Akua Nyamekye",
+        message:
+          "Try using ear drops and avoid getting water in your ear. If it doesn't improve, visit the clinic.",
+        time: "05:10 PM",
+      },
+    ],
+  },
+  {
+    compoundName: "Bolgatanga Central",
+    title: "Cold and Cough",
+    description: "Patient experiencing persistent cold and cough.",
+    time: "07:45 AM",
+    chats: [
+      {
+        doctor: "Dr. Kojo Agyeman",
+        message: "Good morning, how can I help you?",
+        time: "07:45 AM",
+      },
+      {
+        user: "Kwesi Nkrumah",
+        message: "I've been having a persistent cold and cough.",
+        time: "07:47 AM",
+      },
+      {
+        doctor: "Dr. Kojo Agyeman",
+        message: "How long have you had these symptoms?",
+        time: "07:50 AM",
+      },
+      {
+        user: "Kwesi Nkrumah",
+        message: "It's been about two weeks.",
+        time: "07:52 AM",
+      },
+      {
+        doctor: "Dr. Kojo Agyeman",
+        message:
+          "Increase your fluid intake and rest. If it doesn't improve, please come in for a check-up.",
+        time: "07:55 AM",
+      },
+    ],
+  },
+];

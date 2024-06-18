@@ -13,7 +13,7 @@ export const metadata: Metadata = {
 const DiagnosticSupport = () => {
   return (
     <div className="flex flex-col gap-5 w-full my-5">
-      <section className="flex flex-col gap-5 w-full">
+      <section className="flex flex-col gap-5 w-full h-full">
         <DashboardContentHeader
           headerTitle="Diagnostic Support"
           showDate={true}

@@ -45,7 +45,7 @@ const DiagnosticSupportChat = () => {
   };
 
   return (
-    <div className="grid grid-cols-3 gap-5 w-full overflow-x-scroll scrollbar-hide md:overflow-x-hidden h-[95vh]">
+    <div className="grid grid-cols-1 md:grid-cols-3 gap-5 w-full h-full md:h-[95vh]">
       {/* Conversation Sidebar */}
       <section className="col-span-1 w-full flex flex-col gap-5 min-h-full rounded-xl shadow-md bg-white relative">
         <div className="px-5 py-5">

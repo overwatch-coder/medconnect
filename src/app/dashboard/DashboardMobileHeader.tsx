@@ -46,35 +46,9 @@ const DashboardMobileHeader = () => {
             <Separator className="bg-white my-1" />
           </SheetTitle>
 
-          <SheetDescription>
+          <div>
             {/* Dashboard Menu Items */}
             <div className="flex flex-col gap-6 mb-auto">
-              {/* <Link
-                href={"/dashboard/notifications"}
-                className="hover:scale-105 transition p-4 rounded md:rounded-full bg-white/30 md:bg-primary-gray/10 flex items-center gap-3 relative"
-              >
-                <Bell
-                  size={20}
-                  className={`${
-                    pathname === "/dashboard/notifications"
-                      ? "text-primary-green"
-                      : "text-white"
-                  }`}
-                />
-                <span
-                  className={`md:hidden ${
-                    pathname === "/dashboard/notifications"
-                      ? "text-primary-green"
-                      : "text-white"
-                  } text-base`}
-                >
-                  Notifications
-                </span>
-                <span className="text-white bg-red-500 rounded-full text-sm absolute top-5 right-2 md:top-0 md:right-0 h-5 w-5 text-center flex flex-col items-center">
-                  4
-                </span>
-              </Link> */}
-
               <NotificationsModal />
 
               <Link
@@ -123,7 +97,7 @@ const DashboardMobileHeader = () => {
                 </span>
               </Link>
             </div>
-          </SheetDescription>
+          </div>
         </SheetHeader>
 
         <div className="rounded-md bg-white/40 md:bg-primary-gray/10 py-3 md:py-1 px-2 flex items-center gap-5">

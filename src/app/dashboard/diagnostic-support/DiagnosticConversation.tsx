@@ -1,8 +1,8 @@
-import { DiagnosticSupportDataType } from '@/app/dashboard/diagnostic-support/DiagnosticSupportChat';
-import { Paperclip } from 'lucide-react';
-import React from 'react'
-import { IoMdSend } from 'react-icons/io';
-import { PiDotsThreeVerticalBold } from 'react-icons/pi';
+import { DiagnosticSupportDataType } from "@/app/dashboard/diagnostic-support/DiagnosticSupportChat";
+import { Paperclip } from "lucide-react";
+import React from "react";
+import { IoMdSend } from "react-icons/io";
+import { PiDotsThreeVerticalBold } from "react-icons/pi";
 
 const DiagnosticConversation = ({
   selectedConvo,
@@ -10,7 +10,7 @@ const DiagnosticConversation = ({
   selectedConvo: DiagnosticSupportDataType;
 }) => {
   return (
-    <section className="col-span-2 bg-white w-full relative flex flex-col rounded-t-xl shadow-md h-full">
+    <section className="col-span-1 md:col-span-2 bg-white w-full relative flex flex-col rounded-t-xl shadow-md h-full">
       {/* Header */}
       <div className="flex items-center text-white justify-between w-full px-5 py-2 bg-primary-green rounded-t-xl">
         <div className="flex flex-col gap-1">
@@ -69,4 +69,4 @@ const DiagnosticConversation = ({
   );
 };
 
-export default DiagnosticConversation
+export default DiagnosticConversation;

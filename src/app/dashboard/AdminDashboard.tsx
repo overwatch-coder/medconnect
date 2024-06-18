@@ -186,6 +186,9 @@ const AdminDashboard = () => {
                       {data.patientName}
                     </TableCell>
                     <TableCell className="text-secondary-gray font-semibold">
+                      {data.patientID}
+                    </TableCell>
+                    <TableCell className="text-secondary-gray font-semibold">
                       {data.assignedHO}
                     </TableCell>
                     <TableCell className="text-secondary-gray font-semibold">

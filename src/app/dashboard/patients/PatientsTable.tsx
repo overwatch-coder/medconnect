@@ -61,7 +61,7 @@ const PatientsTable = () => {
   return (
     <div className="w-full flex flex-col gap-5 px-5 py-5">
       {/* Filter and Search */}
-      <div className="flex items-center gap-5">
+      <div className="flex flex-col sm:flex-row items-center gap-5 w-fit">
         <div className="flex items-center gap-3 relative rounded-full bg-primary-green/10 px-5 py-2 text-primary-gray">
           <Search
             className="text-secondary-gray absolute top-3 left-5"
@@ -80,7 +80,7 @@ const PatientsTable = () => {
         <FilterMenuDropDown filterBy={filterBy} handleFilter={handleFilter} />
       </div>
 
-      <div className="flex flex-col gap-7 px-3 py-5 bg-white h-full">
+      <div className="flex flex-col gap-7 px-3 py-5 bg-white h-full w-full">
         <GeneratePatientsTable filteredPatientsData={filterPatients} />
 
         {filterPatients.length === 0 && (
@@ -114,7 +114,7 @@ const FilterMenuDropDown = ({
       <DropdownMenuTrigger asChild>
         <Button
           onClick={() => setOpenDropdown(!openDropdown)}
-          className="flex items-center gap-2 bg-white rounded-2xl px-5 border border-secondary-gray py-2 text-secondary-gray hover:bg-white hover:text-secondary-gray outline-none focus:outline-none ring-0 focus:ring-0"
+          className="flex items-center gap-2 bg-white rounded-2xl sm:px-5 border border-secondary-gray py-2 text-secondary-gray hover:bg-white hover:text-secondary-gray outline-none focus:outline-none ring-0 focus:ring-0 w-full sm:w-fit"
         >
           <span>Filter by {filterBy}</span>
           {openDropdown ? (

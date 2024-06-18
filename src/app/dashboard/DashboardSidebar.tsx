@@ -68,7 +68,7 @@ const DashboardSidebar = () => {
       : MEDCONNECT_DASHBOARD_LINKS;
 
   return (
-    <section className="flex flex-col items-center lg:items-start gap-3 px-5 h-full bg-secondary-gray w-[70px] lg:w-[250px] fixed top-0 left-0 pb-7 overflow-y-scroll scrollbar-hide">
+    <section className="bg-secondary-gray scrollbar-hide pb-7 lg:w-60 lg:items-start fixed top-0 left-0 flex flex-col items-center w-16 h-full gap-3 px-5 overflow-y-scroll">
       <div className="flex flex-col gap-3 pt-10 pb-5">
         <Link href={"/"} className="flex items-center gap-3 pb-2">
           <Image

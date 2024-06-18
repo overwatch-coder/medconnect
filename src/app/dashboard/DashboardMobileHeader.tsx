@@ -15,6 +15,7 @@ import Link from "next/link";
 import { Separator } from "@/components/ui/separator";
 import { useUserAtom } from "@/hooks";
 import { usePathname } from "next/navigation";
+import NotificationsModal from "@/app/dashboard/notifications/NotificationsModal";
 
 const DashboardMobileHeader = () => {
   const [user] = useUserAtom();
@@ -48,7 +49,7 @@ const DashboardMobileHeader = () => {
           <SheetDescription>
             {/* Dashboard Menu Items */}
             <div className="flex flex-col gap-6 mb-auto">
-              <Link
+              {/* <Link
                 href={"/dashboard/notifications"}
                 className="hover:scale-105 transition p-4 rounded md:rounded-full bg-white/30 md:bg-primary-gray/10 flex items-center gap-3 relative"
               >
@@ -72,7 +73,9 @@ const DashboardMobileHeader = () => {
                 <span className="text-white bg-red-500 rounded-full text-sm absolute top-5 right-2 md:top-0 md:right-0 h-5 w-5 text-center flex flex-col items-center">
                   4
                 </span>
-              </Link>
+              </Link> */}
+
+              <NotificationsModal />
 
               <Link
                 href={"/dashboard/help"}

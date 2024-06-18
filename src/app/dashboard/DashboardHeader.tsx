@@ -1,13 +1,14 @@
 "use client";
 
 import React from "react";
-import { Menu, Settings, Bell } from "lucide-react";
+import { Settings } from "lucide-react";
 import { MdOutlineQuestionMark } from "react-icons/md";
 import DashboardMobileHeader from "@/app/dashboard/DashboardMobileHeader";
 import Link from "next/link";
 import Image from "next/image";
 import { useUserAtom } from "@/hooks";
 import { usePathname } from "next/navigation";
+import NotificationsModal from "@/app/dashboard/notifications/NotificationsModal";
 
 const DashboardHeader = () => {
   const [user] = useUserAtom();
@@ -16,7 +17,7 @@ const DashboardHeader = () => {
 
   return (
     <header className="w-full py-5 px-3 md:px-4 bg-white z-50">
-      <div className="flex items-center justify-between relative">
+      <div className="flex items-center justify-between relative w-full">
         <h2 className="text-xl capitalize md:text-2xl text-secondary-gray font-extrabold">
           {isSuperAdmin ? "MedConnect" : user.user?.compoundName ?? "Guest"}{" "}
           <br className="md:hidden" />{" "}
@@ -24,12 +25,12 @@ const DashboardHeader = () => {
         </h2>
 
         {/* MobileNav */}
-        <div className="md:hidden me-[10px] md:me-0">
+        <div className="md:hidden">
           <DashboardMobileHeader />
         </div>
 
         <ul className="hidden items-center gap-6 md:flex">
-          <Link
+          {/* <Link
             href={"/dashboard/notifications"}
             className="hover:scale-105 transition p-4 rounded-full bg-primary-gray/10 flex flex-col items-center relative"
           >
@@ -44,7 +45,9 @@ const DashboardHeader = () => {
             <span className="text-white bg-red-500 rounded-full text-sm absolute top-0 right-0 h-5 w-5 text-center flex flex-col items-center">
               4
             </span>
-          </Link>
+          </Link> */}
+
+          <NotificationsModal />
 
           <Link
             href={"/dashboard/help"}

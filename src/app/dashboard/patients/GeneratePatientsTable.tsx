@@ -59,16 +59,16 @@ const GeneratePatientsTable = ({
   };
 
   return (
-    <div className="">
-      <Table className="">
+    <div className="py-2 w-full">
+      <Table className="w-full overflow-x-scroll scrollbar-hide">
         <TableHeader>
           <TableRow>
             {tableHeaderNames.map((table, index) => (
               <TableHead key={index} className="text-primary-gray/40">
-                <p className="flex flex-row items-center justify-between">
+                <p className="flex flex-row items-center gap-1 md:gap-0 md:justify-between">
                   <span>{table}</span>
 
-                  <span className="text-primary-gray/40 flex flex-col">
+                  <span className="text-primary-gray/40 flex-col hidden sm:flex">
                     <IoMdArrowDropup
                       size={15}
                       className="cursor-pointer text-primary-gray"
@@ -92,32 +92,32 @@ const GeneratePatientsTable = ({
           </TableRow>
         </TableHeader>
 
-        <TableBody>
+        <TableBody className="w-full">
           {currentData.map((patient) => (
             <TableRow key={patient.patientName}>
-              <TableCell className="text-primary-gray/40 flex items-center gap-2">
+              <TableCell className="text-secondary-gray flex items-center gap-2">
                 <Image
                   src={patient.image}
                   alt="Avatar"
                   width={40}
                   height={40}
-                  className="object-cover rounded-full"
+                  className="object-cover rounded-full hidden sm:block"
                 />
                 {patient.patientName}
               </TableCell>
-              <TableCell className="text-primary-gray/40">
+              <TableCell className="text-secondary-gray">
                 {patient.age}
               </TableCell>
-              <TableCell className="text-primary-gray/40">
+              <TableCell className="text-secondary-gray">
                 {patient.gender}
               </TableCell>
-              <TableCell className="text-primary-gray/40">
+              <TableCell className="text-secondary-gray">
                 {patient.bloodGroup}
               </TableCell>
-              <TableCell className="text-primary-gray/40">
+              <TableCell className="text-secondary-gray">
                 {patient.phoneNumber}
               </TableCell>
-              <TableCell className="text-primary-gray/40">
+              <TableCell className="text-secondary-gray">
                 {patient.dateAdded}
               </TableCell>
               <TableCell className="flex items-center gap-3">
@@ -144,13 +144,11 @@ const GeneratePatientsTable = ({
 
       {/* Pagination */}
       {filteredPatientsData.length > 0 && (
-        <div className="flex items-center justify-end gap-3 w-full py-5">
-          <GenerateTablePagination
-            currentPage={currentTablePage}
-            totalPages={totalPages}
-            onPageChange={handlePageChange}
-          />
-        </div>
+        <GenerateTablePagination
+          currentPage={currentTablePage}
+          totalPages={totalPages}
+          onPageChange={handlePageChange}
+        />
       )}
     </div>
   );
@@ -175,7 +173,7 @@ const GenerateTablePagination = ({
 
   return (
     <Pagination>
-      <PaginationContent className="flex items-center justify-end w-full">
+      <PaginationContent className="flex flex-row items-center md:justify-end gap-3 w-full">
         <PaginationItem>
           <PaginationPrevious
             href="#"

@@ -28,15 +28,15 @@ const DashboardLayout = async ({ children }: DashboardLayoutProps) => {
   }
 
   return (
-    <section className="flex flex-col lg:flex-row justify-between gap-5 w-full">
+    <section className="flex min-h-screen relative w-full">
       <DashboardSidebar />
 
-      <main className="flex flex-col w-full min-h-screen flex-grow ml-[70px] lg:ml-[250px] overflow-y-scroll scrollbar-hide relative">
+      <main className="lg:ml-60 flex flex-col flex-grow min-h-screen ml-16 relative w-full">
         {/* Header */}
         <DashboardHeader />
 
         {/* Content */}
-        <div className="px-3 mb-auto">{children}</div>
+        <div className="px-3 mb-auto w-full">{children}</div>
 
         {/* Footer */}
         <div className="py-2 px-3">

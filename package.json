@@ -23,6 +23,7 @@
     "@tanstack/react-query-devtools": "^5.40.1",
     "axios": "^1.7.2",
     "chart.js": "^4.4.3",
+    "cjs": "^0.0.11",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
     "embla-carousel-react": "^8.1.3",

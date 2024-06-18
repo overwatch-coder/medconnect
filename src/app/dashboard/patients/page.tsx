@@ -15,10 +15,10 @@ export const metadata: Metadata = {
 
 const Patients = () => {
   return (
-    <div className="flex flex-col gap-5 w-full my-5">
-      <section className="bg-white rounded-md shadow">
+    <div className="flex flex-col gap-5 w-full my-5 relative">
+      <section className="bg-white rounded-md shadow w-full">
         <div className="border-b border-b-secondary-gray w-full flex flex-col items-center">
-          <div className="flex items-center justify-between w-full p-3">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between w-full p-3">
             <h2 className="text-secondary-gray text-xl font-medium">
               Patients
             </h2>

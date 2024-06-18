@@ -21,6 +21,7 @@ const config = {
       backgroundImage: {
         hero: "linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('/assets/images/hero-bg.jpg')",
         hero2: "url('/assets/images/hero-bg.svg')",
+        "chat-bg": "url('/assets/images/chat-bg.svg')",
       },
       colors: {
         border: "hsl(var(--border))",

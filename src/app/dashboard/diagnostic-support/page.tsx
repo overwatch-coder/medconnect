@@ -1,4 +1,6 @@
+import DashboardContentHeader from "@/app/dashboard/DashboardContentHeader";
 import { Metadata } from "next";
+import DiagnosticSupportChat from "@/app/dashboard/diagnostic-support/DiagnosticSupportChat";
 
 export const metadata: Metadata = {
   title: "Diagnostic Support - MedConnect",
@@ -11,7 +13,14 @@ export const metadata: Metadata = {
 const DiagnosticSupport = () => {
   return (
     <div className="flex flex-col gap-5 w-full my-5">
-      <p>Diagnostic Support</p>
+      <section className="flex flex-col gap-5 w-full">
+        <DashboardContentHeader
+          headerTitle="Diagnostic Support"
+          showDate={true}
+        />
+
+        <DiagnosticSupportChat />
+      </section>
     </div>
   );
 };

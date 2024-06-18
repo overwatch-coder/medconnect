@@ -1443,7 +1443,8 @@ export const MEDCONNECT_DASHBOARD_APPOINTEMENTS = [
 
 export const MEDCONNECT_DASHBOARD_DIAGNOSTIC_SUPPORT = [
   {
-    compoundName: "Koforidua Central",
+    id: "dsc1",
+    compoundId: "MDK001",
     title: "Fever and Headache",
     description: "Patient is experiencing high fever and severe headache.",
     time: "10:30 AM",
@@ -1478,7 +1479,8 @@ export const MEDCONNECT_DASHBOARD_DIAGNOSTIC_SUPPORT = [
     ],
   },
   {
-    compoundName: "Takoradi Estate",
+    id: "dsc2",
+    compoundId: "MDK002",
     title: "Stomach Pain",
     description: "Patient reports severe stomach pain and discomfort.",
     time: "01:45 PM",
@@ -1513,7 +1515,8 @@ export const MEDCONNECT_DASHBOARD_DIAGNOSTIC_SUPPORT = [
     ],
   },
   {
-    compoundName: "Tema Harbour",
+    id: "dsc3",
+    compoundId: "MDK003",
     title: "Skin Rash",
     description: "Patient has developed a red, itchy rash on the arms.",
     time: "09:15 AM",
@@ -1548,7 +1551,8 @@ export const MEDCONNECT_DASHBOARD_DIAGNOSTIC_SUPPORT = [
     ],
   },
   {
-    compoundName: "Kumasi Ridge",
+    id: "dsc4",
+    compoundId: "MDK004",
     title: "Back Pain",
     description: "Patient complains of lower back pain for the past few days.",
     time: "02:30 PM",
@@ -1582,7 +1586,8 @@ export const MEDCONNECT_DASHBOARD_DIAGNOSTIC_SUPPORT = [
     ],
   },
   {
-    compoundName: "Cape Coast Gardens",
+    id: "dsc5",
+    compoundId: "MDK005",
     title: "Sore Throat",
     description: "Patient has a sore throat and difficulty swallowing.",
     time: "11:00 AM",
@@ -1616,7 +1621,8 @@ export const MEDCONNECT_DASHBOARD_DIAGNOSTIC_SUPPORT = [
     ],
   },
   {
-    compoundName: "Ho Polytechnic",
+    id: "dsc6",
+    compoundId: "MDK006",
     title: "Chest Pain",
     description: "Patient experiencing intermittent chest pain.",
     time: "03:45 PM",
@@ -1651,7 +1657,8 @@ export const MEDCONNECT_DASHBOARD_DIAGNOSTIC_SUPPORT = [
     ],
   },
   {
-    compoundName: "Accra High Street",
+    id: "dsc7",
+    compoundId: "MDK007",
     title: "Allergic Reaction",
     description: "Patient reports swelling and itching after eating seafood.",
     time: "12:30 PM",
@@ -1685,7 +1692,8 @@ export const MEDCONNECT_DASHBOARD_DIAGNOSTIC_SUPPORT = [
     ],
   },
   {
-    compoundName: "Tamale North",
+    id: "dsc8",
+    compoundId: "MDK008",
     title: "Joint Pain",
     description:
       "Patient complains of joint pain and stiffness in the mornings.",
@@ -1715,13 +1723,14 @@ export const MEDCONNECT_DASHBOARD_DIAGNOSTIC_SUPPORT = [
       {
         doctor: "Dr. Yaw Boateng",
         message:
-          "Try taking an anti-inflammatory medication and doing gentle stretches. If it persists, schedule an appointment.",
+          "Try taking an over-the-counter anti-inflammatory and doing gentle exercises. If it doesn't improve, come in for a check-up.",
         time: "08:40 AM",
       },
     ],
   },
   {
-    compoundName: "Sunyani West",
+    id: "dsc9",
+    compoundId: "MDK009",
     title: "Earache",
     description: "Patient reports ear pain and slight hearing loss.",
     time: "05:00 PM",
@@ -1755,7 +1764,8 @@ export const MEDCONNECT_DASHBOARD_DIAGNOSTIC_SUPPORT = [
     ],
   },
   {
-    compoundName: "Bolgatanga Central",
+    id: "dsc10",
+    compoundId: "MDK010",
     title: "Cold and Cough",
     description: "Patient experiencing persistent cold and cough.",
     time: "07:45 AM",

@@ -15,21 +15,11 @@ import { IoPerson } from "react-icons/io5";
 import { Eye, EyeOff, LockIcon } from "lucide-react";
 import Image from "next/image";
 import { useMutation } from "@tanstack/react-query";
-import { useUserAtom } from "@/hooks";
 import CustomErrorElement from "@/components/CustomErrorElement";
 
 const LoginForm = () => {
-  const [user, setUser] = useUserAtom();
-
   const [showPassword, setShowPassword] = useState(false);
   const [submitFormErrors, setSubmitFormErrors] = useState<string[]>([]);
-
-  const router = useRouter();
-
-  const searchParams = useSearchParams();
-  const redirectUrl = searchParams.has("redirect")
-    ? `${searchParams.get("redirect")}`
-    : "/dashboard";
 
   const {
     register,

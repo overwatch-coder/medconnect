@@ -16,6 +16,7 @@ import { Separator } from "@/components/ui/separator";
 import { useUserAtom } from "@/hooks";
 import { usePathname } from "next/navigation";
 import NotificationsModal from "@/app/dashboard/notifications/NotificationsModal";
+import HelpModal from "@/app/dashboard/help/HelpModal";
 
 const DashboardMobileHeader = () => {
   const [user] = useUserAtom();
@@ -51,28 +52,7 @@ const DashboardMobileHeader = () => {
             <div className="flex flex-col gap-6 mb-auto">
               <NotificationsModal />
 
-              <Link
-                href={"/dashboard/help"}
-                className="hover:scale-105 transition p-4 rounded md:rounded-full bg-white/30 md:bg-primary-gray/10 flex items-center gap-3"
-              >
-                <MdOutlineQuestionMark
-                  size={20}
-                  className={`${
-                    pathname === "/dashboard/help"
-                      ? "text-primary-green"
-                      : "text-white"
-                  }`}
-                />
-                <span
-                  className={`md:hidden ${
-                    pathname === "/dashboard/help"
-                      ? "text-primary-green"
-                      : "text-white"
-                  } text-base`}
-                >
-                  Help
-                </span>
-              </Link>
+              <HelpModal />
 
               <Link
                 href={"/dashboard/settings"}

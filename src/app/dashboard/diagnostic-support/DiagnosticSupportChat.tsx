@@ -100,7 +100,7 @@ const DiagnosticSupportChat = () => {
           })}
         </div>
 
-        <div className="w-full flex items-center justify-end">
+        <div className="w-full flex items-center justify-end pb-5">
           <Button className="bg-transparent hover:bg-transparent">
             <MessageCirclePlus size={30} className="text-primary-green" />
           </Button>

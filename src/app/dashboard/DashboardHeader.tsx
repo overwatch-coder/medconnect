@@ -9,6 +9,7 @@ import Image from "next/image";
 import { useUserAtom } from "@/hooks";
 import { usePathname } from "next/navigation";
 import NotificationsModal from "@/app/dashboard/notifications/NotificationsModal";
+import HelpModal from "@/app/dashboard/help/HelpModal";
 
 const DashboardHeader = () => {
   const [user] = useUserAtom();
@@ -30,23 +31,6 @@ const DashboardHeader = () => {
         </div>
 
         <ul className="hidden items-center gap-6 md:flex">
-          {/* <Link
-            href={"/dashboard/notifications"}
-            className="hover:scale-105 transition p-4 rounded-full bg-primary-gray/10 flex flex-col items-center relative"
-          >
-            <Bell
-              size={15}
-              className={
-                pathname === "/dashboard/notifications"
-                  ? "text-primary-green"
-                  : "text-secondary-gray"
-              }
-            />
-            <span className="text-white bg-red-500 rounded-full text-sm absolute top-0 right-0 h-5 w-5 text-center flex flex-col items-center">
-              4
-            </span>
-          </Link> */}
-
           <NotificationsModal />
 
           <Link

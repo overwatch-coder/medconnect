@@ -69,7 +69,7 @@ const AddTicketModal = ({
               encType="multipart/form-data"
             >
               {/* Subject */}
-              <div className="flex flex-col space-y-4 w-full">
+              <div className="flex flex-col space-y-4 w-full text-start">
                 <label className="text-primary-gray/50" htmlFor="name">
                   Subject
                 </label>
@@ -87,7 +87,7 @@ const AddTicketModal = ({
               </div>
 
               {/* Description */}
-              <div className="flex flex-col space-y-4 w-full">
+              <div className="flex flex-col space-y-4 w-full text-start">
                 <label className="text-primary-gray/50" htmlFor="name">
                   Description
                 </label>
@@ -107,7 +107,7 @@ const AddTicketModal = ({
               {/* Attachment */}
               <label
                 htmlFor="attachement"
-                className="text-lg text-secondary-gray font-semibold"
+                className="text-start text-lg text-secondary-gray font-semibold"
               >
                 Add Attachment
               </label>
@@ -147,6 +147,7 @@ const AddTicketModal = ({
                 pending={pending}
                 reset={reset}
                 setShowAddTicketModal={setShowAddTicketModal}
+                setAttachements={setAttachements}
               />
             </form>
           </DialogDescription>
@@ -162,10 +163,14 @@ const AddTicketButton = ({
   pending,
   reset,
   setShowAddTicketModal,
+  setAttachements,
 }: {
   pending: boolean;
   reset: () => void;
   setShowAddTicketModal: React.Dispatch<React.SetStateAction<boolean>>;
+  setAttachements: React.Dispatch<
+    React.SetStateAction<ArrayLike<File | DataTransferItem> | undefined>
+  >;
 }) => {
   return (
     <div className="flex gap-5 flex-row items-center justify-end">
@@ -174,6 +179,7 @@ const AddTicketButton = ({
         onClick={() => {
           setShowAddTicketModal(false);
           reset();
+          setAttachements(undefined);
         }}
         type="reset"
         variant={"destructive"}

@@ -37,15 +37,15 @@ const HelpTable = ({ tickets }: HelpTableProps) => {
   };
 
   return (
-    <section className="flex flex-col rounded w-full scrollbar-hide">
-      <div className="flex items-center justify-between w-full gap-4">
-        <div className="flex items-center justify-center gap-2 rounded-t-md bg-secondary-gray/20 px-5 py-3 w-fit">
-          <p className="text-secondary-gray text-center font-medium">
+    <section className="flex flex-col rounded w-full h-full">
+      <div className="flex items-center justify-between w-full gap-5">
+        <div className="md:flex items-center justify-center gap-2 rounded-t-md bg-secondary-gray/20 px-3 md:px-5 py-2 md:py-3 w-fit hidden">
+          <p className="text-secondary-gray text-sm md:text-base text-center font-medium">
             My Tickets
           </p>
         </div>
 
-        <div className="flex items-center gap-2 relative w-fit -mt-3 sm:w-1/2 xl:w-1/3">
+        <div className="flex items-center gap-2 mt-4 px-4 md:px-0 relative w-full md:-mt-3 sm:w-1/2 xl:w-1/3">
           <input
             type="text"
             name="search"
@@ -57,7 +57,7 @@ const HelpTable = ({ tickets }: HelpTableProps) => {
           />
           <Search
             size={20}
-            className="absolute top-3 right-2 text-secondary-gray/50 cursor-pointer"
+            className="absolute top-3 right-5 md:right-2 text-secondary-gray/50 cursor-pointer"
             onClick={() =>
               handleSearch({ target: { value: searchTicket } } as any)
             }
@@ -66,7 +66,7 @@ const HelpTable = ({ tickets }: HelpTableProps) => {
       </div>
 
       {/* Tickets */}
-      <div className="flex flex-col gap-7 px-3 pt-5 pb-10 bg-white rounded-md max-h-screen scrollbar-hide h-full">
+      <div className="flex flex-col px-3 pt-5 bg-white rounded-md max-h-screen min-h-full w-full pb-10">
         <div className="flex flex-col items-end w-full p-2">
           <Button
             variant="default"
@@ -78,14 +78,14 @@ const HelpTable = ({ tickets }: HelpTableProps) => {
           </Button>
         </div>
 
-        <TicketTable filteredTickets={filteredTickets} />
-
-        {filteredTickets.length === 0 && (
-          <div className="flex flex-col items-center justify-center h-full">
+        {filteredTickets.length === 0 ? (
+          <div className="flex flex-col items-center justify-center h-full bg-white">
             <p className="text-secondary-gray text-lg font-bold text-center">
               No tickets available
             </p>
           </div>
+        ) : (
+          <TicketTable filteredTickets={filteredTickets} />
         )}
       </div>
 

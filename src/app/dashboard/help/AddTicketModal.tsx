@@ -123,8 +123,12 @@ const AddTicketModal = ({
                   renderLabel={() => (
                     <div className="flex flex-col gap-5 p-5 items-center justify-center">
                       <Upload size={40} className="text-white" />
-                      <p className="text-sm text-black">
-                        Drag and drop files here <br /> or click to browse
+                      <p className="text-sm flex flex-col text-center items-center gap-1 font-medium w-full">
+                        <span className="text-black">Drag and Drop here</span>
+                        <span className="text-primary-gray/50">or</span>
+                        <span className="text-red-500 p-2 text-center rounded bg-white w-full">
+                          Browse Files
+                        </span>
                       </p>
                     </div>
                   )}

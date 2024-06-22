@@ -3,6 +3,7 @@ import {
   MdOutlinePersonalInjury,
   MdOutlineDashboard,
   MdOutlineShowChart,
+  MdOutlineInventory2
 } from "react-icons/md";
 import { FaSearchPlus, FaClinicMedical } from "react-icons/fa";
 import { BsPrescription } from "react-icons/bs";
@@ -237,9 +238,9 @@ export const MEDCONNECT_DASHBOARD_LINKS = [
     icon: CalendarPlus2,
   },
   {
-    name: "Prescriptions",
-    path: "/dashboard/prescriptions",
-    icon: BsPrescription,
+    name: "Inventory",
+    path: "/dashboard/inventory",
+    icon: MdOutlineInventory2,
   },
   {
     name: "Diagnostic Support",

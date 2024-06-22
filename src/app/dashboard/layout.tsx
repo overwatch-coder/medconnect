@@ -41,7 +41,7 @@ const DashboardLayout = async ({ children }: DashboardLayoutProps) => {
         {/* Footer */}
         <div className="py-2 px-3">
           <p className="text-secondary-gray text-sm font-semibold">
-            &copy; Copyright CampusGuardian {new Date().getFullYear()} . All
+            &copy; Copyright campusguardian {new Date().getFullYear()} . All
             rights reserved
           </p>
         </div>

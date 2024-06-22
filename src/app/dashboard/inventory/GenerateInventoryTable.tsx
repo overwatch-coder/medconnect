@@ -21,7 +21,7 @@ import {
   PaginationPrevious,
 } from "@/components/ui/pagination";
 import Image from "next/image";
-import { PrescriptionsDataType } from "@/app/dashboard/prescriptions/PrescriptionsTable";
+import { InventoryDataType } from "@/app/dashboard/inventory/InventoryTable";
 
 const tableHeaderNames = [
   "Time",
@@ -32,10 +32,10 @@ const tableHeaderNames = [
   "Assigned HO",
 ];
 
-const GeneratePrescriptionsTable = ({
-  filteredPrescriptionsData,
+const GenerateInventoryTable = ({
+  filteredInventoryData,
 }: {
-  filteredPrescriptionsData: PrescriptionsDataType[];
+  filteredInventoryData: InventoryDataType[];
 }) => {
   const [currentTablePage, setCurrentTablePage] = useState(1);
   const dataPerPage = 7;
@@ -43,15 +43,15 @@ const GeneratePrescriptionsTable = ({
   // Get current p for the page
   const indexOfLastData = currentTablePage * dataPerPage;
   const indexOfFirstData = indexOfLastData - dataPerPage;
-  const currentData = filteredPrescriptionsData.slice(
+  const currentData = filteredInventoryData.slice(
     indexOfFirstData,
     indexOfLastData
   );
 
   // Calculate the number of pages
   const totalPages = dataPerPage
-    ? Math.ceil(filteredPrescriptionsData.length / dataPerPage)
-    : filteredPrescriptionsData.length;
+    ? Math.ceil(filteredInventoryData.length / dataPerPage)
+    : filteredInventoryData.length;
 
   // Handle page change
   const handlePageChange = (pageNumber: number) => {
@@ -93,25 +93,25 @@ const GeneratePrescriptionsTable = ({
         </TableHeader>
 
         <TableBody className="w-full">
-          {currentData.map((prescription, index) => (
+          {currentData.map((inventory, index) => (
             <TableRow key={index}>
               <TableCell className="text-secondary-gray flex items-center gap-2">
-                {prescription.time}
+                {inventory.time}
               </TableCell>
               <TableCell className="text-secondary-gray">
-                {prescription.date}
+                {inventory.date}
               </TableCell>
               <TableCell className="text-secondary-gray">
-                {prescription.patientName}
+                {inventory.patientName}
               </TableCell>
               <TableCell className="text-secondary-gray">
-                {prescription.age}
+                {inventory.age}
               </TableCell>
               <TableCell className="text-secondary-gray">
-                {prescription.phoneNumber}
+                {inventory.phoneNumber}
               </TableCell>
               <TableCell className="text-secondary-gray">
-                {prescription.assignedHO}
+                {inventory.assignedHO}
               </TableCell>
               <TableCell className="flex items-center gap-3">
                 <TbEdit
@@ -147,7 +147,7 @@ const GeneratePrescriptionsTable = ({
       </Table>
 
       {/* Pagination */}
-      {filteredPrescriptionsData.length > 0 && (
+      {filteredInventoryData.length > 0 && (
         <GenerateTablePagination
           currentPage={currentTablePage}
           totalPages={totalPages}
@@ -158,7 +158,7 @@ const GeneratePrescriptionsTable = ({
   );
 };
 
-export default GeneratePrescriptionsTable;
+export default GenerateInventoryTable;
 
 const GenerateTablePagination = ({
   currentPage,

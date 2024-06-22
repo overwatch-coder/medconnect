@@ -10,10 +10,10 @@ import {
 import { Search } from "lucide-react";
 import React, { useState } from "react";
 import { BiDownArrow, BiUpArrow } from "react-icons/bi";
-import { MEDCONNECT_DASHBOARD_APPOINTEMENTS as prescriptionsData } from "@/constants";
-import GeneratePrescriptionsTable from "@/app/dashboard/prescriptions/GeneratePrescriptionsTable";
+import { MEDCONNECT_DASHBOARD_APPOINTEMENTS as inventoryData } from "@/constants";
+import GenerateInventoryTable from "@/app/dashboard/inventory/GenerateInventoryTable";
 
-export type PrescriptionsDataType = {
+export type InventoryDataType = {
   time: string;
   date: string;
   patientName: string;
@@ -22,22 +22,22 @@ export type PrescriptionsDataType = {
   assignedHO: string;
 };
 
-const PrescriptionsTable = () => {
+const InventoryTable = () => {
   const [searchTerm, setSearchTerm] = useState("");
-  const [filteredPrescriptions, setFilteredPrescriptions] =
-    useState<PrescriptionsDataType[]>(prescriptionsData);
+  const [filteredInventory, setFilteredInventory] =
+    useState<InventoryDataType[]>(inventoryData);
   const [filterBy, setFilterBy] = useState("Patient Name");
 
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(e.target.value);
-    const filtered = prescriptionsData.filter(
+    const filtered = inventoryData.filter(
       (patient) =>
         patient.patientName
           .toLowerCase()
           .includes(e.target.value.toLowerCase()) ||
         patient.assignedHO.toLowerCase().includes(e.target.value.toLowerCase())
     );
-    setFilteredPrescriptions(filtered);
+    setFilteredInventory(filtered);
   };
 
   // Handle filter
@@ -47,7 +47,7 @@ const PrescriptionsTable = () => {
 
     setFilterBy(filterName);
 
-    const filtered = filteredPrescriptions.sort((a: any, b: any) => {
+    const filtered = filteredInventory.sort((a: any, b: any) => {
       if (a[filterValue] < b[filterValue]) {
         return -1;
       }
@@ -57,7 +57,7 @@ const PrescriptionsTable = () => {
       return 0;
     });
 
-    setFilteredPrescriptions(filtered);
+    setFilteredInventory(filtered);
     setSearchTerm("");
   };
 
@@ -84,14 +84,14 @@ const PrescriptionsTable = () => {
       </div>
 
       <div className="flex flex-col gap-7 px-3 py-5 bg-white h-full w-full">
-        <GeneratePrescriptionsTable
-          filteredPrescriptionsData={filteredPrescriptions}
+        <GenerateInventoryTable
+          filteredInventoryData={filteredInventory}
         />
 
-        {filteredPrescriptions.length === 0 && (
+        {filteredInventory.length === 0 && (
           <div className="flex flex-col items-center justify-center h-full">
             <p className="text-secondary-gray text-lg font-bold text-center">
-              No prescriptions found
+              No inventory found
             </p>
           </div>
         )}
@@ -100,7 +100,7 @@ const PrescriptionsTable = () => {
   );
 };
 
-export default PrescriptionsTable;
+export default InventoryTable;
 
 // Filter Component
 type FilterMenuDropDownProps = {

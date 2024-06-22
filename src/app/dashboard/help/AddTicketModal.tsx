@@ -47,13 +47,17 @@ const AddTicketModal = ({
 
   return (
     <Dialog open={openModal}>
-      <DialogContent id="hide" className="flex flex-col gap-4">
+      <DialogContent id="hide" className="flex flex-col gap-4 overflow-y-scroll scrollbar-hide h-screen">
         <DialogHeader>
           <DialogTitle className="flex items-center justify-between">
             <span className="text-xl md:text-2xl text-secondary-gray font-bold">
               Create Ticket
             </span>
-            <DialogClose onClick={() => setShowAddTicketModal(false)}>
+            <DialogClose onClick={() => {
+              setShowAddTicketModal(false)
+              reset();
+              setAttachements(undefined);
+            }}>
               <X
                 className="border border-red-500 text-red-500 rounded-full"
                 size={25}

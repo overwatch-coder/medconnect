@@ -13,7 +13,7 @@ const ImagePreview = ({ image }: ImagePreviewProps) => {
       quality={100}
       width={60}
       height={60}
-      className="rounded object-contain"
+      className="rounded object-contain w-28 h-28"
     />
   );
 };

@@ -1,8 +1,6 @@
+import AddPatient from "@/app/dashboard/patients/add-patients/AddPatient";
 import PatientsTable from "@/app/dashboard/patients/PatientsTable";
-import { Button } from "@/components/ui/button";
-import { Plus } from "lucide-react";
 import { Metadata } from "next";
-import Link from "next/link";
 import React from "react";
 
 export const metadata: Metadata = {
@@ -23,12 +21,7 @@ const Patients = () => {
               Patients
             </h2>
 
-            <Link href={"/patients/new"}>
-              <Button className="bg-primary-green hover:bg-primary-green hover:scale-105 transition py-2 px-5 flex items-center gap-3 rounded-md text-white">
-                <Plus className="text-white" size={20} />
-                <span className="font-semibold">Add Patient</span>
-              </Button>
-            </Link>
+            <AddPatient />
           </div>
         </div>
 

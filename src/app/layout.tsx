@@ -1,14 +1,9 @@
 import type { Metadata } from "next";
-import { Sofia_Sans } from "next/font/google";
 import "./globals.css";
 import { cn } from "@/lib/utils";
 import AppProvider from "@/providers/AppProvider";
 import JotaiProvider from "@/providers/JotaiProvider";
-
-const sofia = Sofia_Sans({
-  weight: ["400", "500", "600", "700", "800", "900"],
-  subsets: ["latin"],
-});
+import { sofia } from "@/app/font";
 
 export const metadata: Metadata = {
   title: "MedConnect | Healthcare for Rural Communities",

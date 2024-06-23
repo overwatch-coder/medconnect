@@ -24,6 +24,7 @@ import { useRouter } from "next/navigation";
 import NotificationModal from "@/components/NotificationModal";
 import CustomInputForm from "@/components/CustomInputForm";
 import { SettingsType } from "@/types/index";
+import { z } from "zod";
 
 type EditCompoundModalProps = {
   openModal: boolean;
@@ -55,14 +56,16 @@ const EditCompoundModal = ({
     setValue,
     formState: { errors, isSubmitting: pending },
     handleSubmit,
-  } = useForm<SettingsType>({
-    resolver: zodResolver(settingsSchema),
+  } = useForm<Partial<SettingsType>>({
+    resolver: zodResolver(z.optional(settingsSchema)),
     mode: "all",
   });
 
   const profilePicture = watch("profilePicture");
 
-  const submitEditCompound: SubmitHandler<SettingsType> = async (data) => {
+  const submitEditCompound: SubmitHandler<Partial<SettingsType>> = async (
+    data
+  ) => {
     console.log({ data });
     setShowEditNotificationModal(true);
     setTimeout(() => {
@@ -160,24 +163,14 @@ const EditCompoundModal = ({
                   <FormSectionHeader title="General Information" />
 
                   <div className="flex flex-col gap-5 px-2 md:px-5">
-                    <div className="flex flex-col gap-4 w-full md:flex-row items-center justify-between">
+                    <div className="flex flex-col gap-4 w-full md:flex-row items-center justify-between md:w-1/3">
                       <CustomInputForm
-                        labelName="Compound Email"
-                        inputName="compoundEmail"
+                        labelName="Email Address"
+                        inputName="email"
                         errors={errors}
                         inputType="text"
                         placeholderText="Enter compound email"
                         register={register}
-                      />
-
-                      <CustomInputForm
-                        labelName="CompoundPassword"
-                        inputName="compoundPassword"
-                        errors={errors}
-                        inputType="text"
-                        placeholderText="Enter compound password"
-                        register={register}
-                        isInputPassword={true}
                       />
                     </div>
 

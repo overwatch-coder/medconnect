@@ -1,19 +1,20 @@
 import { z } from "zod";
 
-export const settingsSchema = z.object({
+export const settingsSchemaWithoutRefinement = z.object({
   compoundName: z
     .string()
     .trim()
     .min(1, { message: "Compound Name cannot be empty" })
     .optional(),
-  compoundEmail: z
+  email: z
     .string()
     .min(1, { message: "Compound Email is required" })
     .email({ message: "Please enter a valid email address" }),
-  compoundPassword: z
+  password: z
     .string()
     .min(1, "Password is required")
     .min(8, { message: "Password must be at least 8 characters long" }),
+  confirmPassword: z.string().min(1, "Confirm Password is required"),
   location: z
     .string()
     .trim()
@@ -45,24 +46,40 @@ export const settingsSchema = z.object({
   profilePicture: z.any().optional(),
 });
 
-export const settingsGeneralInformationSchema = settingsSchema.pick({
-  compoundName: true,
-  location: true,
-  region: true,
-  district: true,
-  contactInformation: true,
-  availableServices: true,
-});
+export const settingsSchema = settingsSchemaWithoutRefinement.superRefine(
+  (data, ctx) => {
+    if (data.password !== data.confirmPassword) {
+      ctx.addIssue({
+        code: "custom",
+        message: "Passwords do not match",
+        path: ["confirmPassword"],
+      });
+    }
+  }
+);
 
-export const settingsAdditionalInformationSchema = settingsSchema.pick({
-  operatingHours: true,
-  staffInformation: true,
-  facilityDetails: true,
-  historicalInformation: true,
-  communityOutreachContact: true,
-  emergencyContact: true,
-});
+export const settingsGeneralInformationSchema =
+  settingsSchemaWithoutRefinement.pick({
+    compoundName: true,
+    location: true,
+    region: true,
+    district: true,
+    contactInformation: true,
+    availableServices: true,
+  });
 
-export const settingsNotificationsSchema = settingsSchema.pick({
-  notifications: true,
-});
+export const settingsAdditionalInformationSchema =
+  settingsSchemaWithoutRefinement.pick({
+    operatingHours: true,
+    staffInformation: true,
+    facilityDetails: true,
+    historicalInformation: true,
+    communityOutreachContact: true,
+    emergencyContact: true,
+  });
+
+export const settingsNotificationsSchema = settingsSchemaWithoutRefinement.pick(
+  {
+    notifications: true,
+  }
+);

@@ -60,8 +60,8 @@ const AddCompoundForm = () => {
           <div className="flex flex-col gap-5 px-2 md:px-5">
             <div className="flex flex-col gap-4 w-full md:flex-row items-center justify-between">
               <CustomInputForm
-                labelName="Compound Email"
-                inputName="compoundEmail"
+                labelName="Email Address"
+                inputName="email"
                 errors={errors}
                 inputType="text"
                 placeholderText="Enter compound email"
@@ -69,11 +69,21 @@ const AddCompoundForm = () => {
               />
 
               <CustomInputForm
-                labelName="CompoundPassword"
-                inputName="compoundPassword"
+                labelName="Password"
+                inputName="password"
                 errors={errors}
                 inputType="text"
                 placeholderText="Enter compound password"
+                register={register}
+                isInputPassword={true}
+              />
+
+              <CustomInputForm
+                labelName="Confirm Password"
+                inputName="confirmPassword"
+                errors={errors}
+                inputType="text"
+                placeholderText="Confirm compound password"
                 register={register}
                 isInputPassword={true}
               />

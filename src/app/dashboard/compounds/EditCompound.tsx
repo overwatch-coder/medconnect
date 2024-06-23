@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/dialog";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { settingsSchema } from "@/schema/setting.schema";
+import { settingsSchemaWithoutRefinement } from "@/schema/setting.schema";
 import { FileDrop } from "@instructure/ui-file-drop";
 import { Upload } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -24,7 +24,6 @@ import { useRouter } from "next/navigation";
 import NotificationModal from "@/components/NotificationModal";
 import CustomInputForm from "@/components/CustomInputForm";
 import { SettingsType } from "@/types/index";
-import { z } from "zod";
 
 type EditCompoundModalProps = {
   openModal: boolean;
@@ -57,7 +56,7 @@ const EditCompoundModal = ({
     formState: { errors, isSubmitting: pending },
     handleSubmit,
   } = useForm<Partial<SettingsType>>({
-    resolver: zodResolver(z.optional(settingsSchema)),
+    resolver: zodResolver(settingsSchemaWithoutRefinement.partial()),
     mode: "all",
   });
 

@@ -24,6 +24,7 @@ import {
 import Image from "next/image";
 import { toast } from "react-toastify";
 import DeleteModal from "@/components/DeleteModal";
+import EditPatient from "@/app/dashboard/patients/edit-patients/EditPatient";
 
 const tableHeaderNames = [
   "Patient Name",
@@ -143,13 +144,7 @@ const GeneratePatientsTable = ({
                 {patient.dateAdded}
               </TableCell>
               <TableCell className="flex items-center gap-3">
-                <TbEdit
-                  size={20}
-                  className="text-red-500 cursor-pointer"
-                  onClick={() => {
-                    console.log("Edit clicked");
-                  }}
-                />
+                <EditPatient patient={patient} />
 
                 <Trash2
                   size={20}

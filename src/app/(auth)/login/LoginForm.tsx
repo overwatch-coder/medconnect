@@ -7,7 +7,7 @@ import { useSearchParams, useRouter } from "next/navigation";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "react-toastify";
-import { loginSchema, LoginType } from "@/schema/user.schema";
+import { loginSchema } from "@/schema/user.schema";
 import { loginFormSubmit } from "@/actions/user.action";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -16,6 +16,7 @@ import { Eye, EyeOff, LockIcon } from "lucide-react";
 import Image from "next/image";
 import { useMutation } from "@tanstack/react-query";
 import CustomErrorElement from "@/components/CustomErrorElement";
+import { LoginType } from "@/types/index";
 
 const LoginForm = () => {
   const [showPassword, setShowPassword] = useState(false);

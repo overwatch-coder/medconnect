@@ -14,12 +14,10 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
 import ClipLoader from "react-spinners/ClipLoader";
 import { FormSectionHeader } from "@/app/dashboard/compounds/add-new/AddCompoundForm";
-import {
-  patientEmergencyContactSchema,
-  PatientEmergencyContactType,
-} from "@/schema/patient.schema";
+import { patientEmergencyContactSchema } from "@/schema/patient.schema";
 import CustomInputForm from "@/components/CustomInputForm";
 import { toast } from "react-toastify";
+import { PatientEmergencyContactType } from "@/types/index";
 
 type AddPatientEmergencyContactProps = {
   open: boolean;

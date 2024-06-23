@@ -18,13 +18,11 @@ import { Button } from "@/components/ui/button";
 import ClipLoader from "react-spinners/ClipLoader";
 import ImagePreview from "@/components/ImagePreview";
 import { FormSectionHeader } from "@/app/dashboard/compounds/add-new/AddCompoundForm";
-import {
-  patientGeneralInformationSchema,
-  PatientGeneralInformationType,
-} from "@/schema/patient.schema";
+import { patientGeneralInformationSchema } from "@/schema/patient.schema";
 import CustomInputForm from "@/components/CustomInputForm";
 import AddPatientAdditionalInfo from "@/app/dashboard/patients/add-patients/AddPatientAdditionalInfo";
 import { toast } from "react-toastify";
+import { PatientGeneralInformationType } from "@/types/index";
 
 type AddPatientGeneralInfoProps = {
   open: boolean;

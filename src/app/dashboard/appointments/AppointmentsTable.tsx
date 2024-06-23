@@ -13,14 +13,7 @@ import { BiDownArrow, BiUpArrow } from "react-icons/bi";
 import { MEDCONNECT_DASHBOARD_APPOINTEMENTS as appointmentsData } from "@/constants";
 import GenerateAppointmentsTable from "@/app/dashboard/appointments/GenerateAppointmentsTable";
 
-export type AppointmentsDataType = {
-  time: string;
-  date: string;
-  patientName: string;
-  age: number;
-  phoneNumber: string;
-  assignedHO: string;
-};
+export type AppointmentsDataType = (typeof appointmentsData)[number];
 
 const AppointmentsTable = () => {
   const [searchTerm, setSearchTerm] = useState("");

@@ -80,18 +80,3 @@ export const patientSchema = z.object({
   additionalInformation: patientAdditionalInformationSchema,
   emergencyContact: patientEmergencyContactSchema,
 });
-
-// types
-export type PatientGeneralInformationType = z.infer<
-  typeof patientGeneralInformationSchema
->;
-
-export type PatientAdditionalInformationType = z.infer<
-  typeof patientAdditionalInformationSchema
->;
-
-export type PatientEmergencyContactType = z.infer<
-  typeof patientEmergencyContactSchema
->;
-
-export type PatientType = z.infer<typeof patientSchema>;

@@ -7,18 +7,16 @@ import { useSearchParams, useRouter } from "next/navigation";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "react-toastify";
-import { resetPasswordSchema, ResetPasswordType } from "@/schema/user.schema";
+import { resetPasswordSchema } from "@/schema/user.schema";
 import { resetPasswordFormSubmit } from "@/actions/user.action";
 import { Button } from "@/components/ui/button";
 import { Eye, EyeOff, LockIcon } from "lucide-react";
 import { IoPerson } from "react-icons/io5";
 import CustomErrorElement from "@/components/CustomErrorElement";
 import { useMutation } from "@tanstack/react-query";
-import { useUserAtom } from "@/hooks";
+import { ResetPasswordType } from "@/types/index";
 
 const ResetPasswordForm = () => {
-  const [user, _] = useUserAtom();
-
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [submitFormErrors, setSubmitFormErrors] = useState<string[]>([]);
@@ -54,11 +52,12 @@ const ResetPasswordForm = () => {
     },
   });
 
-  const handleForgotPasswordSubmission: SubmitHandler<ResetPasswordType> =
-    async (data) => {
-      setSubmitFormErrors([]);
-      mutation.mutate(data);
-    };
+  const handleForgotPasswordSubmission: SubmitHandler<
+    ResetPasswordType
+  > = async (data) => {
+    setSubmitFormErrors([]);
+    mutation.mutate(data);
+  };
 
   const token = searchParams.has("token") ? searchParams.get("token") : null;
 

@@ -6,6 +6,14 @@ export const settingsSchema = z.object({
     .trim()
     .min(1, { message: "Compound Name cannot be empty" })
     .optional(),
+  compoundEmail: z
+    .string()
+    .min(1, { message: "Compound Email is required" })
+    .email({ message: "Please enter a valid email address" }),
+  compoundPassword: z
+    .string()
+    .min(1, "Password is required")
+    .min(8, { message: "Password must be at least 8 characters long" }),
   location: z
     .string()
     .trim()
@@ -58,17 +66,3 @@ export const settingsAdditionalInformationSchema = settingsSchema.pick({
 export const settingsNotificationsSchema = settingsSchema.pick({
   notifications: true,
 });
-
-export type SettingsType = z.infer<typeof settingsSchema>;
-
-export type SettingsGeneralInformationType = z.infer<
-  typeof settingsGeneralInformationSchema
->;
-
-export type SettingsAdditionalInformationType = z.infer<
-  typeof settingsAdditionalInformationSchema
->;
-
-export type SettingsNotificationsType = z.infer<
-  typeof settingsNotificationsSchema
->;

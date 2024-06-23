@@ -5,7 +5,7 @@ import { MessageCirclePlus, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import DiagnosticConversation from "@/app/dashboard/diagnostic-support/DiagnosticConversation";
 
-export type DiagnosticSupportDataType = (typeof diagnosticSupportData)[0];
+export type DiagnosticSupportDataType = (typeof diagnosticSupportData)[number];
 export type DiagnosticSupportChatType =
   (typeof diagnosticSupportData)[0]["chats"][number];
 

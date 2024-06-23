@@ -4,7 +4,6 @@ import {
   MEDCONNECT_OBJECTIVES,
   MEDCONNECT_SERVICES,
   MEDCONNECT_RECENT_ARTICLES,
-  MEDCONNECT_TESTIMONIALS,
 } from "@/constants";
 import { ArrowRight } from "lucide-react";
 import { FaCircle } from "react-icons/fa";

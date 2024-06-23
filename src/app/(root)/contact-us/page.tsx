@@ -3,7 +3,7 @@
 import { Button } from "@/components/ui/button";
 import { Mail, MapPin, PhoneCall } from "lucide-react";
 import React, { useState } from "react";
-import { contactFormSchema, ContactFormType } from "@/schema/contact.schema";
+import { contactFormSchema } from "@/schema/contact.schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import Link from "next/link";
@@ -11,6 +11,7 @@ import ClipLoader from "react-spinners/ClipLoader";
 import { useMutation } from "@tanstack/react-query";
 import CustomErrorElement from "@/components/CustomErrorElement";
 import { contactFormSubmit } from "@/actions/contact.action";
+import { ContactFormType } from "@/types/index";
 
 const Contact = () => {
   const [formSubmitted, setFormSubmitted] = useState(false);

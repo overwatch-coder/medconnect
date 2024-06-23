@@ -3,18 +3,19 @@
 import { getErrors } from "@/lib/parse-error";
 import { axiosInstance } from "@/lib/utils";
 import {
-  ForgotPasswordType,
-  LoginType,
-  ResetPasswordType,
   forgotPasswordSchema,
   loginSchema,
   resetPasswordSchema,
   userSchema,
-  CreateUserType,
 } from "@/schema/user.schema";
-import { ResponseData } from "@/types/index";
+import {
+  CreateUserType,
+  ForgotPasswordType,
+  LoginType,
+  ResetPasswordType,
+  ResponseData,
+} from "@/types/index";
 import { cookies } from "next/headers";
-import { redirect } from "next/navigation";
 
 // save user data to cookies
 export const saveUserToCookies = async (token: string, userId: string) => {

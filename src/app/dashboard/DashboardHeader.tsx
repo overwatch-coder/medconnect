@@ -9,7 +9,6 @@ import Image from "next/image";
 import { useUserAtom } from "@/hooks";
 import { usePathname } from "next/navigation";
 import NotificationsModal from "@/app/dashboard/notifications/NotificationsModal";
-import HelpModal from "@/app/dashboard/help/HelpModal";
 
 const DashboardHeader = () => {
   const [user] = useUserAtom();

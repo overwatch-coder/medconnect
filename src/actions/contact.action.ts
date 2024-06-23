@@ -2,8 +2,8 @@
 
 import { getErrors } from "@/lib/parse-error";
 import { axiosInstance } from "@/lib/utils";
-import { contactFormSchema, ContactFormType } from "@/schema/contact.schema";
-import { ResponseData } from "@/types/index";
+import { contactFormSchema } from "@/schema/contact.schema";
+import { ResponseData, ContactFormType } from "@/types/index";
 
 // contact us
 export const contactFormSubmit = async (data: ContactFormType) => {

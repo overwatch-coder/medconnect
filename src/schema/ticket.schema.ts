@@ -11,7 +11,5 @@ export const ticketSchema = z.object({
     .trim()
     .min(1, { message: "Please enter a description" })
     .max(1000, { message: "Message is too long" }),
-  attachment: z.instanceof(FileList).optional(),
+  attachment: z.any().optional(),
 });
-
-export type TicketType = z.infer<typeof ticketSchema>;

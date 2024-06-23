@@ -7,16 +7,16 @@ import { useSearchParams, useRouter } from "next/navigation";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "react-toastify";
-import { userSchema, CreateUserType } from "@/schema/user.schema";
+import { userSchema } from "@/schema/user.schema";
 import { createUserFormSubmit } from "@/actions/user.action";
 import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
 import { IoPerson } from "react-icons/io5";
 import { Eye, EyeOff, LockIcon, Mail } from "lucide-react";
 import Image from "next/image";
 import { useMutation } from "@tanstack/react-query";
 import { useUserAtom } from "@/hooks";
 import CustomErrorElement from "@/components/CustomErrorElement";
+import { CreateUserType } from "@/types/index";
 
 const RegisterForm = () => {
   const [user, setUser] = useUserAtom();

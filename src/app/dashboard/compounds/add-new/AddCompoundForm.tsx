@@ -3,7 +3,7 @@
 import CustomInputForm from "@/components/CustomInputForm";
 import ImagePreview from "@/components/ImagePreview";
 import { Button } from "@/components/ui/button";
-import { SettingsType, settingsSchema } from "@/schema/setting.schema";
+import { settingsSchema } from "@/schema/setting.schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { FileDrop } from "@instructure/ui-file-drop";
 import { Upload } from "lucide-react";
@@ -12,6 +12,7 @@ import React from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import ClipLoader from "react-spinners/ClipLoader";
 import { toast } from "react-toastify";
+import { SettingsType } from "@/types/index";
 
 const AddCompoundForm = () => {
   const router = useRouter();
@@ -57,6 +58,27 @@ const AddCompoundForm = () => {
           <FormSectionHeader title="General Information" />
 
           <div className="flex flex-col gap-5 px-2 md:px-5">
+            <div className="flex flex-col gap-4 w-full md:flex-row items-center justify-between">
+              <CustomInputForm
+                labelName="Compound Email"
+                inputName="compoundEmail"
+                errors={errors}
+                inputType="text"
+                placeholderText="Enter compound email"
+                register={register}
+              />
+
+              <CustomInputForm
+                labelName="CompoundPassword"
+                inputName="compoundPassword"
+                errors={errors}
+                inputType="text"
+                placeholderText="Enter compound password"
+                register={register}
+                isInputPassword={true}
+              />
+            </div>
+
             <div className="flex flex-col gap-4 w-full md:flex-row items-center justify-between">
               <CustomInputForm
                 labelName="Compound Name"

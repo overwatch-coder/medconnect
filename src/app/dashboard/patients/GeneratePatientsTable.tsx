@@ -119,13 +119,12 @@ const GeneratePatientsTable = ({
           {currentData.map((patient) => (
             <TableRow key={patient.patientName}>
               <TableCell className="text-secondary-gray flex items-center gap-2">
-                <Image
-                  src={patient.image}
-                  alt="Avatar"
-                  width={40}
-                  height={40}
-                  className="object-cover rounded-full hidden sm:block"
-                />
+                <div className="flex items-center justify-center gap-2 h-10 w-10 rounded-full p-2 bg-primary-gray/10">
+                  <p className="text-primary-green font-bold text-center">
+                    {patient.patientName.split(" ")[0].charAt(0)}{" "}
+                    {patient.patientName.split(" ")[1].charAt(0)}
+                  </p>
+                </div>
                 {patient.patientName}
               </TableCell>
               <TableCell className="text-secondary-gray">

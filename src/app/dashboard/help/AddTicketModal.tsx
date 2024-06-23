@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React from "react";
 import { X } from "lucide-react";
 import {
   Dialog,
@@ -12,12 +12,13 @@ import {
 } from "@/components/ui/dialog";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { ticketSchema, TicketType } from "@/schema/ticket.schema";
+import { ticketSchema } from "@/schema/ticket.schema";
 import { FileDrop } from "@instructure/ui-file-drop";
 import { Upload } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import ClipLoader from "react-spinners/ClipLoader";
 import ImagePreview from "@/components/ImagePreview";
+import { TicketType } from "@/types/index";
 
 type AddTicketModalProps = {
   openModal: boolean;
@@ -28,12 +29,11 @@ const AddTicketModal = ({
   openModal,
   setShowAddTicketModal,
 }: AddTicketModalProps) => {
-  const [attachements, setAttachements] =
-    useState<ArrayLike<File | DataTransferItem>>();
-
   const {
     register,
     reset,
+    watch,
+    setValue,
     formState: { errors, isSubmitting: pending },
     handleSubmit,
   } = useForm<TicketType>({
@@ -41,23 +41,29 @@ const AddTicketModal = ({
     mode: "all",
   });
 
+  const attachements = watch("attachment");
+
   const submitListingHandler: SubmitHandler<TicketType> = async (data) => {
-    console.log({ data, attachements });
+    console.log({ data });
   };
 
   return (
     <Dialog open={openModal}>
-      <DialogContent id="hide" className="flex flex-col gap-4 overflow-y-scroll scrollbar-hide h-screen">
+      <DialogContent
+        id="hide"
+        className="flex flex-col gap-4 overflow-y-scroll scrollbar-hide h-screen"
+      >
         <DialogHeader>
           <DialogTitle className="flex items-center justify-between">
             <span className="text-xl md:text-2xl text-secondary-gray font-bold">
               Create Ticket
             </span>
-            <DialogClose onClick={() => {
-              setShowAddTicketModal(false)
-              reset();
-              setAttachements(undefined);
-            }}>
+            <DialogClose
+              onClick={() => {
+                setShowAddTicketModal(false);
+                reset();
+              }}
+            >
               <X
                 className="border border-red-500 text-red-500 rounded-full"
                 size={25}
@@ -120,7 +126,7 @@ const AddTicketModal = ({
                   id="attachements"
                   name="attachements"
                   onDropAccepted={(file) => {
-                    setAttachements(file);
+                    setValue("attachment", file);
                   }}
                   shouldEnablePreview={true}
                   shouldAllowMultiple={true}
@@ -155,7 +161,6 @@ const AddTicketModal = ({
                 pending={pending}
                 reset={reset}
                 setShowAddTicketModal={setShowAddTicketModal}
-                setAttachements={setAttachements}
               />
             </form>
           </DialogDescription>
@@ -171,14 +176,10 @@ const AddTicketButton = ({
   pending,
   reset,
   setShowAddTicketModal,
-  setAttachements,
 }: {
   pending: boolean;
   reset: () => void;
   setShowAddTicketModal: React.Dispatch<React.SetStateAction<boolean>>;
-  setAttachements: React.Dispatch<
-    React.SetStateAction<ArrayLike<File | DataTransferItem> | undefined>
-  >;
 }) => {
   return (
     <div className="flex gap-5 flex-row items-center justify-end">
@@ -187,7 +188,6 @@ const AddTicketButton = ({
         onClick={() => {
           setShowAddTicketModal(false);
           reset();
-          setAttachements(undefined);
         }}
         type="reset"
         variant={"destructive"}

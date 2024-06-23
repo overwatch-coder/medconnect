@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/dialog";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { settingsSchema, SettingsType } from "@/schema/setting.schema";
+import { settingsSchema } from "@/schema/setting.schema";
 import { FileDrop } from "@instructure/ui-file-drop";
 import { Upload } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -23,6 +23,7 @@ import { FormSectionHeader } from "@/app/dashboard/compounds/add-new/AddCompound
 import { useRouter } from "next/navigation";
 import NotificationModal from "@/components/NotificationModal";
 import CustomInputForm from "@/components/CustomInputForm";
+import { SettingsType } from "@/types/index";
 
 type EditCompoundModalProps = {
   openModal: boolean;
@@ -159,6 +160,27 @@ const EditCompoundModal = ({
                   <FormSectionHeader title="General Information" />
 
                   <div className="flex flex-col gap-5 px-2 md:px-5">
+                    <div className="flex flex-col gap-4 w-full md:flex-row items-center justify-between">
+                      <CustomInputForm
+                        labelName="Compound Email"
+                        inputName="compoundEmail"
+                        errors={errors}
+                        inputType="text"
+                        placeholderText="Enter compound email"
+                        register={register}
+                      />
+
+                      <CustomInputForm
+                        labelName="CompoundPassword"
+                        inputName="compoundPassword"
+                        errors={errors}
+                        inputType="text"
+                        placeholderText="Enter compound password"
+                        register={register}
+                        isInputPassword={true}
+                      />
+                    </div>
+
                     <div className="flex flex-col gap-4 w-full md:flex-row items-center justify-between">
                       <CustomInputForm
                         labelName="Compound Name"

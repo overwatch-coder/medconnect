@@ -1,4 +1,4 @@
-import { User } from "@/schema/user.schema";
+import { User } from "@/types/index";
 import { useAtom } from "jotai";
 import { atomWithStorage } from "jotai/utils";
 

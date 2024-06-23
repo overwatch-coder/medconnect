@@ -71,9 +71,3 @@ export const resetPasswordSchema = z
       });
     }
   });
-
-export type User = z.infer<typeof userSchema>;
-export type LoginType = z.infer<typeof loginSchema>;
-export type ForgotPasswordType = z.infer<typeof forgotPasswordSchema>;
-export type ResetPasswordType = z.infer<typeof resetPasswordSchema>;
-export type CreateUserType = Omit<User, "_id">;

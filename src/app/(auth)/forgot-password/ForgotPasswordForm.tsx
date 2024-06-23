@@ -2,30 +2,21 @@
 
 import React, { useState } from "react";
 import ClipLoader from "react-spinners/ClipLoader";
-import Swal from "sweetalert2";
 import Link from "next/link";
-import { useSearchParams, useRouter } from "next/navigation";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { toast } from "react-toastify";
-import { forgotPasswordSchema, ForgotPasswordType } from "@/schema/user.schema";
+import { forgotPasswordSchema } from "@/schema/user.schema";
 import { forgotPasswordFormSubmit } from "@/actions/user.action";
 import { Button } from "@/components/ui/button";
 import { IoPerson } from "react-icons/io5";
 import { useMutation } from "@tanstack/react-query";
 import CustomErrorElement from "@/components/CustomErrorElement";
-import { useUserAtom } from "@/hooks";
+import { ForgotPasswordType } from "@/types/index";
 
 const ForgotPasswordForm = () => {
-  const [user, _] = useUserAtom();
-
   // state
   const [successMessage, setSuccessMessage] = useState("");
   const [submitFormErrors, setSubmitFormErrors] = useState<string[]>([]);
-
-  // routes & params
-  const router = useRouter();
-  const searchParams = useSearchParams();
 
   const {
     register,
@@ -51,11 +42,12 @@ const ForgotPasswordForm = () => {
     },
   });
 
-  const handleForgotPasswordSubmission: SubmitHandler<ForgotPasswordType> =
-    async (data) => {
-      setSubmitFormErrors([]);
-      mutation.mutate(data);
-    };
+  const handleForgotPasswordSubmission: SubmitHandler<
+    ForgotPasswordType
+  > = async (data) => {
+    setSubmitFormErrors([]);
+    mutation.mutate(data);
+  };
 
   return (
     <div

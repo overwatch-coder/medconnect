@@ -81,7 +81,10 @@ const PatientsTable = () => {
       </div>
 
       <div className="flex flex-col gap-7 px-3 py-5 bg-white h-full w-full">
-        <GeneratePatientsTable filteredPatientsData={filterPatients} />
+        <GeneratePatientsTable
+          filteredPatientsData={filterPatients}
+          setFilteredPatientsData={setFilterPatients}
+        />
 
         {filterPatients.length === 0 && (
           <div className="flex flex-col items-center justify-center h-full">

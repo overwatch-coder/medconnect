@@ -17,7 +17,6 @@ import { RiLogoutCircleLine } from "react-icons/ri";
 import { useUserAtom } from "@/hooks";
 import { toast } from "react-toastify";
 import { X } from "lucide-react";
-import { useRouter } from "next/navigation";
 import { logout, removeUserFromCookies } from "@/actions/user.action";
 
 const LogoutModal = () => {

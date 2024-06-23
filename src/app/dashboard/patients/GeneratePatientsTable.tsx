@@ -22,6 +22,8 @@ import {
   PaginationPrevious,
 } from "@/components/ui/pagination";
 import Image from "next/image";
+import { toast } from "react-toastify";
+import DeleteModal from "@/components/DeleteModal";
 
 const tableHeaderNames = [
   "Patient Name",
@@ -34,9 +36,15 @@ const tableHeaderNames = [
 
 const GeneratePatientsTable = ({
   filteredPatientsData,
+  setFilteredPatientsData,
 }: {
   filteredPatientsData: PatientsDataType[];
+  setFilteredPatientsData: React.Dispatch<
+    React.SetStateAction<PatientsDataType[]>
+  >;
 }) => {
+  const [openDeleteModal, setOpenDeleteModal] = useState(false);
+  const [patientToDelete, setPatientToDelete] = useState<PatientsDataType>();
   const [currentTablePage, setCurrentTablePage] = useState(1);
   const dataPerPage = 7;
 
@@ -56,6 +64,21 @@ const GeneratePatientsTable = ({
   // Handle page change
   const handlePageChange = (pageNumber: number) => {
     setCurrentTablePage(pageNumber);
+  };
+
+  // Handle delete
+  const handleDelete = async (patient: PatientsDataType) => {
+    const data = filteredPatientsData.filter(
+      (p) => p.patientName !== patient.patientName
+    );
+
+    toast.success("Patient deleted successfully");
+
+    setFilteredPatientsData(data);
+
+    setPatientToDelete(undefined);
+
+    setOpenDeleteModal(false);
   };
 
   return (
@@ -133,7 +156,8 @@ const GeneratePatientsTable = ({
                   size={20}
                   className="text-primary-green cursor-pointer"
                   onClick={() => {
-                    console.log("Delete clicked");
+                    setPatientToDelete(patient);
+                    setOpenDeleteModal(true);
                   }}
                 />
               </TableCell>
@@ -141,6 +165,14 @@ const GeneratePatientsTable = ({
           ))}
         </TableBody>
       </Table>
+
+      <DeleteModal
+        openModal={openDeleteModal}
+        setOpenModal={setOpenDeleteModal}
+        title="Delete Patient"
+        description="Are you sure you want to delete this patient from the system?"
+        deleteFn={() => handleDelete(patientToDelete!)}
+      />
 
       {/* Pagination */}
       {filteredPatientsData.length > 0 && (

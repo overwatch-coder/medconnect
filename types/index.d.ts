@@ -1,4 +1,5 @@
 import { contactFormSchema } from "@/schema/contact.schema";
+import { diagnosisReportSchema } from "@/schema/diagnosis-report.schema";
 import { medicalHistorySchema } from "@/schema/medical-history.schema";
 import {
   patientAdditionalInformationSchema,
@@ -87,3 +88,6 @@ export type PrescriptionType = z.infer<typeof prescriptionSchema>;
 
 // Treatment Plan Schema
 export type TreatmentPlanType = z.infer<typeof treatmentPlanSchema>;
+
+// Diagnosis Report Schema
+export type DiagnosisReportType = z.infer<typeof diagnosisReportSchema>;

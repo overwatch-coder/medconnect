@@ -17,16 +17,19 @@ import ClipLoader from "react-spinners/ClipLoader";
 import { FormSectionHeader } from "@/app/dashboard/compounds/add-new/AddCompoundForm";
 import CustomInputForm from "@/components/CustomInputForm";
 import { toast } from "react-toastify";
-import { TreatmentPlanType } from "@/types/index";
+import { DiagnosisReportType } from "@/types/index";
 import CustomFileUpload from "@/components/CustomFileUpload";
-import { treatmentPlanSchema } from "@/schema/treatment-plan.schema";
+import { diagnosisReportSchema } from "@/schema/diagnosis-report.schema";
 
-type UploadTreatmentPlanProps = {
+type EditDiagnosisReportProps = {
   open: boolean;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
-const UploadTreatmentPlan = ({ open, setOpen }: UploadTreatmentPlanProps) => {
+const EditDiagnosisReportForm = ({
+  open,
+  setOpen,
+}: EditDiagnosisReportProps) => {
   const {
     register,
     reset,
@@ -34,15 +37,17 @@ const UploadTreatmentPlan = ({ open, setOpen }: UploadTreatmentPlanProps) => {
     setValue,
     formState: { errors, isSubmitting: pending },
     handleSubmit,
-  } = useForm<TreatmentPlanType>({
-    resolver: zodResolver(treatmentPlanSchema),
+  } = useForm<Partial<DiagnosisReportType>>({
+    resolver: zodResolver(diagnosisReportSchema.partial()),
     mode: "all",
   });
 
-  const handleFormSubmit: SubmitHandler<TreatmentPlanType> = async (data) => {
+  const handleFormSubmit: SubmitHandler<Partial<DiagnosisReportType>> = async (
+    data
+  ) => {
     console.log({ data });
     setOpen(false);
-    toast.success("Treatment Plan added successfully");
+    toast.success("Diagnosis Report modified successfully");
     reset();
   };
 
@@ -56,7 +61,7 @@ const UploadTreatmentPlan = ({ open, setOpen }: UploadTreatmentPlanProps) => {
           <DialogHeader className="overflow-y-scroll scrollbar-hide">
             <DialogTitle className="flex items-center justify-between">
               <span className="text-xl md:text-2xl text-secondary-gray font-bold">
-                Upload Patient Treatment Plan
+                Modify Diagnosis Report
               </span>
               <DialogClose
                 onClick={() => {
@@ -85,70 +90,69 @@ const UploadTreatmentPlan = ({ open, setOpen }: UploadTreatmentPlanProps) => {
                     <div className="flex flex-col gap-5">
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-5 w-full px-2 md:px-5">
                         <CustomInputForm
-                          labelName="Treatment Plan Number"
-                          inputName="treatmentPlanNumber"
+                          labelName="Report ID"
+                          inputName="reportID"
                           register={register}
                           errors={errors}
                           inputType="text"
-                          placeholderText="eg. TP1345"
+                          placeholderText="eg. DR13456"
+                          value={`DR${Math.floor(Math.random() * 1000)}`}
                         />
 
                         <CustomInputForm
-                          labelName="Plan Name"
-                          inputName="planName"
+                          labelName="Doctor Name"
+                          inputName="doctorName"
                           register={register}
                           errors={errors}
                           inputType="text"
                           placeholderText="eg. TP1"
+                          value={
+                            ["Dr. John Doe", "Dr. Jane Doe", "Dr. Bob Doe"][
+                              Math.floor(Math.random() * 2)
+                            ]
+                          }
                         />
                       </div>
 
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-5 w-full px-2 md:px-5">
                         <CustomInputForm
-                          labelName="Start Date"
-                          inputName="startDate"
+                          labelName="Date of Diagnosis"
+                          inputName="diagnosisDate"
                           register={register}
                           errors={errors}
                           inputType="date"
+                          value={new Date().toISOString().split("T")[0]}
                         />
 
                         <CustomInputForm
-                          labelName="End Date"
-                          inputName="endDate"
+                          labelName="Follow Up Date"
+                          inputName="followUpDate"
                           register={register}
                           errors={errors}
                           inputType="date"
+                          value={new Date().toISOString().split("T")[0]}
                         />
                       </div>
 
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-5 w-full px-2 md:px-5">
                         <CustomInputForm
-                          labelName="Objectives"
-                          inputName="objectives"
+                          labelName="Symptoms"
+                          inputName="symptoms"
                           register={register}
                           errors={errors}
                           inputType="text"
-                          placeholderText="eg. Regain full mobility in the knee"
+                          placeholderText="eg. Fever, Cough, Headache"
+                          value={"Fever, Cough, Headache"}
                         />
 
                         <CustomInputForm
-                          labelName="Medication Name"
-                          inputName="medicationName"
+                          labelName="Recommended Test"
+                          inputName="recommendedTests"
                           register={register}
                           errors={errors}
                           inputType="text"
-                          placeholderText="eg. Ibuprofen"
-                        />
-                      </div>
-
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-5 w-full px-2 md:px-5">
-                        <CustomInputForm
-                          labelName="Follow Up Schedule"
-                          inputName="followUpSchedule"
-                          register={register}
-                          errors={errors}
-                          inputType="text"
-                          placeholderText="eg. 2024-07-19 at 10:00 AM"
+                          placeholderText="eg. Blood Test"
+                          value={"None"}
                         />
                       </div>
 
@@ -160,6 +164,9 @@ const UploadTreatmentPlan = ({ open, setOpen }: UploadTreatmentPlanProps) => {
                           errors={errors}
                           inputType="text"
                           placeholderText="Enter notes here"
+                          value={
+                            "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas pharetra erat vel tellus tristique rutrum. Integer vulputate efficitur nibh. Morbi iaculis orci id eros fermentum vulputate. Curabitur cursus vel ante sed consectetur. Proin ut varius orci. Phasellus interdum ligula tempus, blandit risus sit amet, dapibus sem."
+                          }
                         />
                       </div>
                     </div>
@@ -169,13 +176,13 @@ const UploadTreatmentPlan = ({ open, setOpen }: UploadTreatmentPlanProps) => {
                   <CustomFileUpload
                     setValue={setValue}
                     watch={watch}
-                    itemName="treatmentPlanAttachment"
-                    title="Upload Patient Treatment Form"
+                    itemName="diagnoisReportAttachments"
+                    title="Upload Patient Diagnosis Report"
                     allowMultiple={true}
                   />
 
                   {/* Submit form button */}
-                  <UploadTreatmentPlanButton pending={pending} reset={reset} />
+                  <EditDiagnosisReportButton pending={pending} reset={reset} />
                 </div>
               </form>
             </DialogDescription>
@@ -186,10 +193,10 @@ const UploadTreatmentPlan = ({ open, setOpen }: UploadTreatmentPlanProps) => {
   );
 };
 
-export default UploadTreatmentPlan;
+export default EditDiagnosisReportForm;
 
 // Submit form button
-const UploadTreatmentPlanButton = ({
+const EditDiagnosisReportButton = ({
   pending,
   reset,
 }: {
@@ -218,7 +225,7 @@ const UploadTreatmentPlanButton = ({
         {pending ? (
           <ClipLoader size={28} loading={pending} color="white" />
         ) : (
-          "Upload"
+          "Modify"
         )}
       </Button>
     </div>

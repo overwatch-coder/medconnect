@@ -47,7 +47,7 @@ const EditTreatmentPlanForm = ({
   ) => {
     console.log({ data });
     setOpen(false);
-    toast.success("Medical History added successfully");
+    toast.success("Treatment Plan modified successfully");
     reset();
   };
 

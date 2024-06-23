@@ -163,17 +163,6 @@ const EditCompoundModal = ({
                   <FormSectionHeader title="General Information" />
 
                   <div className="flex flex-col gap-5 px-2 md:px-5">
-                    <div className="flex flex-col gap-4 w-full md:flex-row items-center justify-between md:w-1/3">
-                      <CustomInputForm
-                        labelName="Email Address"
-                        inputName="email"
-                        errors={errors}
-                        inputType="text"
-                        placeholderText="Enter compound email"
-                        register={register}
-                      />
-                    </div>
-
                     <div className="flex flex-col gap-4 w-full md:flex-row items-center justify-between">
                       <CustomInputForm
                         labelName="Compound Name"
@@ -231,6 +220,17 @@ const EditCompoundModal = ({
                         errors={errors}
                         inputType="text"
                         placeholderText="Enter available services"
+                        register={register}
+                      />
+                    </div>
+
+                    <div className="flex flex-col gap-4 w-full md:flex-row items-center justify-between md:w-1/3">
+                      <CustomInputForm
+                        labelName="Email Address"
+                        inputName="email"
+                        errors={errors}
+                        inputType="text"
+                        placeholderText="Enter compound email"
                         register={register}
                       />
                     </div>

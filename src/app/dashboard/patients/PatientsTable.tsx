@@ -13,15 +13,7 @@ import { BiDownArrow, BiUpArrow } from "react-icons/bi";
 import { MEDCONNECT_DASHBOARD_PATIENTS as patientsData } from "@/constants";
 import GeneratePatientsTable from "@/app/dashboard/patients/GeneratePatientsTable";
 
-export type PatientsDataType = {
-  patientName: string;
-  age: number;
-  gender: string;
-  bloodGroup: string;
-  phoneNumber: string;
-  dateAdded: string;
-  image: string;
-};
+export type PatientsDataType = (typeof patientsData)[number];
 
 const PatientsTable = () => {
   const [searchTerm, setSearchTerm] = useState("");

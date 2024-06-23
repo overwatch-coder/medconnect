@@ -130,6 +130,7 @@ const EditPatientGeneralInfo = ({
                           errors={errors}
                           inputType="text"
                           placeholderText="Enter patient ID"
+                          value={patient.patientID}
                         />
 
                         <CustomInputForm

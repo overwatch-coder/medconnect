@@ -3,7 +3,7 @@ import {
   MdOutlinePersonalInjury,
   MdOutlineDashboard,
   MdOutlineShowChart,
-  MdOutlineInventory2
+  MdOutlineInventory2,
 } from "react-icons/md";
 import { FaSearchPlus, FaClinicMedical } from "react-icons/fa";
 import { BsPrescription } from "react-icons/bs";
@@ -1098,6 +1098,7 @@ export const MEDCONNECT_SUPER_ADMIN_DASHBOARD_COMPOUNDS_WITH_ACTIONS = [
 
 export const MEDCONNECT_DASHBOARD_PATIENTS = [
   {
+    patientID: "MDCKWP001",
     patientName: "Kwame Mensah",
     age: 45,
     gender: "Male",
@@ -1107,6 +1108,7 @@ export const MEDCONNECT_DASHBOARD_PATIENTS = [
     image: "https://randomuser.me/api/portraits/men/1.jpg",
   },
   {
+    patientID: "MDCAPP002",
     patientName: "Akua Nyamekye",
     age: 30,
     gender: "Female",
@@ -1116,6 +1118,7 @@ export const MEDCONNECT_DASHBOARD_PATIENTS = [
     image: "https://randomuser.me/api/portraits/women/1.jpg",
   },
   {
+    patientID: "MDCYBP003",
     patientName: "Yaw Boateng",
     age: 60,
     gender: "Male",
@@ -1125,6 +1128,7 @@ export const MEDCONNECT_DASHBOARD_PATIENTS = [
     image: "https://randomuser.me/api/portraits/men/2.jpg",
   },
   {
+    patientID: "MDCASE004",
     patientName: "Ama Serwaa",
     age: 27,
     gender: "Female",
@@ -1134,6 +1138,7 @@ export const MEDCONNECT_DASHBOARD_PATIENTS = [
     image: "https://randomuser.me/api/portraits/women/2.jpg",
   },
   {
+    patientID: "MDCKOP005",
     patientName: "Kofi Owusu",
     age: 50,
     gender: "Male",
@@ -1143,6 +1148,7 @@ export const MEDCONNECT_DASHBOARD_PATIENTS = [
     image: "https://randomuser.me/api/portraits/men/3.jpg",
   },
   {
+    patientID: "MDCABP006",
     patientName: "Abena Osei",
     age: 34,
     gender: "Female",
@@ -1152,6 +1158,7 @@ export const MEDCONNECT_DASHBOARD_PATIENTS = [
     image: "https://randomuser.me/api/portraits/women/3.jpg",
   },
   {
+    patientID: "MDCKAP007",
     patientName: "Kojo Agyeman",
     age: 41,
     gender: "Male",
@@ -1161,6 +1168,7 @@ export const MEDCONNECT_DASHBOARD_PATIENTS = [
     image: "https://randomuser.me/api/portraits/men/4.jpg",
   },
   {
+    patientID: "MDCEAP008",
     patientName: "Efua Adjei",
     age: 29,
     gender: "Female",
@@ -1170,6 +1178,7 @@ export const MEDCONNECT_DASHBOARD_PATIENTS = [
     image: "https://randomuser.me/api/portraits/women/4.jpg",
   },
   {
+    patientID: "MDCYKP009",
     patientName: "Yaw Kyei",
     age: 53,
     gender: "Male",
@@ -1179,6 +1188,7 @@ export const MEDCONNECT_DASHBOARD_PATIENTS = [
     image: "https://randomuser.me/api/portraits/men/5.jpg",
   },
   {
+    patientID: "MDCEGP010",
     patientName: "Esi Gyamfi",
     age: 40,
     gender: "Female",
@@ -1188,6 +1198,7 @@ export const MEDCONNECT_DASHBOARD_PATIENTS = [
     image: "https://randomuser.me/api/portraits/women/5.jpg",
   },
   {
+    patientID: "MDCKNP011",
     patientName: "Kwesi Nkrumah",
     age: 37,
     gender: "Male",
@@ -1197,6 +1208,7 @@ export const MEDCONNECT_DASHBOARD_PATIENTS = [
     image: "https://randomuser.me/api/portraits/men/6.jpg",
   },
   {
+    patientID: "MDCKAP012",
     patientName: "Akosua Yeboah",
     age: 33,
     gender: "Female",
@@ -1206,6 +1218,7 @@ export const MEDCONNECT_DASHBOARD_PATIENTS = [
     image: "https://randomuser.me/api/portraits/women/6.jpg",
   },
   {
+    patientID: "MDCYAP013",
     patientName: "Yaw Amankwa",
     age: 52,
     gender: "Male",
@@ -1215,6 +1228,7 @@ export const MEDCONNECT_DASHBOARD_PATIENTS = [
     image: "https://randomuser.me/api/portraits/men/7.jpg",
   },
   {
+    patientID: "MDCAOP014",
     patientName: "Ama Obeng",
     age: 26,
     gender: "Female",
@@ -1224,6 +1238,7 @@ export const MEDCONNECT_DASHBOARD_PATIENTS = [
     image: "https://randomuser.me/api/portraits/women/7.jpg",
   },
   {
+    patientID: "MDCKDP015",
     patientName: "Kofi Darko",
     age: 48,
     gender: "Male",
@@ -1233,6 +1248,7 @@ export const MEDCONNECT_DASHBOARD_PATIENTS = [
     image: "https://randomuser.me/api/portraits/men/8.jpg",
   },
   {
+    patientID: "MDCABP016",
     patientName: "Abena Kumi",
     age: 39,
     gender: "Female",
@@ -1242,6 +1258,7 @@ export const MEDCONNECT_DASHBOARD_PATIENTS = [
     image: "https://randomuser.me/api/portraits/women/8.jpg",
   },
   {
+    patientID: "MDCKAP017",
     patientName: "Kwame Anane",
     age: 55,
     gender: "Male",
@@ -1251,6 +1268,7 @@ export const MEDCONNECT_DASHBOARD_PATIENTS = [
     image: "https://randomuser.me/api/portraits/men/9.jpg",
   },
   {
+    patientID: "MDCAPP018",
     patientName: "Akua Agyapong",
     age: 42,
     gender: "Female",
@@ -1260,6 +1278,7 @@ export const MEDCONNECT_DASHBOARD_PATIENTS = [
     image: "https://randomuser.me/api/portraits/women/9.jpg",
   },
   {
+    patientID: "MDCYOP019",
     patientName: "Yaw Opoku",
     age: 31,
     gender: "Male",
@@ -1269,6 +1288,7 @@ export const MEDCONNECT_DASHBOARD_PATIENTS = [
     image: "https://randomuser.me/api/portraits/men/10.jpg",
   },
   {
+    patientID: "MDCEOP020",
     patientName: "Efua Owusu",
     age: 36,
     gender: "Female",

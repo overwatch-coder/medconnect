@@ -1,7 +1,6 @@
 "use client";
 import { Trash2 } from "lucide-react";
 import React, { useState } from "react";
-import { TbEdit } from "react-icons/tb";
 import { IoMdArrowDropup, IoMdArrowDropdown } from "react-icons/io";
 
 import {
@@ -21,10 +20,10 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
-import Image from "next/image";
 import { toast } from "react-toastify";
 import DeleteModal from "@/components/DeleteModal";
 import EditPatient from "@/app/dashboard/patients/edit-patients/EditPatient";
+import Link from "next/link";
 
 const tableHeaderNames = [
   "Patient Name",
@@ -70,7 +69,7 @@ const GeneratePatientsTable = ({
   // Handle delete
   const handleDelete = async (patient: PatientsDataType) => {
     const data = filteredPatientsData.filter(
-      (p) => p.patientName !== patient.patientName
+      (p) => p.patientID !== patient.patientID
     );
 
     toast.success("Patient deleted successfully");
@@ -126,7 +125,12 @@ const GeneratePatientsTable = ({
                     {patient.patientName.split(" ")[1].charAt(0)}
                   </p>
                 </div>
-                {patient.patientName}
+                <Link
+                  href={`/dashboard/patients/${patient.patientID}`}
+                  className="hover:underline"
+                >
+                  {patient.patientName}
+                </Link>
               </TableCell>
               <TableCell className="text-secondary-gray">
                 {patient.age}

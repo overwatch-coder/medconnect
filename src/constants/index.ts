@@ -1820,3 +1820,71 @@ export const MEDCONNECT_DASHBOARD_DIAGNOSTIC_SUPPORT = [
     ],
   },
 ];
+
+export const MEDCONNECT_DASHBOARD_PATIENT_PRESCRIPTIONS = [
+  {
+    prescriptionFor: "Malaria",
+    date: "25th June 2024",
+    prescriptionID: "RX12345",
+    healthOfficialName: "Dr. John Doe",
+    medications: {
+      medicationName: "Paracetamol",
+      dosage: "500mg",
+      frequency: 3, // per day
+      duration: "1 week",
+    },
+    notes: "Patient should stay hydrated and take plenty of rest.",
+  },
+  {
+    prescriptionFor: "Flu",
+    date: "20th June 2024",
+    prescriptionID: "RX12346",
+    healthOfficialName: "Dr. Jane Smith",
+    medications: {
+      medicationName: "Ibuprofen",
+      dosage: "400mg",
+      frequency: 2, // per day
+      duration: "5 days",
+    },
+    notes: "Avoid cold drinks and take with food.",
+  },
+  {
+    prescriptionFor: "Hypertension",
+    date: "18th June 2024",
+    prescriptionID: "RX12347",
+    healthOfficialName: "Dr. Michael Brown",
+    medications: {
+      medicationName: "Lisinopril",
+      dosage: "10mg",
+      frequency: 1, // per day
+      duration: "2 weeks",
+    },
+    notes: "Monitor blood pressure daily and report any unusual symptoms.",
+  },
+  {
+    prescriptionFor: "Diabetes",
+    date: "22nd June 2024",
+    prescriptionID: "RX12348",
+    healthOfficialName: "Dr. Sarah Johnson",
+    medications: {
+      medicationName: "Metformin",
+      dosage: "500mg",
+      frequency: 2, // per day
+      duration: "1 month",
+    },
+    notes: "Maintain a balanced diet and check blood sugar levels regularly.",
+  },
+  {
+    prescriptionFor: "Allergy",
+    date: "19th June 2024",
+    prescriptionID: "RX12349",
+    healthOfficialName: "Dr. William Lee",
+    medications: {
+      medicationName: "Cetirizine",
+      dosage: "10mg",
+      frequency: 1, // per day
+      duration: "1 week",
+    },
+    notes: "Avoid allergens and follow up if symptoms persist.",
+  },
+];

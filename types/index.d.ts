@@ -6,6 +6,7 @@ import {
   patientGeneralInformationSchema,
   patientSchema,
 } from "@/schema/patient.schema";
+import { prescriptionSchema } from "@/schema/prescription.schema";
 import {
   settingsAdditionalInformationSchema,
   settingsGeneralInformationSchema,
@@ -79,3 +80,6 @@ export type TicketType = z.infer<typeof ticketSchema>;
 
 // Medical History Schema
 export type MedicalHistoryType = z.infer<typeof medicalHistorySchema>;
+
+// Prescription Schema
+export type PrescriptionType = z.infer<typeof prescriptionSchema>;

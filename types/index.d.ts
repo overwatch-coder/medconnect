@@ -1,4 +1,5 @@
 import { contactFormSchema } from "@/schema/contact.schema";
+import { medicalHistorySchema } from "@/schema/medical-history.schema";
 import {
   patientAdditionalInformationSchema,
   patientEmergencyContactSchema,
@@ -75,3 +76,6 @@ export type SettingsNotificationsType = z.infer<
 
 // Ticket Schema
 export type TicketType = z.infer<typeof ticketSchema>;
+
+// Medical History Schema
+export type MedicalHistoryType = z.infer<typeof medicalHistorySchema>;

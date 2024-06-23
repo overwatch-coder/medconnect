@@ -23,6 +23,7 @@ import CustomInputForm from "@/components/CustomInputForm";
 import AddPatientAdditionalInfo from "@/app/dashboard/patients/add-patients/AddPatientAdditionalInfo";
 import { toast } from "react-toastify";
 import { PatientGeneralInformationType } from "@/types/index";
+import CustomFileUpload from "@/components/CustomFileUpload";
 
 type AddPatientGeneralInfoProps = {
   open: boolean;
@@ -40,15 +41,11 @@ const AddPatientGeneralInfo = ({
     register,
     reset,
     formState: { errors, isSubmitting: pending },
-    setValue,
-    watch,
     handleSubmit,
   } = useForm<PatientGeneralInformationType>({
     resolver: zodResolver(patientGeneralInformationSchema),
     mode: "all",
   });
-
-  const profilePicture = watch("profilePicture");
 
   const handleFormSubmit: SubmitHandler<PatientGeneralInformationType> = async (
     data
@@ -228,51 +225,6 @@ const AddPatientGeneralInfo = ({
                           placeholderText="Enter marital status"
                         />
                       </div>
-                    </div>
-                  </div>
-
-                  {/* Upload Profile Picture */}
-                  <div className="flex flex-col gap-5 p-4 rounded-md border border-secondary-gray/50 w-full">
-                    <FormSectionHeader title="Upload Profile Picture" />
-
-                    {/* Attachment */}
-                    <div className="flex flex-col gap-4 p-2 w-full rounded-md border border-secondary-gray bg-transparent">
-                      <FileDrop
-                        id="profilePicture"
-                        name="profilePicture"
-                        onDropAccepted={(file) => {
-                          setValue("profilePicture", file);
-                        }}
-                        shouldEnablePreview={true}
-                        shouldAllowMultiple={false}
-                        renderLabel={() => (
-                          <div className="flex gap-3 p-2 items-center justify-center">
-                            <div className="flex items-center justify-center w-10 h-10 rounded-full border border-secondary-gray">
-                              <Upload
-                                size={30}
-                                className="text-secondary-gray/50"
-                              />
-                            </div>
-                            <p className="text-sm text-black font-semibold flex items-center gap-1">
-                              Drag and drop files here or{" "}
-                              <span className="text-red-500">Browse File</span>
-                            </p>
-                          </div>
-                        )}
-                      />
-
-                      {profilePicture && profilePicture.length > 0 && (
-                        <div className="flex items-center gap-3 flex-wrap overflow-x-scroll scrollbar-hide">
-                          {Array.from(profilePicture).map(
-                            (image, idx: number) => (
-                              <ImagePreview
-                                image={URL.createObjectURL(image as File)}
-                                key={idx}
-                              />
-                            )
-                          )}
-                        </div>
-                      )}
                     </div>
                   </div>
 

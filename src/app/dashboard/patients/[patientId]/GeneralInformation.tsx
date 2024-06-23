@@ -26,7 +26,7 @@ const GeneralInformation = ({ patient }: GeneralInformationProps) => {
   ] = useState(false);
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 w-full gap-5">
+    <div className="grid grid-cols-1 md:grid-cols-2 w-full gap-3 2xl:gap-5">
       {/* Basic Information */}
       <section className="col-span-1 bg-white px-5 py-3 flex flex-col gap-4 w-full h-full">
         <ContentHeader
@@ -122,14 +122,14 @@ const GeneralInformation = ({ patient }: GeneralInformationProps) => {
             <div className="grid grid-cols-2 place-content-start place-items-start text-sm">
               <h3 className="text-primary-gray font-semibold">Email Address</h3>
               <p className="text-primary-gray/50 font-medium">
-                {`${patient.patientName.toLowerCase().split(" ").join(".")}@medconnect.com`}
+                {`${patient.patientName.toLowerCase().split(" ").join(".")}@mdc.com`}
               </p>
             </div>
 
             <div className="grid grid-cols-2 place-content-start place-items-start text-sm">
               <h3 className="text-primary-gray font-semibold">Address</h3>
               <p className="text-primary-gray/50 font-medium">
-                {"123 Main Street, New York, NY 10010"}
+                {"123 Main Street, New York, 10010"}
               </p>
             </div>
 

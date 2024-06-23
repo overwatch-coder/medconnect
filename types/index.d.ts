@@ -22,6 +22,7 @@ import {
   resetPasswordSchema,
   userSchema,
 } from "@/schema/user.schema";
+import { visitLogsSchema } from "@/schema/visit-logs.schema";
 import { z } from "zod";
 
 export type SuccessResponse = {
@@ -91,3 +92,6 @@ export type TreatmentPlanType = z.infer<typeof treatmentPlanSchema>;
 
 // Diagnosis Report Schema
 export type DiagnosisReportType = z.infer<typeof diagnosisReportSchema>;
+
+// Visit Logs Schema
+export type VisitLogsType = z.infer<typeof visitLogsSchema>;

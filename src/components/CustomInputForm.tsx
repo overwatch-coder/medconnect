@@ -17,7 +17,7 @@ type CustomInputFormProps<T extends FieldValues> = {
   value?: string;
   placeholderText?: string;
   className?: string;
-  inputType?: "text" | "date" | "select" | "textarea";
+  inputType?: "text" | "date" | "select" | "textarea" | "time";
   selectOptions?: { value: string; label: string }[];
   isInputPassword?: boolean;
 };
@@ -48,6 +48,16 @@ const CustomInputForm = <T extends FieldValues>({
           placeholder={placeholderText}
           defaultValue={value}
           max={new Date().toISOString().split("T")[0]}
+        />
+      )}
+
+      {inputType === "time" && (
+        <input
+          type="time"
+          className="px-3 py-2 rounded w-full focus:border-2 ring-0 outline-none border border-secondary-gray placeholder:text-secondary-gray/60"
+          {...register(inputName)}
+          placeholder={placeholderText}
+          defaultValue={value}
         />
       )}
 

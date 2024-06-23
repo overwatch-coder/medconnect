@@ -14,6 +14,7 @@ import {
   settingsSchema,
 } from "@/schema/setting.schema";
 import { ticketSchema } from "@/schema/ticket.schema";
+import { treatmentPlanSchema } from "@/schema/treatment-plan.schema";
 import {
   forgotPasswordSchema,
   loginSchema,
@@ -83,3 +84,6 @@ export type MedicalHistoryType = z.infer<typeof medicalHistorySchema>;
 
 // Prescription Schema
 export type PrescriptionType = z.infer<typeof prescriptionSchema>;
+
+// Treatment Plan Schema
+export type TreatmentPlanType = z.infer<typeof treatmentPlanSchema>;

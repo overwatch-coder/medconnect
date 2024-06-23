@@ -34,7 +34,7 @@ export const settingsSchema = z.object({
   communityOutreachContact: z.string().trim().optional(),
   emergencyContact: z.string().trim().optional(),
   notifications: z.coerce.boolean().default(false),
-  profilePicture: z.instanceof(FileList).optional(),
+  profilePicture: z.any().optional(),
 });
 
 export const settingsGeneralInformationSchema = settingsSchema.pick({

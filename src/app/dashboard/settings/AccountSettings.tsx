@@ -1,6 +1,6 @@
 "use client";
 
-import AccountSettingsForm from "@/app/dashboard/settings/AccountSettingsForm";
+import CustomInputForm from "@/components/CustomInputForm";
 import NotificationModal from "@/components/NotificationModal";
 import { Button } from "@/components/ui/button";
 import { useUserAtom } from "@/hooks";
@@ -88,31 +88,31 @@ const AccountSettings = () => {
             method="POST"
           >
             <div className="flex flex-col gap-4 w-full md:flex-row items-center justify-between">
-              <AccountSettingsForm
+              <CustomInputForm
                 labelName="Compound Name"
                 inputName="compoundName"
-                errorExists={Boolean(errors.compoundName)}
-                errorMessage={errors.compoundName?.message || ""}
+                errors={errors}
+                inputType="text"
                 register={register}
                 value={user.user?.compoundName}
                 placeholderText="Enter your compound name"
               />
 
-              <AccountSettingsForm
+              <CustomInputForm
                 labelName="Location"
                 inputName="location"
-                errorExists={Boolean(errors.location)}
-                errorMessage={errors.location?.message || ""}
+                errors={errors}
+                inputType="text"
                 register={register}
                 value={user.user?.location}
                 placeholderText="Enter your location"
               />
 
-              <AccountSettingsForm
+              <CustomInputForm
                 labelName="Region"
                 inputName="region"
-                errorExists={Boolean(errors.region)}
-                errorMessage={errors.region?.message || ""}
+                errors={errors}
+                inputType="text"
                 register={register}
                 value={user.user?.region}
                 placeholderText="Enter your region"
@@ -120,31 +120,31 @@ const AccountSettings = () => {
             </div>
 
             <div className="flex flex-col gap-4 w-full md:flex-row items-center justify-between">
-              <AccountSettingsForm
+              <CustomInputForm
                 labelName="District"
                 inputName="district"
-                errorExists={Boolean(errors.district)}
-                errorMessage={errors.district?.message || ""}
+                errors={errors}
+                inputType="text"
                 register={register}
                 value={user.user?.district}
                 placeholderText="Enter your district"
               />
 
-              <AccountSettingsForm
+              <CustomInputForm
                 labelName="Contact Information"
                 inputName="contactInformation"
-                errorExists={Boolean(errors.contactInformation)}
-                errorMessage={errors.contactInformation?.message || ""}
+                errors={errors}
+                inputType="text"
                 register={register}
                 value={""}
                 placeholderText="Enter your contact information"
               />
 
-              <AccountSettingsForm
+              <CustomInputForm
                 labelName="Available Services"
                 inputName="availableServices"
-                errorExists={Boolean(errors.availableServices)}
-                errorMessage={errors.availableServices?.message || ""}
+                errors={errors}
+                inputType="text"
                 register={register}
                 value={user.user?.availableServices}
                 placeholderText="Enter available services"
@@ -163,31 +163,31 @@ const AccountSettings = () => {
             method="POST"
           >
             <div className="flex flex-col gap-4 w-full md:flex-row items-center justify-between">
-              <AccountSettingsForm
+              <CustomInputForm
                 labelName="Operating Hours"
                 inputName="operatingHours"
-                errorExists={Boolean(errors.operatingHours)}
-                errorMessage={errors.operatingHours?.message || ""}
+                errors={errors}
+                inputType="text"
                 register={register}
                 value={user.user?.operatingHours}
                 placeholderText="Enter operating hours"
               />
 
-              <AccountSettingsForm
+              <CustomInputForm
                 labelName="Staff Information"
                 inputName="staffInformation"
-                errorExists={Boolean(errors.staffInformation)}
-                errorMessage={errors.staffInformation?.message || ""}
+                errors={errors}
+                inputType="text"
                 register={register}
                 value={""}
                 placeholderText="Enter staff information"
               />
 
-              <AccountSettingsForm
+              <CustomInputForm
                 labelName="Facility Details"
                 inputName="facilityDetails"
-                errorExists={Boolean(errors.facilityDetails)}
-                errorMessage={errors.facilityDetails?.message || ""}
+                errors={errors}
+                inputType="text"
                 register={register}
                 value=""
                 placeholderText="Enter facility details"
@@ -195,31 +195,31 @@ const AccountSettings = () => {
             </div>
 
             <div className="flex flex-col gap-4 w-full md:flex-row items-center justify-between">
-              <AccountSettingsForm
+              <CustomInputForm
                 labelName="Historical Inforamtion"
                 inputName="historicalInformation"
-                errorExists={Boolean(errors.historicalInformation)}
-                errorMessage={errors.historicalInformation?.message || ""}
+                errors={errors}
+                inputType="text"
                 register={register}
                 value={""}
                 placeholderText="Enter historical information"
               />
 
-              <AccountSettingsForm
+              <CustomInputForm
                 labelName="Community Outreach Programs"
                 inputName="communityOutreachContact"
-                errorExists={Boolean(errors.communityOutreachContact)}
-                errorMessage={errors.communityOutreachContact?.message || ""}
+                errors={errors}
+                inputType="text"
                 register={register}
                 value={""}
                 placeholderText="Enter community outreach programs"
               />
 
-              <AccountSettingsForm
+              <CustomInputForm
                 labelName="Emergency Contact"
                 inputName="emergencyContact"
-                errorExists={Boolean(errors.emergencyContact)}
-                errorMessage={errors.emergencyContact?.message || ""}
+                errors={errors}
+                inputType="text"
                 register={register}
                 value={""}
                 placeholderText="Enter emergency contact"
@@ -244,6 +244,7 @@ const AccountSettings = () => {
           >
             <div className="items-top flex space-x-2">
               <input
+                id="notifications"
                 type="checkbox"
                 {...register("notifications")}
                 className="border-secondary-gray border-2"

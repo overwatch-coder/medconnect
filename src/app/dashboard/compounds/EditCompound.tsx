@@ -19,10 +19,10 @@ import { Upload } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import ClipLoader from "react-spinners/ClipLoader";
 import ImagePreview from "@/components/ImagePreview";
-import AccountSettingsForm from "@/app/dashboard/settings/AccountSettingsForm";
 import { FormSectionHeader } from "@/app/dashboard/compounds/add-new/AddCompoundForm";
 import { useRouter } from "next/navigation";
 import NotificationModal from "@/components/NotificationModal";
+import CustomInputForm from "@/components/CustomInputForm";
 
 type EditCompoundModalProps = {
   openModal: boolean;
@@ -39,8 +39,6 @@ const EditCompoundModal = ({
 }: EditCompoundModalProps) => {
   const router = useRouter();
 
-  const [profilePicture, setProfilePicture] =
-    useState<ArrayLike<File | DataTransferItem>>();
   const [showEditNotificationModal, setShowEditNotificationModal] =
     useState(false);
 
@@ -52,6 +50,8 @@ const EditCompoundModal = ({
   const {
     register,
     reset,
+    watch,
+    setValue,
     formState: { errors, isSubmitting: pending },
     handleSubmit,
   } = useForm<SettingsType>({
@@ -59,8 +59,10 @@ const EditCompoundModal = ({
     mode: "all",
   });
 
+  const profilePicture = watch("profilePicture");
+
   const submitEditCompound: SubmitHandler<SettingsType> = async (data) => {
-    console.log({ data, profilePicture });
+    console.log({ data });
     setShowEditNotificationModal(true);
     setTimeout(() => {
       setShowEditNotificationModal(false);
@@ -117,15 +119,21 @@ const EditCompoundModal = ({
                       id="profilePicture"
                       name="profilePicture"
                       onDropAccepted={(file) => {
-                        setProfilePicture(file);
+                        setValue("profilePicture", file);
                       }}
                       shouldEnablePreview={true}
                       shouldAllowMultiple={false}
                       renderLabel={() => (
-                        <div className="flex flex-col gap-5 p-2 items-center justify-center">
-                          <Upload size={30} className="text-black" />
-                          <p className="text-sm text-black">
-                            Drag and drop files here <br /> or click to browse
+                        <div className="flex gap-3 p-2 items-center justify-center">
+                          <div className="flex items-center justify-center w-10 h-10 rounded-full border border-secondary-gray">
+                            <Upload
+                              size={30}
+                              className="text-secondary-gray/50"
+                            />
+                          </div>
+                          <p className="text-sm text-black font-semibold flex items-center gap-1">
+                            Drag and drop files here or{" "}
+                            <span className="text-red-500">Browse File</span>
                           </p>
                         </div>
                       )}
@@ -152,66 +160,63 @@ const EditCompoundModal = ({
 
                   <div className="flex flex-col gap-5 px-2 md:px-5">
                     <div className="flex flex-col gap-4 w-full md:flex-row items-center justify-between">
-                      <AccountSettingsForm
+                      <CustomInputForm
                         labelName="Compound Name"
                         inputName="compoundName"
-                        errorExists={Boolean(errors.compoundName)}
-                        errorMessage={errors.compoundName?.message || ""}
+                        errors={errors}
+                        inputType="text"
+                        placeholderText="Enter your compound name"
                         register={register}
                         value={compoundData.compoundName}
-                        placeholderText="Enter your compound name"
                       />
 
-                      <AccountSettingsForm
+                      <CustomInputForm
                         labelName="Location"
                         inputName="location"
-                        errorExists={Boolean(errors.location)}
-                        errorMessage={errors.location?.message || ""}
+                        errors={errors}
+                        inputType="text"
+                        placeholderText="Enter your location"
                         register={register}
                         value={compoundData.location}
-                        placeholderText="Enter your location"
                       />
 
-                      <AccountSettingsForm
+                      <CustomInputForm
                         labelName="Region"
                         inputName="region"
-                        errorExists={Boolean(errors.region)}
-                        errorMessage={errors.region?.message || ""}
+                        errors={errors}
+                        inputType="text"
+                        placeholderText="Enter your region"
                         register={register}
                         value={compoundData.region}
-                        placeholderText="Enter your region"
                       />
                     </div>
 
                     <div className="flex flex-col gap-4 w-full md:flex-row items-center justify-between">
-                      <AccountSettingsForm
+                      <CustomInputForm
                         labelName="District"
                         inputName="district"
-                        errorExists={Boolean(errors.district)}
-                        errorMessage={errors.district?.message || ""}
-                        register={register}
-                        value={""}
+                        errors={errors}
+                        inputType="text"
                         placeholderText="Enter your district"
+                        register={register}
                       />
 
-                      <AccountSettingsForm
+                      <CustomInputForm
                         labelName="Contact Information"
                         inputName="contactInformation"
-                        errorExists={Boolean(errors.contactInformation)}
-                        errorMessage={errors.contactInformation?.message || ""}
-                        register={register}
-                        value={""}
+                        errors={errors}
+                        inputType="text"
                         placeholderText="Enter your contact information"
+                        register={register}
                       />
 
-                      <AccountSettingsForm
+                      <CustomInputForm
                         labelName="Available Services"
                         inputName="availableServices"
-                        errorExists={Boolean(errors.availableServices)}
-                        errorMessage={errors.availableServices?.message || ""}
-                        register={register}
-                        value={""}
+                        errors={errors}
+                        inputType="text"
                         placeholderText="Enter available services"
+                        register={register}
                       />
                     </div>
                   </div>
@@ -223,70 +228,60 @@ const EditCompoundModal = ({
 
                   <div className="flex flex-col gap-5 px-2 md:px-5">
                     <div className="flex flex-col gap-4 w-full md:flex-row items-center justify-between">
-                      <AccountSettingsForm
+                      <CustomInputForm
                         labelName="Operating Hours"
                         inputName="operatingHours"
-                        errorExists={Boolean(errors.operatingHours)}
-                        errorMessage={errors.operatingHours?.message || ""}
-                        register={register}
-                        value={""}
+                        errors={errors}
+                        inputType="text"
                         placeholderText="Enter operating hours"
+                        register={register}
                       />
 
-                      <AccountSettingsForm
+                      <CustomInputForm
                         labelName="Staff Information"
                         inputName="staffInformation"
-                        errorExists={Boolean(errors.staffInformation)}
-                        errorMessage={errors.staffInformation?.message || ""}
-                        register={register}
-                        value={""}
+                        errors={errors}
+                        inputType="text"
                         placeholderText="Enter staff information"
+                        register={register}
                       />
 
-                      <AccountSettingsForm
+                      <CustomInputForm
                         labelName="Facility Details"
                         inputName="facilityDetails"
-                        errorExists={Boolean(errors.facilityDetails)}
-                        errorMessage={errors.facilityDetails?.message || ""}
-                        register={register}
-                        value=""
+                        errors={errors}
+                        inputType="text"
                         placeholderText="Enter facility details"
+                        register={register}
                       />
                     </div>
 
                     <div className="flex flex-col gap-4 w-full md:flex-row items-center justify-between">
-                      <AccountSettingsForm
-                        labelName="Historical Inforamtion"
+                      <CustomInputForm
+                        labelName="Historical Information"
                         inputName="historicalInformation"
-                        errorExists={Boolean(errors.historicalInformation)}
-                        errorMessage={
-                          errors.historicalInformation?.message || ""
-                        }
-                        register={register}
-                        value={""}
+                        errors={errors}
+                        inputType="text"
                         placeholderText="Enter historical information"
+                        register={register}
                       />
 
-                      <AccountSettingsForm
+                      <CustomInputForm
                         labelName="Community Outreach Programs"
                         inputName="communityOutreachContact"
-                        errorExists={Boolean(errors.communityOutreachContact)}
-                        errorMessage={
-                          errors.communityOutreachContact?.message || ""
-                        }
-                        register={register}
-                        value={""}
+                        errors={errors}
+                        inputType="text"
                         placeholderText="Enter community outreach programs"
+                        register={register}
                       />
 
-                      <AccountSettingsForm
+                      <CustomInputForm
                         labelName="Emergency Contact"
                         inputName="emergencyContact"
-                        errorExists={Boolean(errors.emergencyContact)}
-                        errorMessage={errors.emergencyContact?.message || ""}
-                        register={register}
-                        value={""}
+                        errors={errors}
+                        inputType="text"
                         placeholderText="Enter emergency contact"
+                        register={register}
                       />
                     </div>
                   </div>

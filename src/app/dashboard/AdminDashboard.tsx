@@ -217,7 +217,7 @@ const AdminDashboard = () => {
 
           <div className="flex flex-col h-full items-center gap-3 px-3 py-5">
             {/* Graph */}
-            <div className="flex flex-col items-center w-full h-full pt-5">
+            <div className="flex flex-col items-center pt-5">
               <DoughnutChart
                 labels={["Excellent", "Good", "Average", "Poor"]}
                 data={[40, 20, 80, 10]}
@@ -234,7 +234,7 @@ const AdminDashboard = () => {
                 <span className="text-primary-green">80%</span>
               </div>
 
-              <button className="group flex items-center justify-end w-full gap-3">
+              <button className="group flex items-center w-full gap-3 px-5">
                 <span className="group-hover:font-semibold">
                   Start a new diagnosis
                 </span>

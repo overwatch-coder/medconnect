@@ -9,6 +9,7 @@ type DashboardContentHeaderProps = {
   showButton?: boolean;
   buttonName?: string;
   buttonLink?: string;
+  children?: React.ReactNode;
 };
 
 const DashboardContentHeader = ({
@@ -17,6 +18,7 @@ const DashboardContentHeader = ({
   showButton,
   buttonName,
   buttonLink,
+  children,
 }: DashboardContentHeaderProps) => {
   return (
     <section className="flex items-center justify-between py-3">
@@ -31,6 +33,7 @@ const DashboardContentHeader = ({
             })}
           </p>
         )}
+
         {showButton && (
           <Button className="bg-primary-green py-2 px-4">
             <Link href={`${buttonLink}`} className="flex items-center gap-2">
@@ -41,6 +44,8 @@ const DashboardContentHeader = ({
             </Link>
           </Button>
         )}
+
+        {children}
       </div>
     </section>
   );

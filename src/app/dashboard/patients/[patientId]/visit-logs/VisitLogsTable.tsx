@@ -1,17 +1,9 @@
 "use client";
-import { Button } from "@/components/ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuRadioGroup,
-  DropdownMenuRadioItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import { Search } from "lucide-react";
 import React, { useState } from "react";
-import { BiDownArrow, BiUpArrow } from "react-icons/bi";
 import { MEDCONNECT_DASHBOARD_PATIENT_VISIT_LOGS as visitLogsData } from "@/constants";
 import GenerateVisitLogsTable from "@/app/dashboard/patients/[patientId]/visit-logs/GenerateVisitLogsTable";
+import CustomFilterDropdown from "@/components/CustomFilterDropdown";
 
 export type VisitLogsDataType = (typeof visitLogsData)[number];
 
@@ -52,6 +44,36 @@ const VisitLogsTable = () => {
     setSearchTerm("");
   };
 
+  const filterOptions: {
+    value: keyof VisitLogsDataType;
+    label: string;
+  }[] = [
+    {
+      value: "logID",
+      label: "Log ID",
+    },
+    {
+      value: "visitDate",
+      label: "Date Of Visit",
+    },
+    {
+      value: "visitTime",
+      label: "Time of Visit",
+    },
+    {
+      value: "visitPurpose",
+      label: "Purpose of Visit",
+    },
+    {
+      value: "attendingHO",
+      label: "Attending H.O",
+    },
+    {
+      value: "notes",
+      label: "Notes",
+    },
+  ];
+
   return (
     <div className="w-full flex flex-col gap-5 px-5 py-5">
       {/* Filter and Search */}
@@ -71,7 +93,11 @@ const VisitLogsTable = () => {
           />
         </div>
 
-        <FilterMenuDropDown filterBy={filterBy} handleFilter={handleFilter} />
+        <CustomFilterDropdown
+          filterBy={filterBy}
+          handleFilter={handleFilter}
+          filterOptions={filterOptions}
+        />
       </div>
 
       <div className="flex flex-col gap-7 px-3 py-5 bg-white h-[90vh] scrollbar-hide overflow-y-scroll w-full">
@@ -90,57 +116,3 @@ const VisitLogsTable = () => {
 };
 
 export default VisitLogsTable;
-
-// Filter Component
-type FilterMenuDropDownProps = {
-  filterBy: string;
-  handleFilter: (value: string) => void;
-};
-
-const FilterMenuDropDown = ({
-  filterBy,
-  handleFilter,
-}: FilterMenuDropDownProps) => {
-  const [openDropdown, setOpenDropdown] = useState(false);
-
-  return (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button
-          onClick={() => setOpenDropdown(!openDropdown)}
-          className="flex items-center gap-2 bg-white rounded-2xl sm:px-5 border border-secondary-gray py-2 text-secondary-gray hover:bg-white hover:text-secondary-gray outline-none focus:outline-none ring-0 focus:ring-0 w-full sm:w-fit"
-        >
-          <span>Filter by {filterBy}</span>
-          {openDropdown ? (
-            <BiUpArrow size={15} className="text-secondary-gray" />
-          ) : (
-            <BiDownArrow size={15} className="text-secondary-gray" />
-          )}
-        </Button>
-      </DropdownMenuTrigger>
-
-      <DropdownMenuContent className="w-full">
-        <DropdownMenuRadioGroup value={filterBy} onValueChange={handleFilter}>
-          <DropdownMenuRadioItem value="logID|Log ID">
-            Log ID
-          </DropdownMenuRadioItem>
-          <DropdownMenuRadioItem value="visitDate|Date Of Visit">
-            Date Of Visit
-          </DropdownMenuRadioItem>
-          <DropdownMenuRadioItem value="visitTime|Time of Visit">
-            Time of Visit
-          </DropdownMenuRadioItem>
-          <DropdownMenuRadioItem value="visitPurpose|Purpose of Visit">
-            Purpose of Visit
-          </DropdownMenuRadioItem>
-          <DropdownMenuRadioItem value="attendingHO|Attending H.O">
-            Attending H.O
-          </DropdownMenuRadioItem>
-          <DropdownMenuRadioItem value="notes|Notes">
-            Notes
-          </DropdownMenuRadioItem>
-        </DropdownMenuRadioGroup>
-      </DropdownMenuContent>
-    </DropdownMenu>
-  );
-};

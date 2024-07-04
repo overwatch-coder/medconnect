@@ -4,6 +4,7 @@ import {
 } from "@/schema/appointment.schema";
 import { contactFormSchema } from "@/schema/contact.schema";
 import { diagnosisReportSchema } from "@/schema/diagnosis-report.schema";
+import { inventorySchema } from "@/schema/inventory.schema";
 import { medicalHistorySchema } from "@/schema/medical-history.schema";
 import {
   patientAdditionalInformationSchema,
@@ -105,3 +106,6 @@ export type AppointmentType = z.infer<typeof appointmentSchema>;
 export type RescheduleAppointmentType = z.infer<
   typeof rescheduleAppointmentSchema
 >;
+
+// Inventory Schema
+export type InventoryType = z.infer<typeof inventorySchema>;

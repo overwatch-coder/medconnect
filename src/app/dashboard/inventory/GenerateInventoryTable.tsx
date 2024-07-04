@@ -1,9 +1,7 @@
 "use client";
 import { Trash2 } from "lucide-react";
 import React, { useState } from "react";
-import { TbEdit } from "react-icons/tb";
 import { IoMdArrowDropup, IoMdArrowDropdown } from "react-icons/io";
-
 import {
   Table,
   TableBody,
@@ -12,50 +10,60 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import {
-  Pagination,
-  PaginationContent,
-  PaginationItem,
-  PaginationLink,
-  PaginationNext,
-  PaginationPrevious,
-} from "@/components/ui/pagination";
-import Image from "next/image";
+import DeleteModal from "@/components/DeleteModal";
+import { toast } from "react-toastify";
+import EditInventory from "@/app/dashboard/inventory/EditInventory";
 import { InventoryDataType } from "@/app/dashboard/inventory/InventoryTable";
+import GenerateTablePagination from "@/components/GenerateTablePagination";
 
 const tableHeaderNames = [
-  "Time",
-  "Date",
-  "Patient Name",
-  "Age",
-  "Phone Number",
-  "Assigned HO",
+  "Product Name",
+  "Type",
+  "In Stock",
+  "Received Date",
+  "Expiry Date",
+  "Manufacturer",
 ];
 
 const GenerateInventoryTable = ({
-  filteredInventoryData,
+  filteredData,
+  setFilteredData,
 }: {
-  filteredInventoryData: InventoryDataType[];
+  filteredData: InventoryDataType[];
+  setFilteredData: React.Dispatch<React.SetStateAction<InventoryDataType[]>>;
 }) => {
+  const [openDeleteModal, setOpenDeleteModal] = useState(false);
+  const [dataToDelete, setDataToDelete] = useState<InventoryDataType>();
+
   const [currentTablePage, setCurrentTablePage] = useState(1);
   const dataPerPage = 7;
 
-  // Get current p for the page
+  // Get current appointments for the page
   const indexOfLastData = currentTablePage * dataPerPage;
   const indexOfFirstData = indexOfLastData - dataPerPage;
-  const currentData = filteredInventoryData.slice(
-    indexOfFirstData,
-    indexOfLastData
-  );
+  const currentData = filteredData.slice(indexOfFirstData, indexOfLastData);
 
   // Calculate the number of pages
   const totalPages = dataPerPage
-    ? Math.ceil(filteredInventoryData.length / dataPerPage)
-    : filteredInventoryData.length;
+    ? Math.ceil(filteredData.length / dataPerPage)
+    : filteredData.length;
 
   // Handle page change
   const handlePageChange = (pageNumber: number) => {
     setCurrentTablePage(pageNumber);
+  };
+
+  // Handle delete
+  const handleDelete = async (item: InventoryDataType) => {
+    const data = filteredData.filter((p) => p.id !== item.id);
+
+    setFilteredData(data);
+
+    setDataToDelete(undefined);
+
+    setOpenDeleteModal(false);
+
+    toast.success("Product deleted successfully");
   };
 
   return (
@@ -93,51 +101,35 @@ const GenerateInventoryTable = ({
         </TableHeader>
 
         <TableBody className="w-full">
-          {currentData.map((inventory, index) => (
+          {currentData.map((data, index) => (
             <TableRow key={index}>
               <TableCell className="text-secondary-gray flex items-center gap-2">
-                {inventory.time}
+                {data.productName}
               </TableCell>
               <TableCell className="text-secondary-gray">
-                {inventory.date}
+                {data.productType}
               </TableCell>
               <TableCell className="text-secondary-gray">
-                {inventory.patientName}
+                {data.inStock}
               </TableCell>
               <TableCell className="text-secondary-gray">
-                {inventory.age}
+                {data.receivedDate}
               </TableCell>
               <TableCell className="text-secondary-gray">
-                {inventory.phoneNumber}
+                {data.expiryDate}
               </TableCell>
               <TableCell className="text-secondary-gray">
-                {inventory.assignedHO}
+                {data.manufacturer}
               </TableCell>
               <TableCell className="flex items-center gap-3">
-                <TbEdit
-                  size={20}
-                  className="text-red-500 cursor-pointer"
-                  onClick={() => {
-                    console.log("Edit clicked");
-                  }}
-                />
+                <EditInventory inventory={data} />
 
                 <Trash2
                   size={20}
-                  className="text-primary-green cursor-pointer"
+                  className="text-red-500 cursor-pointer"
                   onClick={() => {
-                    console.log("Delete clicked");
-                  }}
-                />
-
-                <Image
-                  src="/assets/icons/calendar.svg"
-                  alt="Calendar"
-                  width={20}
-                  height={20}
-                  className="cursor-pointer"
-                  onClick={() => {
-                    console.log("Calendar clicked");
+                    setDataToDelete(data);
+                    setOpenDeleteModal(true);
                   }}
                 />
               </TableCell>
@@ -146,8 +138,16 @@ const GenerateInventoryTable = ({
         </TableBody>
       </Table>
 
+      <DeleteModal
+        openModal={openDeleteModal}
+        setOpenModal={setOpenDeleteModal}
+        title="Delete Product"
+        description="Are you sure you want to delete this product from the inventory?"
+        deleteFn={() => handleDelete(dataToDelete!)}
+      />
+
       {/* Pagination */}
-      {filteredInventoryData.length > 0 && (
+      {filteredData.length > 0 && (
         <GenerateTablePagination
           currentPage={currentTablePage}
           totalPages={totalPages}
@@ -159,69 +159,3 @@ const GenerateInventoryTable = ({
 };
 
 export default GenerateInventoryTable;
-
-const GenerateTablePagination = ({
-  currentPage,
-  totalPages,
-  onPageChange,
-}: {
-  currentPage: number;
-  totalPages: number;
-  onPageChange: (pageNumber: number) => void;
-}) => {
-  const pageNumbers: number[] = [];
-
-  for (let i = 1; i <= totalPages; i++) {
-    pageNumbers.push(i);
-  }
-
-  return (
-    <Pagination>
-      <PaginationContent className="flex flex-row items-center md:justify-end gap-3 w-full">
-        <PaginationItem>
-          <PaginationPrevious
-            href="#"
-            onClick={(e) => {
-              e.preventDefault();
-              if (currentPage > 1) {
-                onPageChange(currentPage - 1);
-              }
-            }}
-          />
-        </PaginationItem>
-
-        {pageNumbers.map((number) => (
-          <PaginationItem key={number}>
-            <PaginationLink
-              href="#"
-              isActive={number === currentPage}
-              onClick={(e) => {
-                e.preventDefault();
-                onPageChange(number);
-              }}
-              className={`${
-                number === currentPage
-                  ? "bg-primary-blue text-white hover:bg-primary-blue hover:text-white"
-                  : "text-primary-blue"
-              }`}
-            >
-              {number}
-            </PaginationLink>
-          </PaginationItem>
-        ))}
-
-        <PaginationItem>
-          <PaginationNext
-            href="#"
-            onClick={(e) => {
-              e.preventDefault();
-              if (currentPage < totalPages) {
-                onPageChange(currentPage + 1);
-              }
-            }}
-          />
-        </PaginationItem>
-      </PaginationContent>
-    </Pagination>
-  );
-};

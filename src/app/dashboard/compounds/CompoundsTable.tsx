@@ -1,8 +1,6 @@
 "use client";
 
 import React, { useState } from "react";
-import { Button } from "@/components/ui/button";
-import { BiDownArrow, BiUpArrow } from "react-icons/bi";
 import { MEDCONNECT_SUPER_ADMIN_DASHBOARD_COMPOUNDS_WITH_ACTIONS as compoundsData } from "@/constants";
 import { Edit, Search } from "lucide-react";
 import {
@@ -13,18 +11,12 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuRadioGroup,
-  DropdownMenuRadioItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 
 import { GrCheckbox, GrCheckboxSelected } from "react-icons/gr";
 import DeleteCompound from "@/app/dashboard/compounds/DeleteCompound";
 import EditCompoundModal from "@/app/dashboard/compounds/EditCompound";
 import { useRouter } from "next/navigation";
+import CustomFilterDropdown from "@/components/CustomFilterDropdown";
 
 export type CompoundsDataType = {
   compoundName: string;
@@ -34,7 +26,7 @@ export type CompoundsDataType = {
 };
 
 const CompoundsTable = () => {
-  const [sortCompoundsBy, setSortCompoundsBy] = useState("Compound ID");
+  const [filterBy, setFilterBy] = useState("Compound ID");
   const [searchTerm, setSearchTerm] = useState("");
   const [filteredCompoundsData, setFilteredCompoundsData] =
     useState<CompoundsDataType[]>(compoundsData);
@@ -50,24 +42,47 @@ const CompoundsTable = () => {
     setFilteredCompoundsData(filtered);
   };
 
-  // Handle sort
-  const handleSort = (value: string) => {
-    const sortValue = value.split("|")[0];
-    const sortName = value.split("|")[1];
+  // Handle filter
+  const handleFilter = (value: string) => {
+    const filterValue = value.split("|")[0];
+    const filterName = value.split("|")[1];
 
-    setSortCompoundsBy(sortName);
-    const sorted = filteredCompoundsData.sort((a: any, b: any) => {
-      if (a[sortValue] < b[sortValue]) {
+    setFilterBy(filterName);
+
+    const filtered = filteredCompoundsData.sort((a: any, b: any) => {
+      if (a[filterValue] < b[filterValue]) {
         return -1;
       }
-      if (a[sortValue] > b[sortValue]) {
+      if (a[filterValue] > b[filterValue]) {
         return 1;
       }
       return 0;
     });
 
-    setFilteredCompoundsData(sorted);
+    setFilteredCompoundsData(filtered);
   };
+
+  const filterOptions: {
+    value: keyof CompoundsDataType;
+    label: string;
+  }[] = [
+    {
+      value: "compoundName",
+      label: "Compound Name",
+    },
+    {
+      value: "compoundId",
+      label: "Compound ID",
+    },
+    {
+      value: "location",
+      label: "Location",
+    },
+    {
+      value: "region",
+      label: "Region",
+    },
+  ];
 
   return (
     <section className="flex flex-col rounded w-full">
@@ -86,9 +101,10 @@ const CompoundsTable = () => {
           />
         </div>
 
-        <SortByMenuDropDown
-          sortCompoundsBy={sortCompoundsBy}
-          handleSort={handleSort}
+        <CustomFilterDropdown
+          filterBy={filterBy}
+          handleFilter={handleFilter}
+          filterOptions={filterOptions}
         />
       </div>
 
@@ -111,58 +127,6 @@ const CompoundsTable = () => {
 };
 
 export default CompoundsTable;
-
-// SortBy Component
-type SortByMenuDropDownProps = {
-  sortCompoundsBy: string;
-  handleSort: (value: string) => void;
-};
-
-const SortByMenuDropDown = ({
-  sortCompoundsBy,
-  handleSort,
-}: SortByMenuDropDownProps) => {
-  const [openDropdown, setOpenDropdown] = useState(false);
-
-  return (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button
-          onClick={() => setOpenDropdown(!openDropdown)}
-          variant={"destructive"}
-          className="text-white flex items-center gap-2"
-        >
-          <span>Sort by {sortCompoundsBy}</span>
-          {openDropdown ? (
-            <BiUpArrow size={15} className="text-white" />
-          ) : (
-            <BiDownArrow size={15} className="text-white" />
-          )}
-        </Button>
-      </DropdownMenuTrigger>
-
-      <DropdownMenuContent>
-        <DropdownMenuRadioGroup
-          value={sortCompoundsBy}
-          onValueChange={handleSort}
-        >
-          <DropdownMenuRadioItem value="compoundName|Compound Name">
-            Compound Name
-          </DropdownMenuRadioItem>
-          <DropdownMenuRadioItem value="compoundId|Compound ID">
-            Compound ID
-          </DropdownMenuRadioItem>
-          <DropdownMenuRadioItem value="location|Location">
-            Location
-          </DropdownMenuRadioItem>
-          <DropdownMenuRadioItem value="region|Region">
-            Region
-          </DropdownMenuRadioItem>
-        </DropdownMenuRadioGroup>
-      </DropdownMenuContent>
-    </DropdownMenu>
-  );
-};
 
 // Compounds Table
 type CompoundsTableProps = {

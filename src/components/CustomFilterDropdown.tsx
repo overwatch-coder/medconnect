@@ -19,14 +19,16 @@ type FilterOption = {
 // Filter Component
 type CustomFilterDropdownProps = {
   filterBy: string;
-  handleFilter: (value: string) => void;
+  handleFilter: (value: string, index?: number) => void;
   filterOptions: FilterOption[];
+  index?: number;
 };
 
 const CustomFilterDropdown = ({
   filterBy,
   handleFilter,
   filterOptions,
+  index,
 }: CustomFilterDropdownProps) => {
   const [openDropdown, setOpenDropdown] = useState(false);
 
@@ -47,7 +49,10 @@ const CustomFilterDropdown = ({
       </DropdownMenuTrigger>
 
       <DropdownMenuContent className="w-full">
-        <DropdownMenuRadioGroup value={filterBy} onValueChange={handleFilter}>
+        <DropdownMenuRadioGroup
+          value={filterBy}
+          onValueChange={(value) => handleFilter(value, index)}
+        >
           {filterOptions.map((option) => (
             <DropdownMenuRadioItem
               value={`${option.value}|${option.label}`}

@@ -1,17 +1,9 @@
 "use client";
-import { Button } from "@/components/ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuRadioGroup,
-  DropdownMenuRadioItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import { Search } from "lucide-react";
 import React, { useState } from "react";
-import { BiDownArrow, BiUpArrow } from "react-icons/bi";
 import { MEDCONNECT_DASHBOARD_PATIENTS as patientsData } from "@/constants";
 import GeneratePatientsTable from "@/app/dashboard/patients/GeneratePatientsTable";
+import CustomFilterDropdown from "@/components/CustomFilterDropdown";
 
 export type PatientsDataType = (typeof patientsData)[number];
 
@@ -50,6 +42,36 @@ const PatientsTable = () => {
     setSearchTerm("");
   };
 
+  const filterOptions: {
+    value: keyof PatientsDataType;
+    label: string;
+  }[] = [
+    {
+      value: "patientName",
+      label: "Patient Name",
+    },
+    {
+      value: "age",
+      label: "Age",
+    },
+    {
+      value: "gender",
+      label: "Gender",
+    },
+    {
+      value: "bloodGroup",
+      label: "Blood Group",
+    },
+    {
+      value: "phoneNumber",
+      label: "Phone Number",
+    },
+    {
+      value: "dateAdded",
+      label: "Date Added",
+    },
+  ];
+
   return (
     <div className="w-full flex flex-col gap-5 px-5 py-5">
       {/* Filter and Search */}
@@ -69,7 +91,11 @@ const PatientsTable = () => {
           />
         </div>
 
-        <FilterMenuDropDown filterBy={filterBy} handleFilter={handleFilter} />
+        <CustomFilterDropdown
+          filterBy={filterBy}
+          handleFilter={handleFilter}
+          filterOptions={filterOptions}
+        />
       </div>
 
       <div className="flex flex-col gap-7 px-3 py-5 bg-white h-full w-full">
@@ -91,55 +117,3 @@ const PatientsTable = () => {
 };
 
 export default PatientsTable;
-
-// Filter Component
-type FilterMenuDropDownProps = {
-  filterBy: string;
-  handleFilter: (value: string) => void;
-};
-
-const FilterMenuDropDown = ({
-  filterBy,
-  handleFilter,
-}: FilterMenuDropDownProps) => {
-  const [openDropdown, setOpenDropdown] = useState(false);
-
-  return (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button
-          onClick={() => setOpenDropdown(!openDropdown)}
-          className="flex items-center gap-2 bg-white rounded-2xl sm:px-5 border border-secondary-gray py-2 text-secondary-gray hover:bg-white hover:text-secondary-gray outline-none focus:outline-none ring-0 focus:ring-0 w-full sm:w-fit"
-        >
-          <span>Filter by {filterBy}</span>
-          {openDropdown ? (
-            <BiUpArrow size={15} className="text-secondary-gray" />
-          ) : (
-            <BiDownArrow size={15} className="text-secondary-gray" />
-          )}
-        </Button>
-      </DropdownMenuTrigger>
-
-      <DropdownMenuContent className="w-full">
-        <DropdownMenuRadioGroup value={filterBy} onValueChange={handleFilter}>
-          <DropdownMenuRadioItem value="patientName|Patient Name">
-            Patient Name
-          </DropdownMenuRadioItem>
-          <DropdownMenuRadioItem value="age|Age">Age</DropdownMenuRadioItem>
-          <DropdownMenuRadioItem value="gender|Gender">
-            Gender
-          </DropdownMenuRadioItem>
-          <DropdownMenuRadioItem value="bloodGroup|Blood Group">
-            Blood Group
-          </DropdownMenuRadioItem>
-          <DropdownMenuRadioItem value="phoneNumber|Phone Number">
-            Phone Number
-          </DropdownMenuRadioItem>
-          <DropdownMenuRadioItem value="dateAdded|Date Added">
-            Date Added
-          </DropdownMenuRadioItem>
-        </DropdownMenuRadioGroup>
-      </DropdownMenuContent>
-    </DropdownMenu>
-  );
-};

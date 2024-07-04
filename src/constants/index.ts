@@ -9,7 +9,7 @@ import { FaSearchPlus, FaClinicMedical } from "react-icons/fa";
 import { BsPrescription } from "react-icons/bs";
 import { TbReport } from "react-icons/tb";
 import { GrSystem } from "react-icons/gr";
-import { UserRoundPlus, CalendarPlus2 } from "lucide-react";
+import { UserRoundPlus, CalendarPlus2, Podcast } from "lucide-react";
 
 // HOMEPAGE DATA
 export const NAV_ITEMS = [
@@ -256,6 +256,11 @@ export const MEDCONNECT_DASHBOARD_LINKS = [
     name: "Disease Analysis",
     path: "/dashboard/disease-analysis",
     icon: MdOutlineShowChart,
+  },
+  {
+    name: "Outreach Programs",
+    path: "/dashboard/outreach-programs",
+    icon: Podcast,
   },
   {
     name: "Reports",
@@ -1307,6 +1312,8 @@ export const MEDCONNECT_DASHBOARD_APPOINTEMENTS = [
     age: 45,
     phoneNumber: "+233 24 123 4567",
     assignedHO: "Dr. Yaw Boateng",
+    status: "New",
+    patientID: `MDCPA${Math.floor(Math.random() * 1000)}`,
   },
   {
     time: "10:30 AM",
@@ -1315,6 +1322,8 @@ export const MEDCONNECT_DASHBOARD_APPOINTEMENTS = [
     age: 30,
     phoneNumber: "+233 24 234 5678",
     assignedHO: "Dr. Ama Serwaa",
+    status: "New",
+    patientID: `MDCPA${Math.floor(Math.random() * 1000)}`,
   },
   {
     time: "11:15 AM",
@@ -1323,6 +1332,8 @@ export const MEDCONNECT_DASHBOARD_APPOINTEMENTS = [
     age: 60,
     phoneNumber: "+233 24 345 6789",
     assignedHO: "Dr. Kojo Agyeman",
+    status: "New",
+    patientID: `MDCPA${Math.floor(Math.random() * 1000)}`,
   },
   {
     time: "02:00 PM",
@@ -1331,6 +1342,8 @@ export const MEDCONNECT_DASHBOARD_APPOINTEMENTS = [
     age: 27,
     phoneNumber: "+233 24 456 7890",
     assignedHO: "Dr. Efua Adjei",
+    status: "Completed",
+    patientID: `MDCPA${Math.floor(Math.random() * 1000)}`,
   },
   {
     time: "03:30 PM",
@@ -1339,6 +1352,8 @@ export const MEDCONNECT_DASHBOARD_APPOINTEMENTS = [
     age: 50,
     phoneNumber: "+233 24 567 8901",
     assignedHO: "Dr. Kofi Darko",
+    status: "New",
+    patientID: `MDCPA${Math.floor(Math.random() * 1000)}`,
   },
   {
     time: "08:45 AM",
@@ -1347,6 +1362,8 @@ export const MEDCONNECT_DASHBOARD_APPOINTEMENTS = [
     age: 34,
     phoneNumber: "+233 24 678 9012",
     assignedHO: "Dr. Abena Kumi",
+    status: "Completed",
+    patientID: `MDCPA${Math.floor(Math.random() * 1000)}`,
   },
   {
     time: "09:30 AM",
@@ -1355,6 +1372,8 @@ export const MEDCONNECT_DASHBOARD_APPOINTEMENTS = [
     age: 41,
     phoneNumber: "+233 24 789 0123",
     assignedHO: "Dr. Kwame Anane",
+    status: "Completed",
+    patientID: `MDCPA${Math.floor(Math.random() * 1000)}`,
   },
   {
     time: "10:00 AM",
@@ -1363,6 +1382,8 @@ export const MEDCONNECT_DASHBOARD_APPOINTEMENTS = [
     age: 29,
     phoneNumber: "+233 24 890 1234",
     assignedHO: "Dr. Akua Agyapong",
+    status: "Completed",
+    patientID: `MDCPA${Math.floor(Math.random() * 1000)}`,
   },
   {
     time: "11:45 AM",
@@ -1371,6 +1392,8 @@ export const MEDCONNECT_DASHBOARD_APPOINTEMENTS = [
     age: 53,
     phoneNumber: "+233 24 901 2345",
     assignedHO: "Dr. Yaw Opoku",
+    status: "New",
+    patientID: `MDCPA${Math.floor(Math.random() * 1000)}`,
   },
   {
     time: "01:30 PM",
@@ -1379,6 +1402,8 @@ export const MEDCONNECT_DASHBOARD_APPOINTEMENTS = [
     age: 40,
     phoneNumber: "+233 24 012 3456",
     assignedHO: "Dr. Efua Owusu",
+    status: "New",
+    patientID: `MDCPA${Math.floor(Math.random() * 1000)}`,
   },
   {
     time: "02:15 PM",
@@ -1387,6 +1412,8 @@ export const MEDCONNECT_DASHBOARD_APPOINTEMENTS = [
     age: 37,
     phoneNumber: "+233 24 123 4568",
     assignedHO: "Dr. Kwame Mensah",
+    status: "New",
+    patientID: `MDCPA${Math.floor(Math.random() * 1000)}`,
   },
   {
     time: "03:00 PM",
@@ -1395,6 +1422,8 @@ export const MEDCONNECT_DASHBOARD_APPOINTEMENTS = [
     age: 33,
     phoneNumber: "+233 24 234 5679",
     assignedHO: "Dr. Akua Nyamekye",
+    status: "Completed",
+    patientID: `MDCPA${Math.floor(Math.random() * 1000)}`,
   },
   {
     time: "04:30 PM",
@@ -1403,6 +1432,8 @@ export const MEDCONNECT_DASHBOARD_APPOINTEMENTS = [
     age: 52,
     phoneNumber: "+233 24 345 6780",
     assignedHO: "Dr. Yaw Boateng",
+    status: "Completed",
+    patientID: `MDCPA${Math.floor(Math.random() * 1000)}`,
   },
   {
     time: "08:00 AM",
@@ -1411,6 +1442,8 @@ export const MEDCONNECT_DASHBOARD_APPOINTEMENTS = [
     age: 26,
     phoneNumber: "+233 24 456 7891",
     assignedHO: "Dr. Ama Serwaa",
+    status: "Completed",
+    patientID: `MDCPA${Math.floor(Math.random() * 1000)}`,
   },
   {
     time: "09:15 AM",
@@ -1419,6 +1452,8 @@ export const MEDCONNECT_DASHBOARD_APPOINTEMENTS = [
     age: 48,
     phoneNumber: "+233 24 567 8902",
     assignedHO: "Dr. Kojo Agyeman",
+    status: "Completed",
+    patientID: `MDCPA${Math.floor(Math.random() * 1000)}`,
   },
   {
     time: "10:45 AM",
@@ -1427,6 +1462,8 @@ export const MEDCONNECT_DASHBOARD_APPOINTEMENTS = [
     age: 39,
     phoneNumber: "+233 24 678 9013",
     assignedHO: "Dr. Efua Adjei",
+    status: "New",
+    patientID: `MDCPA${Math.floor(Math.random() * 1000)}`,
   },
   {
     time: "11:30 AM",
@@ -1435,6 +1472,8 @@ export const MEDCONNECT_DASHBOARD_APPOINTEMENTS = [
     age: 55,
     phoneNumber: "+233 24 789 0124",
     assignedHO: "Dr. Kofi Darko",
+    status: "New",
+    patientID: `MDCPA${Math.floor(Math.random() * 1000)}`,
   },
   {
     time: "12:00 PM",
@@ -1443,6 +1482,8 @@ export const MEDCONNECT_DASHBOARD_APPOINTEMENTS = [
     age: 42,
     phoneNumber: "+233 24 890 1235",
     assignedHO: "Dr. Abena Kumi",
+    status: "New",
+    patientID: `MDCPA${Math.floor(Math.random() * 1000)}`,
   },
   {
     time: "01:00 PM",
@@ -1451,6 +1492,8 @@ export const MEDCONNECT_DASHBOARD_APPOINTEMENTS = [
     age: 31,
     phoneNumber: "+233 24 901 2346",
     assignedHO: "Dr. Kwame Anane",
+    status: "Completed",
+    patientID: `MDCPA${Math.floor(Math.random() * 1000)}`,
   },
   {
     time: "02:45 PM",
@@ -1459,6 +1502,8 @@ export const MEDCONNECT_DASHBOARD_APPOINTEMENTS = [
     age: 36,
     phoneNumber: "+233 24 012 3457",
     assignedHO: "Dr. Akua Agyapong",
+    status: "Completed",
+    patientID: `MDCPA${Math.floor(Math.random() * 1000)}`,
   },
 ];
 

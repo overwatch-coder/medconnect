@@ -1,3 +1,7 @@
+import {
+  appointmentSchema,
+  rescheduleAppointmentSchema,
+} from "@/schema/appointment.schema";
 import { contactFormSchema } from "@/schema/contact.schema";
 import { diagnosisReportSchema } from "@/schema/diagnosis-report.schema";
 import { medicalHistorySchema } from "@/schema/medical-history.schema";
@@ -95,3 +99,9 @@ export type DiagnosisReportType = z.infer<typeof diagnosisReportSchema>;
 
 // Visit Logs Schema
 export type VisitLogsType = z.infer<typeof visitLogsSchema>;
+
+// Appointment Schema
+export type AppointmentType = z.infer<typeof appointmentSchema>;
+export type RescheduleAppointmentType = z.infer<
+  typeof rescheduleAppointmentSchema
+>;

@@ -1,9 +1,7 @@
 "use client";
 import { Trash2 } from "lucide-react";
 import React, { useState } from "react";
-import { TbEdit } from "react-icons/tb";
 import { IoMdArrowDropup, IoMdArrowDropdown } from "react-icons/io";
-
 import {
   Table,
   TableBody,
@@ -20,8 +18,12 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
-import Image from "next/image";
+import { MEDCONNECT_DASHBOARD_APPOINTEMENTS as appointmentsData } from "@/constants";
 import { AppointmentsDataType } from "@/app/dashboard/appointments/AppointmentsTable";
+import EditAppointment from "@/app/dashboard/appointments/EditAppointment";
+import RescheduleAppointment from "@/app/dashboard/appointments/RescheduleAppointment";
+import DeleteModal from "@/components/DeleteModal";
+import { toast } from "react-toastify";
 
 const tableHeaderNames = [
   "Time",
@@ -34,9 +36,17 @@ const tableHeaderNames = [
 
 const GenerateAppointmentsTable = ({
   filteredAppointmentsData,
+  setFilteredAppointmentsData,
 }: {
   filteredAppointmentsData: AppointmentsDataType[];
+  setFilteredAppointmentsData: React.Dispatch<
+    React.SetStateAction<AppointmentsDataType[]>
+  >;
 }) => {
+  const [openDeleteModal, setOpenDeleteModal] = useState(false);
+  const [appointmentToDelete, setAppointmentToDelete] =
+    useState<AppointmentsDataType>();
+
   const [currentTablePage, setCurrentTablePage] = useState(1);
   const dataPerPage = 7;
 
@@ -56,6 +66,25 @@ const GenerateAppointmentsTable = ({
   // Handle page change
   const handlePageChange = (pageNumber: number) => {
     setCurrentTablePage(pageNumber);
+  };
+
+  // Handle delete
+  const handleDelete = async (appointment: AppointmentsDataType) => {
+    const data = filteredAppointmentsData.filter(
+      (p) => p.patientID !== appointment.patientID
+    );
+
+    const dataByStatus = appointmentsData.filter(
+      (p) => p.status !== appointment.status
+    );
+
+    setFilteredAppointmentsData([...data, ...dataByStatus]);
+
+    setAppointmentToDelete(undefined);
+
+    setOpenDeleteModal(false);
+
+    toast.success("Patient deleted successfully");
   };
 
   return (
@@ -114,37 +143,31 @@ const GenerateAppointmentsTable = ({
                 {appointment.assignedHO}
               </TableCell>
               <TableCell className="flex items-center gap-3">
-                <TbEdit
-                  size={20}
-                  className="text-red-500 cursor-pointer"
-                  onClick={() => {
-                    console.log("Edit clicked");
-                  }}
-                />
+                <EditAppointment appointment={appointment} />
 
                 <Trash2
                   size={20}
-                  className="text-primary-green cursor-pointer"
+                  className="text-red-500 cursor-pointer"
                   onClick={() => {
-                    console.log("Delete clicked");
+                    setAppointmentToDelete(appointment);
+                    setOpenDeleteModal(true);
                   }}
                 />
 
-                <Image
-                  src="/assets/icons/calendar.svg"
-                  alt="Calendar"
-                  width={20}
-                  height={20}
-                  className="cursor-pointer"
-                  onClick={() => {
-                    console.log("Calendar clicked");
-                  }}
-                />
+                <RescheduleAppointment appointment={appointment} />
               </TableCell>
             </TableRow>
           ))}
         </TableBody>
       </Table>
+
+      <DeleteModal
+        openModal={openDeleteModal}
+        setOpenModal={setOpenDeleteModal}
+        title="Delete Appointment"
+        description="Are you sure you want to delete this appointment?"
+        deleteFn={() => handleDelete(appointmentToDelete!)}
+      />
 
       {/* Pagination */}
       {filteredAppointmentsData.length > 0 && (

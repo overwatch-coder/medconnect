@@ -17,7 +17,7 @@ type CustomInputFormProps<T extends FieldValues> = {
   value?: string;
   placeholderText?: string;
   className?: string;
-  inputType?: "text" | "date" | "select" | "textarea" | "time";
+  inputType?: "text" | "date" | "select" | "textarea" | "time" | "hidden";
   selectOptions?: { value: string; label: string }[];
   isInputPassword?: boolean;
 };
@@ -36,9 +36,15 @@ const CustomInputForm = <T extends FieldValues>({
 }: CustomInputFormProps<T>) => {
   return (
     <div className={cn("flex flex-col space-y-4 w-full", className)}>
-      <label className="text-primary-gray/50" htmlFor={inputName as string}>
-        {labelName}
-      </label>
+      {inputType !== "hidden" && (
+        <label className="text-primary-gray/50" htmlFor={inputName as string}>
+          {labelName}
+        </label>
+      )}
+
+      {inputType === "hidden" && (
+        <input type="hidden" {...register(inputName)} />
+      )}
 
       {inputType === "date" && (
         <input
@@ -47,7 +53,6 @@ const CustomInputForm = <T extends FieldValues>({
           {...register(inputName)}
           placeholder={placeholderText}
           defaultValue={value}
-          max={new Date().toISOString().split("T")[0]}
         />
       )}
 

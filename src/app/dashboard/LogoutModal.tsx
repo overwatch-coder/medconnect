@@ -19,7 +19,7 @@ import { toast } from "react-toastify";
 import { X } from "lucide-react";
 import { logout, removeUserFromCookies } from "@/actions/user.action";
 
-const LogoutModal = () => {
+const LogoutModal = ({ showLogoutName }: { showLogoutName?: boolean }) => {
   const [user, setUser] = useUserAtom();
 
   // handle logout
@@ -38,10 +38,14 @@ const LogoutModal = () => {
   return (
     <AlertDialog>
       <AlertDialogTrigger className="flex flex-col items-start mt-16 hover:no-underline hover:scale-105 transition">
-        <p className="flex items-center gap-4 font-bold">
+        <span className="flex items-center gap-4 font-bold">
           <RiLogoutCircleLine size={25} color="white" />
-          <span className="text-white text-lg hidden lg:block">Logout</span>
-        </p>
+          {showLogoutName ? (
+            <span className="text-white text-lg">Logout</span>
+          ) : (
+            <span className="text-white text-lg hidden lg:block">Logout</span>
+          )}
+        </span>
       </AlertDialogTrigger>
 
       <AlertDialogContent id="hide" className="flex flex-col gap-6">
@@ -59,9 +63,9 @@ const LogoutModal = () => {
           </AlertDialogTitle>
 
           <AlertDialogDescription className="flex flex-col gap-5">
-            <p className="text-secondary-gray font-semibold">
+            <span className="text-secondary-gray font-semibold">
               Are you sure you want to logout?
-            </p>
+            </span>
           </AlertDialogDescription>
 
           <AlertDialogFooter>

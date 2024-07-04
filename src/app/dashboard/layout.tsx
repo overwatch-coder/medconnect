@@ -31,7 +31,7 @@ const DashboardLayout = async ({ children }: DashboardLayoutProps) => {
     <section className="flex min-h-screen relative w-full">
       <DashboardSidebar />
 
-      <main className="lg:ml-60 flex flex-col flex-grow min-h-screen ml-16 relative w-full">
+      <main className="lg:ml-60 flex flex-col flex-grow min-h-screen md:ml-16 relative w-full">
         {/* Header */}
         <DashboardHeader />
 

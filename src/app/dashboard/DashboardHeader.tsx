@@ -9,6 +9,7 @@ import Image from "next/image";
 import { useUserAtom } from "@/hooks";
 import { usePathname } from "next/navigation";
 import NotificationsModal from "@/app/dashboard/notifications/NotificationsModal";
+import DashboardSidebarMobile from "@/components/DashboardSidebarMobile";
 
 const DashboardHeader = () => {
   const [user] = useUserAtom();
@@ -18,9 +19,12 @@ const DashboardHeader = () => {
   return (
     <header className="w-full py-5 px-3 md:px-4 bg-white z-50">
       <div className="flex items-center justify-between relative w-full">
+        <div className="md:hidden">
+          <DashboardSidebarMobile />
+        </div>
+
         <h2 className="text-xl capitalize md:text-2xl text-secondary-gray font-extrabold">
           {isSuperAdmin ? "MedConnect" : user.user?.compoundName ?? "Guest"}{" "}
-          <br className="md:hidden" />{" "}
           {!isSuperAdmin && <span>CHPS Compound</span>}
         </h2>
 

@@ -14,49 +14,67 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
 import ClipLoader from "react-spinners/ClipLoader";
 import { FormSectionHeader } from "@/app/dashboard/compounds/add-new/AddCompoundForm";
-import { patientEmergencyContactSchema } from "@/schema/patient.schema";
 import CustomInputForm from "@/components/CustomInputForm";
 import { toast } from "react-toastify";
-import { PatientEmergencyContactType } from "@/types/index";
+import { HealthOfficialEmergencyContactType } from "@/types/index";
+import { healthOfficialEmergencyContactSchema } from "@/schema/health-officials.schema";
+import { useMutation } from "@tanstack/react-query";
 
-type EditPatientEmergencyContactProps = {
+type EditOfficialEmergencyContactProps = {
   open: boolean;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
-const EditPatientEmergencyContact = ({
+const EditOfficialEmergencyContact = ({
   open,
   setOpen,
-}: EditPatientEmergencyContactProps) => {
+}: EditOfficialEmergencyContactProps) => {
   const {
     register,
     reset,
-    formState: { errors, isSubmitting: pending },
+    formState: { errors },
     handleSubmit,
-  } = useForm<Partial<PatientEmergencyContactType>>({
-    resolver: zodResolver(patientEmergencyContactSchema.partial()),
+  } = useForm<Partial<HealthOfficialEmergencyContactType>>({
+    resolver: zodResolver(healthOfficialEmergencyContactSchema.partial()),
+    defaultValues: {
+      contactName: "John Doe",
+      location: "Accra",
+      phoneNumber: "+233 24 123 4567",
+      email: "johndoe@gmail.com",
+    },
     mode: "all",
   });
 
+  const { mutateAsync, isPending: pending } = useMutation({
+    mutationFn: async (data: Partial<HealthOfficialEmergencyContactType>) => {
+      console.log({ data });
+      return data;
+    },
+
+    onSuccess: (data) => {
+      toast.success("Health Official Emergency Contact updated successfully");
+      setOpen(false);
+      reset();
+    },
+  });
+
   const handleFormSubmit: SubmitHandler<
-    Partial<PatientEmergencyContactType>
+    Partial<HealthOfficialEmergencyContactType>
   > = async (data) => {
     console.log({ data });
-    setOpen(false);
-    toast.success("Emergency Contact updated successfully");
-    reset();
+    await mutateAsync(data);
   };
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogContent
         id="hide"
-        className="flex flex-col gap-4 w-full max-w-[90vw] md:max-w-[50vw] max-h-[95vh] h-full overflow-hidden"
+        className="flex flex-col gap-4 w-full max-w-[90vw] md:max-w-[50vw] overflow-hidden"
       >
         <DialogHeader className="overflow-y-scroll scrollbar-hide">
           <DialogTitle className="flex items-center justify-between">
             <span className="text-xl md:text-2xl text-secondary-gray font-bold">
-              Edit Patient
+              Edit Emergency Contact Information
             </span>
             <DialogClose
               onClick={() => {
@@ -77,18 +95,15 @@ const EditPatientEmergencyContact = ({
               method="POST"
             >
               <div className="flex flex-col gap-5 px-3 pt-5 pb-10 bg-white h-full">
-                {/* Emergency Contact Information */}
+                {/* Emergency Contact Person */}
                 <div className="flex flex-col gap-5 p-4 rounded-md border border-secondary-gray/50 w-full">
-                  <FormSectionHeader title="Emergency Contact Information" />
+                  <FormSectionHeader title="Emergency Contact Person" />
 
-                  <div className="flex flex-col gap-5">
-                    <h2 className="text-black font-normal text-base -mb-3">
-                      Contact Person 1
-                    </h2>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-5 w-full px-2 md:px-5">
+                  <div className="flex flex-col gap-5 px-2 md:px-5">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-5 w-full">
                       <CustomInputForm
                         labelName="Contact Name"
-                        inputName="emergencyContactNameOne"
+                        inputName="contactName"
                         register={register}
                         errors={errors}
                         inputType="text"
@@ -96,82 +111,39 @@ const EditPatientEmergencyContact = ({
                       />
 
                       <CustomInputForm
-                        labelName="Contact Relationship"
-                        inputName="emergencyContactRelationshipOne"
+                        labelName="Phone Number"
+                        inputName="phoneNumber"
                         register={register}
                         errors={errors}
                         inputType="text"
-                        placeholderText="Enter contact relationship"
+                        placeholderText="Enter phone number"
                       />
                     </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-5 w-full px-2 md:px-5">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-5 w-full">
                       <CustomInputForm
-                        labelName="Contact Address"
-                        inputName="emergencyContactAddressOne"
+                        labelName="Location"
+                        inputName="location"
                         register={register}
                         errors={errors}
                         inputType="text"
-                        placeholderText="Enter contact address"
+                        placeholderText="Enter location"
                       />
 
                       <CustomInputForm
-                        labelName="Contact Phone Number"
-                        inputName="emergencyContactPhoneNumberOne"
+                        labelName="Email Address"
+                        inputName="email"
                         register={register}
                         errors={errors}
                         inputType="text"
-                        placeholderText="Enter contact phone number"
-                      />
-                    </div>
-
-                    <h2 className="text-black font-normal text-base -mb-3">
-                      Contact Person 2
-                    </h2>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-5 w-full px-2 md:px-5">
-                      <CustomInputForm
-                        labelName="Contact Name"
-                        inputName="emergencyContactNameTwo"
-                        register={register}
-                        errors={errors}
-                        inputType="text"
-                        placeholderText="Enter contact name"
-                      />
-
-                      <CustomInputForm
-                        labelName="Contact Relationship"
-                        inputName="emergencyContactRelationshipTwo"
-                        register={register}
-                        errors={errors}
-                        inputType="text"
-                        placeholderText="Enter contact relationship"
-                      />
-                    </div>
-
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-5 w-full px-2 md:px-5">
-                      <CustomInputForm
-                        labelName="Contact Address"
-                        inputName="emergencyContactAddressTwo"
-                        register={register}
-                        errors={errors}
-                        inputType="text"
-                        placeholderText="Enter contact address"
-                      />
-
-                      <CustomInputForm
-                        labelName="Contact Phone Number"
-                        inputName="emergencyContactPhoneNumberTwo"
-                        register={register}
-                        errors={errors}
-                        inputType="text"
-                        placeholderText="Enter contact phone number"
+                        placeholderText="Enter email address"
                       />
                     </div>
                   </div>
                 </div>
 
                 {/* Submit form button */}
-                <EditPatientEmergencyContactButton
+                <EditOfficialEmergencyContactButton
                   pending={pending}
                   reset={reset}
                 />
@@ -184,9 +156,9 @@ const EditPatientEmergencyContact = ({
   );
 };
 
-export default EditPatientEmergencyContact;
+export default EditOfficialEmergencyContact;
 
-const EditPatientEmergencyContactButton = ({
+const EditOfficialEmergencyContactButton = ({
   pending,
   reset,
 }: {
@@ -215,7 +187,7 @@ const EditPatientEmergencyContactButton = ({
         {pending ? (
           <ClipLoader size={28} loading={pending} color="white" />
         ) : (
-          "Update Patient"
+          "Update"
         )}
       </Button>
     </div>

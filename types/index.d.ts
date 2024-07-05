@@ -4,6 +4,11 @@ import {
 } from "@/schema/appointment.schema";
 import { contactFormSchema } from "@/schema/contact.schema";
 import { diagnosisReportSchema } from "@/schema/diagnosis-report.schema";
+import {
+  healthOfficialAdditionalInformationSchema,
+  healthOfficialEmergencyContactSchema,
+  healthOfficialSchema,
+} from "@/schema/health-officials.schema";
 import { inventorySchema } from "@/schema/inventory.schema";
 import { medicalHistorySchema } from "@/schema/medical-history.schema";
 import {
@@ -109,3 +114,12 @@ export type RescheduleAppointmentType = z.infer<
 
 // Inventory Schema
 export type InventoryType = z.infer<typeof inventorySchema>;
+
+// Health Officials Schema
+export type HealthOfficialType = z.infer<typeof healthOfficialSchema>;
+export type HealthOfficialAdditionalInformationType = z.infer<
+  typeof healthOfficialAdditionalInformationSchema
+>;
+export type HealthOfficialEmergencyContactType = z.infer<
+  typeof healthOfficialEmergencyContactSchema
+>;

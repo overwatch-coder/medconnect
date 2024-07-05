@@ -77,9 +77,9 @@ const AddPatientEmergencyContact = ({
               method="POST"
             >
               <div className="flex flex-col gap-5 px-3 pt-5 pb-10 bg-white h-full">
-                {/* Additional Information */}
+                {/* Emergency Contact Information */}
                 <div className="flex flex-col gap-5 p-4 rounded-md border border-secondary-gray/50 w-full">
-                  <FormSectionHeader title="Additional Information" />
+                  <FormSectionHeader title="Emergency Contact Information" />
 
                   <div className="flex flex-col gap-5">
                     <h2 className="text-black font-normal text-base -mb-3">

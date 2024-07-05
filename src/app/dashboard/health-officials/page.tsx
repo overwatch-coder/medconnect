@@ -1,37 +1,37 @@
 import DashboardContentHeader from "@/app/dashboard/DashboardContentHeader";
+import AddOfficial from "@/app/dashboard/health-officials/add-official/AddOfficial";
+import HealthOfficialsTable from "@/app/dashboard/health-officials/HealthOfficialsTable";
 import { Button } from "@/components/ui/button";
 import { Upload } from "lucide-react";
 import { Metadata } from "next";
 import React from "react";
 import { IoIosArrowRoundUp } from "react-icons/io";
-import InventoryTable from "@/app/dashboard/inventory/InventoryTable";
-import AddInventory from "@/app/dashboard/inventory/AddInventory";
 
 export const metadata: Metadata = {
-  title: "Inventory - MedConnect",
-  description: "Manage your inventory",
+  title: "Health Officials - MedConnect",
+  description: "Manage your health Officials",
   icons: {
     icon: "/favicon.ico",
   },
 };
 
-const Inventory = () => {
+const HealthOfficials = () => {
   return (
     <div className="flex flex-col gap-5 w-full my-5 relative">
       <DashboardContentHeader
-        headerTitle={"Inventory Overview"}
+        headerTitle={"Health Officials Overview"}
         showDate={false}
       >
-        <AddInventory />
+        <AddOfficial />
       </DashboardContentHeader>
 
       {/* Data Overview */}
       <div className="flex flex-col gap-2 w-full">
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-5">
-          {/* Total Inventory Items */}
+          {/* Total Number of Health Workers */}
           <div className="bg-white rounded-md p-4 col-span-1 flex flex-col gap-3  w-full">
             <h2 className="font-semibold text-secondary-gray md:text-lg">
-              Total Inventory Items
+              Total Number of Health Workers
             </h2>
 
             <p className="font-bold text-2xl relative text-primary-green">
@@ -43,36 +43,36 @@ const Inventory = () => {
             </p>
           </div>
 
-          {/* Recently Added Items */}
+          {/* Nurses */}
           <div className="bg-white rounded-md p-4 col-span-1 flex flex-col gap-3  w-full">
             <h2 className="font-semibold text-secondary-gray md:text-lg">
-              Recently Added Items
+              Nurses
             </h2>
 
             <p className="font-bold text-2xl relative text-primary-green">
-              <span>100</span>
+              <span>30</span>
             </p>
           </div>
 
-          {/* Expired Items */}
+          {/* Physician Assistants */}
           <div className="bg-white rounded-md p-4 col-span-1 flex flex-col gap-3  w-full">
             <h2 className="font-semibold text-secondary-gray md:text-lg">
-              Expired Items
+              Physician Assistants
             </h2>
 
             <p className="font-bold text-2xl relative text-primary-green">
-              <span>300</span>
+              <span>15</span>
             </p>
           </div>
 
-          {/* Low Stock Items */}
+          {/* Community Health Workers */}
           <div className="bg-white rounded-md p-4 col-span-1 flex flex-col gap-3  w-full">
             <h2 className="font-semibold text-secondary-gray md:text-lg">
-              Low Stock Items
+              Community Health Workers
             </h2>
 
             <p className="font-bold text-2xl relative text-primary-green">
-              <span>50</span>
+              <span>7</span>
             </p>
           </div>
         </div>
@@ -82,7 +82,7 @@ const Inventory = () => {
         <div className="border-b border-b-secondary-gray w-full flex flex-col items-center">
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between w-full p-3">
             <h2 className="text-secondary-gray text-xl font-medium">
-              Medicine Inventory
+              Health Officials
             </h2>
 
             <Button className="bg-transparent hover:bg-transparent border-2 border-primary-green hover:scale-105 transition py-2 px-5 flex items-center gap-3 rounded-md text-white">
@@ -92,11 +92,11 @@ const Inventory = () => {
           </div>
         </div>
 
-        {/* Inventory Table */}
-        <InventoryTable />
+        {/* Health Officials Table */}
+        <HealthOfficialsTable />
       </section>
     </div>
   );
 };
 
-export default Inventory;
+export default HealthOfficials;

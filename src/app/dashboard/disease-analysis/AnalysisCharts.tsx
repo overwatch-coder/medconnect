@@ -62,23 +62,21 @@ const AnalysisCharts = () => {
               Disease Analysis
             </h2>
 
-            <div className="flex items-center gap-2">
-              <select
-                name="chartType"
-                id="chartType"
-                onChange={(e) => setChartType(e.target.value as "line" | "pie")}
+            {chartType === "line" ? (
+              <span
+                onClick={() => setChartType("pie")}
+                className="flex cursor-pointer items-center justify-center gap-2 bg-primary-green text-white rounded-md p-2"
               >
-                <option value="line">Line Chart</option>
-                <option value="pie">Pie Chart</option>
-              </select>
-            </div>
-            <span className="flex items-center justify-center gap-2 bg-primary-green text-white rounded-md p-2">
-              {chartType === "line" ? (
-                <AiOutlineLineChart size={20} className="text-white" />
-              ) : (
                 <PieChart size={20} className="text-white" />
-              )}
-            </span>
+              </span>
+            ) : (
+              <span
+                onClick={() => setChartType("line")}
+                className="flex cursor-pointer items-center justify-center gap-2 bg-primary-green text-white rounded-md p-2"
+              >
+                <AiOutlineLineChart size={20} className="text-white" />
+              </span>
+            )}
           </div>
 
           {/* Chart */}

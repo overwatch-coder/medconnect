@@ -42,6 +42,7 @@ type LineChartProps = {
   scalesXTickColor?: string;
   scalesYGridColor?: string;
   scalesYTickColor?: string;
+  position?: "center" | "left" | "right" | "top" | "bottom" | "chartArea";
 };
 
 const LineChart = ({
@@ -52,6 +53,7 @@ const LineChart = ({
   scalesXTickColor,
   scalesYTickColor,
   scalesYGridColor,
+  position,
 }: LineChartProps) => {
   const lineChartData: ChartData<"line"> = {
     labels: labels,
@@ -63,7 +65,7 @@ const LineChart = ({
     maintainAspectRatio: true,
     plugins: {
       legend: {
-        position: "bottom",
+        position: position || "bottom",
         labels: {
           color: legendLabelsColor,
         },

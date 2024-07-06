@@ -2726,3 +2726,164 @@ export const MEDCONNECT_DASHBOARD_OUTREACH_PROGRAMS = [
     organization: "Women's Health Ghana",
   },
 ];
+
+export const MEDCONNECT_DASHBOARD_REPORT_TYPES_SUPER_ADMIN = [
+  {
+    name: "Patients Report",
+    type: "patients",
+    reportTypes: [
+      { name: "Admission Report", value: "admission report" },
+      { name: "Discharge Report", value: "discharge report" },
+      { name: "Consultation Report", value: "consultation report" },
+      { name: "Treatment Plan Report", value: "treatment plan report" },
+    ],
+  },
+  {
+    name: "Appointments Report",
+    type: "appointments",
+    reportTypes: [
+      { name: "Daily Appointment Report", value: "daily appointment report" },
+      { name: "Weekly Appointment Report", value: "weekly appointment report" },
+      {
+        name: "Monthly Appointment Report",
+        value: "monthly appointment report",
+      },
+      {
+        name: "Cancelled Appointment Report",
+        value: "cancelled appointment report",
+      },
+    ],
+  },
+  {
+    name: "Inventory Report",
+    type: "inventory",
+    reportTypes: [
+      { name: "Stock Report", value: "stock report" },
+      { name: "Usage Report", value: "usage report" },
+      { name: "Expiry Report", value: "expiry report" },
+      { name: "Purchase Report", value: "purchase report" },
+    ],
+  },
+  {
+    name: "Diagnostic Report",
+    type: "diagnostic",
+    reportTypes: [
+      { name: "Radiology Report", value: "radiology report" },
+      { name: "Laboratory Report", value: "laboratory report" },
+      { name: "Cardiology Report", value: "cardiology report" },
+      { name: "Pathology Report", value: "pathology report" },
+    ],
+  },
+  {
+    name: "System Performance Report",
+    type: "system-performance",
+    reportTypes: [
+      { name: "Uptime Report", value: "uptime report" },
+      { name: "Response Time Report", value: "response time report" },
+      { name: "Error Report", value: "error report" },
+      { name: "Load Report", value: "load report" },
+    ],
+  },
+  {
+    name: "Compound Management Report",
+    type: "compound-management",
+    reportTypes: [
+      { name: "Chemical Inventory Report", value: "chemical inventory report" },
+      { name: "Compound Usage Report", value: "compound usage report" },
+      { name: "Safety Report", value: "safety report" },
+      { name: "Storage Report", value: "storage report" },
+    ],
+  },
+  {
+    name: "Outreach Program Report",
+    type: "outreach-program",
+    reportTypes: [
+      { name: "Event Report", value: "event report" },
+      { name: "Participation Report", value: "participation report" },
+      { name: "Feedback Report", value: "feedback report" },
+      { name: "Impact Assessment Report", value: "impact assessment report" },
+    ],
+  },
+];
+
+export const MEDCONNECT_DASHBOARD_REPORT_TYPES_ADMIN = [
+  {
+    name: "Patients Report",
+    type: "patients",
+    reportTypes: [
+      { name: "Admission Report", value: "admission report" },
+      { name: "Discharge Report", value: "discharge report" },
+      { name: "Consultation Report", value: "consultation report" },
+      { name: "Treatment Plan Report", value: "treatment plan report" },
+    ],
+  },
+  {
+    name: "Appointments Report",
+    type: "appointments",
+    reportTypes: [
+      { name: "Daily Appointment Report", value: "daily appointment report" },
+      { name: "Weekly Appointment Report", value: "weekly appointment report" },
+      {
+        name: "Monthly Appointment Report",
+        value: "monthly appointment report",
+      },
+      {
+        name: "Cancelled Appointment Report",
+        value: "cancelled appointment report",
+      },
+    ],
+  },
+  {
+    name: "Inventory Report",
+    type: "inventory",
+    reportTypes: [
+      { name: "Stock Report", value: "stock report" },
+      { name: "Usage Report", value: "usage report" },
+      { name: "Expiry Report", value: "expiry report" },
+      { name: "Purchase Report", value: "purchase report" },
+    ],
+  },
+  {
+    name: "Diagnostic Report",
+    type: "diagnostic",
+    reportTypes: [
+      { name: "Radiology Report", value: "radiology report" },
+      { name: "Laboratory Report", value: "laboratory report" },
+      { name: "Cardiology Report", value: "cardiology report" },
+      { name: "Pathology Report", value: "pathology report" },
+    ],
+  },
+  {
+    name: "Health Officials Report",
+    type: "health-officials",
+    reportTypes: [
+      { name: "Staff Attendance Report", value: "staff attendance report" },
+      {
+        name: "Performance Evaluation Report",
+        value: "performance evaluation report",
+      },
+      { name: "Training Report", value: "training report" },
+      { name: "Certification Report", value: "certification report" },
+    ],
+  },
+  {
+    name: "Disease Analysis Report",
+    type: "disease-analysis",
+    reportTypes: [
+      { name: "Infection Report", value: "infection report" },
+      { name: "Outbreak Report", value: "outbreak report" },
+      { name: "Mortality Report", value: "mortality report" },
+      { name: "Recovery Report", value: "recovery report" },
+    ],
+  },
+  {
+    name: "Outreach Program Report",
+    type: "outreach-program",
+    reportTypes: [
+      { name: "Event Report", value: "event report" },
+      { name: "Participation Report", value: "participation report" },
+      { name: "Feedback Report", value: "feedback report" },
+      { name: "Impact Assessment Report", value: "impact assessment report" },
+    ],
+  },
+];

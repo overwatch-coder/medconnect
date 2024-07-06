@@ -81,3 +81,42 @@ export const getEndTime = (startTime: string) => {
 
   return `${formattedHours}:${formattedMinutes} ${endModifier}`;
 };
+
+// get all years from startYear to current year
+export const getAllYears = (startYear: number = 2010) => {
+  const currentYear = new Date().getFullYear();
+  const years = [];
+
+  for (let i = startYear; i <= currentYear; i++) {
+    years.push(i);
+  }
+
+  return years.reverse();
+};
+
+// get all months from startMonth to current month
+export const getAllMonths = (startMonth: number = 1) => {
+  const monthsInWords = [
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December",
+  ];
+
+  const currentMonth = new Date().getMonth() + 1;
+  const months = [];
+
+  for (let i = startMonth; i <= currentMonth; i++) {
+    months.push(i);
+  }
+
+  return months.map((month) => monthsInWords[month - 1]);
+};

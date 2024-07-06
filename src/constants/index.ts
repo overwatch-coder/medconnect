@@ -1,4 +1,4 @@
-import { IoCheckmarkCircle } from "react-icons/io5";
+import { IoCheckmarkCircle, IoTicketOutline } from "react-icons/io5";
 import {
   MdOutlinePersonalInjury,
   MdOutlineDashboard,
@@ -6,10 +6,8 @@ import {
   MdOutlineInventory2,
 } from "react-icons/md";
 import { FaSearchPlus, FaClinicMedical } from "react-icons/fa";
-import { BsPrescription } from "react-icons/bs";
 import { TbReport } from "react-icons/tb";
-import { GrSystem } from "react-icons/gr";
-import { UserRoundPlus, CalendarPlus2, Podcast } from "lucide-react";
+import { UserRoundPlus, CalendarPlus2, Podcast, LineChart } from "lucide-react";
 
 // HOMEPAGE DATA
 export const NAV_ITEMS = [
@@ -277,19 +275,19 @@ export const MEDCONNECT_SUPER_ADMIN_DASHBOARD_LINKS = [
     icon: FaClinicMedical,
   },
   {
-    name: "Health Officials",
-    path: "/dashboard/health-officials",
-    icon: UserRoundPlus,
-  },
-  {
-    name: "Compound Management",
-    path: "/dashboard/compound-management",
-    icon: BsPrescription,
-  },
-  {
     name: "System Analytics",
     path: "/dashboard/system-analytics",
-    icon: GrSystem,
+    icon: LineChart,
+  },
+  {
+    name: "Outreach Programs",
+    path: "/dashboard/outreach-programs",
+    icon: Podcast,
+  },
+  {
+    name: "Tickets",
+    path: "/dashboard/tickets",
+    icon: IoTicketOutline,
   },
   {
     name: "Reports",

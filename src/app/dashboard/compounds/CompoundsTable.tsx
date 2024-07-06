@@ -26,7 +26,7 @@ export type CompoundsDataType = {
 };
 
 const CompoundsTable = () => {
-  const [filterBy, setFilterBy] = useState("Compound ID");
+  const [filterBy, setFilterBy] = useState("Region");
   const [searchTerm, setSearchTerm] = useState("");
   const [filteredCompoundsData, setFilteredCompoundsData] =
     useState<CompoundsDataType[]>(compoundsData);
@@ -105,10 +105,13 @@ const CompoundsTable = () => {
           filterBy={filterBy}
           handleFilter={handleFilter}
           filterOptions={filterOptions}
+          filterName="Sort by"
+          className="rounded bg-red-500 hover:bg-red-500 border-0 hover:text-white text-white"
+          iconClassName="text-white"
         />
       </div>
 
-      <div className="flex flex-col gap-7 px-3 py-5 bg-white max-h-screen h-full overflow-y-scroll scrollbar-hide">
+      <div className="flex flex-col gap-7 pb-5 bg-white max-h-screen h-full overflow-y-scroll scrollbar-hide">
         <GetCompoundsTable
           setFilteredCompoundsData={setFilteredCompoundsData}
           filteredCompoundsData={filteredCompoundsData}
@@ -183,7 +186,7 @@ const GetCompoundsTable = ({
   };
 
   return (
-    <Table>
+    <Table className="scrollbar-hide">
       <TableHeader>
         <TableRow className="bg-primary-green hover:bg-primary-green w-full">
           <TableHead
@@ -207,7 +210,7 @@ const GetCompoundsTable = ({
         </TableRow>
       </TableHeader>
 
-      <TableBody>
+      <TableBody className="scrollbar-hide">
         {filteredCompoundsData.map((data, idx) => (
           <TableRow key={idx}>
             <TableCell className="text-secondary-gray font-semibold flex items-center gap-2">

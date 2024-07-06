@@ -82,10 +82,15 @@ const DashboardMobileHeader = () => {
 
         <div className="rounded-md bg-white/40 md:bg-primary-gray/10 py-3 md:py-1 px-2 flex items-center gap-5">
           <Image
-            src="/assets/icons/dashboard-header.svg"
+            src={
+              isSuperAdmin
+                ? "/assets/avatars/super-admin.svg"
+                : "/assets/icons/dashboard-header.svg"
+            }
             alt="avatar"
             width={70}
             height={70}
+            className="rounded-full object-cover"
           />
           <p className="flex flex-col gap-1 text-white md:text-secondary-gray">
             <span className="font-bold text-lg capitalize">

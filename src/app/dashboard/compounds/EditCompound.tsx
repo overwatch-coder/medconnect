@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/dialog";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { settingsSchemaWithoutRefinement } from "@/schema/setting.schema";
+import { settingsSchema } from "@/schema/setting.schema";
 import { FileDrop } from "@instructure/ui-file-drop";
 import { Upload } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -24,6 +24,7 @@ import { useRouter } from "next/navigation";
 import NotificationModal from "@/components/NotificationModal";
 import CustomInputForm from "@/components/CustomInputForm";
 import { SettingsType } from "@/types/index";
+import { useUserAtom } from "@/hooks";
 
 type EditCompoundModalProps = {
   openModal: boolean;
@@ -39,6 +40,7 @@ const EditCompoundModal = ({
   setEditCompoundId,
 }: EditCompoundModalProps) => {
   const router = useRouter();
+  const [user] = useUserAtom();
 
   const [showEditNotificationModal, setShowEditNotificationModal] =
     useState(false);
@@ -56,7 +58,26 @@ const EditCompoundModal = ({
     formState: { errors, isSubmitting: pending },
     handleSubmit,
   } = useForm<Partial<SettingsType>>({
-    resolver: zodResolver(settingsSchemaWithoutRefinement.partial()),
+    resolver: zodResolver(settingsSchema.partial()),
+    defaultValues: {
+      compoundName: compoundData?.compoundName,
+      email: user.user?.email,
+      location: compoundData?.location,
+      region: compoundData?.region,
+      district: user.user?.district,
+      contactInformation: "",
+      availableServices: user.user?.availableServices,
+      operatingHours: "",
+      staffInformation: "",
+      facilityDetails: "",
+      historicalInformation: "",
+      communityOutreachContact: "",
+      emergencyContact: "",
+      notifications: false,
+      profilePicture: null,
+      userId: user.user?._id,
+      compoundId: compoundData?.compoundId,
+    },
     mode: "all",
   });
 
@@ -162,7 +183,7 @@ const EditCompoundModal = ({
                   <FormSectionHeader title="General Information" />
 
                   <div className="flex flex-col gap-5 px-2 md:px-5">
-                    <div className="flex flex-col gap-4 w-full md:flex-row items-center justify-between">
+                    <div className="grid grid-cols-1 md:grid-cols-3 w-full gap-5">
                       <CustomInputForm
                         labelName="Compound Name"
                         inputName="compoundName"
@@ -194,7 +215,7 @@ const EditCompoundModal = ({
                       />
                     </div>
 
-                    <div className="flex flex-col gap-4 w-full md:flex-row items-center justify-between">
+                    <div className="grid grid-cols-1 md:grid-cols-3 w-full gap-5">
                       <CustomInputForm
                         labelName="District"
                         inputName="district"
@@ -223,13 +244,29 @@ const EditCompoundModal = ({
                       />
                     </div>
 
-                    <div className="flex flex-col gap-4 w-full md:flex-row items-center justify-between md:w-1/3">
+                    <div className="grid grid-cols-1 md:grid-cols-3 w-full gap-5">
                       <CustomInputForm
                         labelName="Email Address"
                         inputName="email"
                         errors={errors}
                         inputType="text"
                         placeholderText="Enter compound email"
+                        register={register}
+                      />
+
+                      <CustomInputForm
+                        labelName="User ID"
+                        inputName="userId"
+                        errors={errors}
+                        inputType="hidden"
+                        register={register}
+                      />
+
+                      <CustomInputForm
+                        labelName="Compound ID"
+                        inputName="compoundId"
+                        errors={errors}
+                        inputType="hidden"
                         register={register}
                       />
                     </div>
@@ -241,7 +278,7 @@ const EditCompoundModal = ({
                   <FormSectionHeader title="Additional Information" />
 
                   <div className="flex flex-col gap-5 px-2 md:px-5">
-                    <div className="flex flex-col gap-4 w-full md:flex-row items-center justify-between">
+                    <div className="grid grid-cols-1 md:grid-cols-3 w-full gap-5">
                       <CustomInputForm
                         labelName="Operating Hours"
                         inputName="operatingHours"
@@ -270,7 +307,7 @@ const EditCompoundModal = ({
                       />
                     </div>
 
-                    <div className="flex flex-col gap-4 w-full md:flex-row items-center justify-between">
+                    <div className="grid grid-cols-1 md:grid-cols-3 w-full gap-5">
                       <CustomInputForm
                         labelName="Historical Information"
                         inputName="historicalInformation"

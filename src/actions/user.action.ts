@@ -26,7 +26,7 @@ export const saveUserToCookies = async (token: string, userId: string) => {
     httpOnly: true,
     sameSite: "strict",
     path: "/",
-    expires: new Date(Date.now() + 60 * 60 * 1000), // 1 hour
+    expires: new Date(Date.now() + 60 * 60 * 5 * 1000), // 5 hour
   });
 };
 

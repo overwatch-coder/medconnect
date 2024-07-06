@@ -13,9 +13,11 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import ClipLoader from "react-spinners/ClipLoader";
 import { toast } from "react-toastify";
 import { SettingsType } from "@/types/index";
+import { useUserAtom } from "@/hooks";
 
 const AddCompoundForm = () => {
   const router = useRouter();
+  const [user] = useUserAtom();
 
   const {
     register,
@@ -25,6 +27,24 @@ const AddCompoundForm = () => {
     setValue,
   } = useForm<SettingsType>({
     resolver: zodResolver(settingsSchema),
+    defaultValues: {
+      compoundName: user.user?.compoundName,
+      email: user.user?.email,
+      location: user.user?.location,
+      region: user.user?.region,
+      district: user.user?.district,
+      contactInformation: "",
+      availableServices: user.user?.availableServices,
+      operatingHours: "",
+      staffInformation: "",
+      facilityDetails: "",
+      historicalInformation: "",
+      communityOutreachContact: "",
+      emergencyContact: "",
+      notifications: false,
+      profilePicture: null,
+      userId: user.user?._id,
+    },
     mode: "all",
   });
 
@@ -58,7 +78,7 @@ const AddCompoundForm = () => {
           <FormSectionHeader title="General Information" />
 
           <div className="flex flex-col gap-5 px-2 md:px-5">
-            <div className="flex flex-col gap-4 w-full md:flex-row items-center justify-between">
+            <div className="grid grid-cols-1 md:grid-cols-3 w-full gap-5">
               <CustomInputForm
                 labelName="Compound Name"
                 inputName="compoundName"
@@ -87,7 +107,7 @@ const AddCompoundForm = () => {
               />
             </div>
 
-            <div className="flex flex-col gap-4 w-full md:flex-row items-center justify-between">
+            <div className="grid grid-cols-1 md:grid-cols-3 w-full gap-5">
               <CustomInputForm
                 labelName="District"
                 inputName="district"
@@ -116,7 +136,7 @@ const AddCompoundForm = () => {
               />
             </div>
 
-            <div className="flex flex-col gap-4 w-full md:flex-row items-center justify-between">
+            <div className="grid grid-cols-1 md:grid-cols-3 w-full gap-5">
               <CustomInputForm
                 labelName="Email Address"
                 inputName="email"
@@ -124,27 +144,14 @@ const AddCompoundForm = () => {
                 inputType="text"
                 placeholderText="Enter compound email"
                 register={register}
-                value=""
               />
 
               <CustomInputForm
-                labelName="Password"
-                inputName="password"
+                labelName="User ID"
+                inputName="userId"
                 errors={errors}
-                inputType="text"
-                placeholderText="Enter compound password"
+                inputType="hidden"
                 register={register}
-                isInputPassword={true}
-              />
-
-              <CustomInputForm
-                labelName="Confirm Password"
-                inputName="confirmPassword"
-                errors={errors}
-                inputType="text"
-                placeholderText="Confirm compound password"
-                register={register}
-                isInputPassword={true}
               />
             </div>
           </div>
@@ -155,7 +162,7 @@ const AddCompoundForm = () => {
           <FormSectionHeader title="Additional Information" />
 
           <div className="flex flex-col gap-5 px-2 md:px-5">
-            <div className="flex flex-col gap-4 w-full md:flex-row items-center justify-between">
+            <div className="grid grid-cols-1 md:grid-cols-3 w-full gap-5">
               <CustomInputForm
                 labelName="Operating Hours"
                 inputName="operatingHours"
@@ -184,7 +191,7 @@ const AddCompoundForm = () => {
               />
             </div>
 
-            <div className="flex flex-col gap-4 w-full md:flex-row items-center justify-between">
+            <div className="grid grid-cols-1 md:grid-cols-3 w-full gap-5">
               <CustomInputForm
                 labelName="Historical Information"
                 inputName="historicalInformation"

@@ -66,10 +66,15 @@ const DashboardHeader = () => {
 
           <div className="rounded-md bg-primary-gray/10 py-1 px-3 flex items-center gap-3">
             <Image
-              src="/assets/icons/dashboard-header.svg"
+              src={
+                isSuperAdmin
+                  ? "/assets/avatars/super-admin.svg"
+                  : "/assets/icons/dashboard-header.svg"
+              }
               alt="avatar"
-              width={35}
-              height={35}
+              width={50}
+              height={50}
+              className="rounded-full object-cover"
             />
             <p className="flex flex-col gap-1 text-secondary-gray">
               <span className="font-bold capitalize">

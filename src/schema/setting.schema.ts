@@ -44,19 +44,14 @@ export const settingsSchemaWithoutRefinement = z.object({
   emergencyContact: z.string().trim().optional(),
   notifications: z.coerce.boolean().default(false),
   profilePicture: z.any().optional(),
+  userId: z.string(),
+  compoundId: z.string().optional(),
 });
 
-export const settingsSchema = settingsSchemaWithoutRefinement.superRefine(
-  (data, ctx) => {
-    if (data.password !== data.confirmPassword) {
-      ctx.addIssue({
-        code: "custom",
-        message: "Passwords do not match",
-        path: ["confirmPassword"],
-      });
-    }
-  }
-);
+export const settingsSchema = settingsSchemaWithoutRefinement.omit({
+  password: true,
+  confirmPassword: true,
+});
 
 export const settingsGeneralInformationSchema =
   settingsSchemaWithoutRefinement.pick({

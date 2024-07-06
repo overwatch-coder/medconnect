@@ -7,6 +7,8 @@ import AddTicket from "@/app/dashboard/tickets/AddTicket";
 import TicketsWithSearch from "@/app/dashboard/tickets/TicketsWithSearch";
 import TicketsAnalyticsSummary from "@/app/dashboard/tickets/TicketsAnalyticsSummary";
 
+export const dynamic = "force-dynamic";
+
 export const metadata: Metadata = {
   title: "Help & Support - MedConnect",
   description: "Manage your help & support tickets",

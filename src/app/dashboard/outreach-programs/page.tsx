@@ -7,6 +7,8 @@ import { currentServerUser } from "@/actions/user.action";
 import { IoIosArrowRoundUp } from "react-icons/io";
 import OutreachProgramsWithSearch from "@/app/dashboard/outreach-programs/OutreachProgramsWithSearch";
 
+export const dynamic = "force-dynamic";
+
 export const metadata: Metadata = {
   title: "Outreach Programs - MedConnect",
   description: "Manage your outreach programs",

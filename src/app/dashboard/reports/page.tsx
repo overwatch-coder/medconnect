@@ -8,6 +8,8 @@ import {
 import { currentServerUser } from "@/actions/user.action";
 import GenerateReports from "@/app/dashboard/reports/GenerateReports";
 
+export const dynamic = "force-dynamic";
+
 export type ReportType =
   (typeof MEDCONNECT_DASHBOARD_REPORT_TYPES_ADMIN)[number];
 

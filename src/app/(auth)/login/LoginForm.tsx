@@ -16,6 +16,7 @@ import Image from "next/image";
 import { useMutation } from "@tanstack/react-query";
 import CustomErrorElement from "@/components/CustomErrorElement";
 import { LoginType } from "@/types/index";
+import { MdEmail } from "react-icons/md";
 
 const LoginForm = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -80,18 +81,18 @@ const LoginForm = () => {
           <CustomErrorElement errors={submitFormErrors} />
 
           <div className="flex flex-col w-full">
-            <label htmlFor="compoundName" className="flex items-center gap-2">
-              <IoPerson size={15} className="text-secondary-gray" />
-              <span className="text-secondary-gray">Compound Name</span>
+            <label htmlFor="email" className="flex items-center gap-2">
+              <MdEmail size={15} className="text-secondary-gray" />
+              <span className="text-secondary-gray">Email</span>
             </label>
             <input
               type="text"
               className="text-secondary-gray ring-0 border-b-secondary-gray w-full px-2 py-1 border-b-2 outline-none"
-              {...register("compoundName")}
+              {...register("email")}
             />
-            {errors?.compoundName?.message && (
+            {errors?.email?.message && (
               <p className="py-2 text-xs text-red-500">
-                {errors.compoundName.message}
+                {errors.email.message}
               </p>
             )}
           </div>

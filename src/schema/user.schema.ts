@@ -1,12 +1,7 @@
 import { z } from "zod";
 
 export const userSchema = z.object({
-  compoundName: z
-    .string()
-    .min(1, { message: "Compound Name cannot be empty" })
-    .regex(/^\S+$/, {
-      message: "Compound Name must be a single word without spaces",
-    }),
+  compoundName: z.string().min(1, { message: "Compound Name cannot be empty" }),
   location: z.string().min(1, { message: "Location cannot be empty" }),
   region: z.string().min(1, { message: "Region cannot be empty" }),
   district: z.string().min(1, { message: "District cannot be empty" }),
@@ -29,12 +24,13 @@ export const userSchema = z.object({
 });
 
 export const loginSchema = z.object({
-  compoundName: z
-    .string({ required_error: "Compound Name is required" })
+  email: z
+    .string({ required_error: "Email address is required" })
     .trim()
     .min(1, {
-      message: "Compound Name is required",
-    }),
+      message: "Email address is required",
+    })
+    .email({ message: "Please enter a valid email address" }),
   password: z.string({ required_error: "Password is required" }).trim().min(6, {
     message: "Password must be at least 6 characters",
   }),

@@ -12,6 +12,7 @@ import {
   Legend,
   ChartData,
   ChartOptions,
+  Filler,
 } from "chart.js";
 import { Line } from "react-chartjs-2";
 
@@ -22,20 +23,12 @@ ChartJS.register(
   LineElement,
   Title,
   Tooltip,
-  Legend
+  Legend,
+  Filler
 );
 
-type DataSet = {
-  label: string;
-  backgroundColor?: string;
-  borderColor?: string;
-  pointBackgroundColor?: string;
-  pointBorderColor?: string;
-  data: number[];
-};
-
 type LineChartProps = {
-  datasets: DataSet[];
+  datasets: ChartData<"line">["datasets"];
   labels: string[] | number[];
   legendLabelsColor?: string;
   scalesXGridColor?: string;
@@ -44,6 +37,8 @@ type LineChartProps = {
   scalesYTickColor?: string;
   position?: "center" | "left" | "right" | "top" | "bottom" | "chartArea";
   smooth?: boolean;
+  showLegend?: boolean;
+  customYAxisLabel?: string;
 };
 
 const LineChart = ({
@@ -56,6 +51,8 @@ const LineChart = ({
   scalesYGridColor,
   position,
   smooth,
+  showLegend,
+  customYAxisLabel,
 }: LineChartProps) => {
   const lineChartData: ChartData<"line"> = {
     labels: labels,
@@ -68,6 +65,7 @@ const LineChart = ({
     plugins: {
       legend: {
         position: position || "bottom",
+        display: showLegend ?? true,
         labels: {
           color: legendLabelsColor,
         },
@@ -93,6 +91,7 @@ const LineChart = ({
         },
         ticks: {
           color: scalesYTickColor,
+          callback: (value) => `${value} ${customYAxisLabel || ""}`,
         },
       },
     },

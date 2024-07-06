@@ -95,7 +95,7 @@ export const getAllYears = (startYear: number = 2010) => {
 };
 
 // get all months from startMonth to current month
-export const getAllMonths = (startMonth: number = 1) => {
+export const getAllMonths = (startMonth: number = 1, all: boolean = false) => {
   const monthsInWords = [
     "January",
     "February",
@@ -110,6 +110,10 @@ export const getAllMonths = (startMonth: number = 1) => {
     "November",
     "December",
   ];
+
+  if (all) {
+    return monthsInWords;
+  }
 
   const currentMonth = new Date().getMonth() + 1;
   const months = [];

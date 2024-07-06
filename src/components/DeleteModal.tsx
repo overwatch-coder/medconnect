@@ -14,21 +14,23 @@ import {
 
 import { X } from "lucide-react";
 
-type DeleteModalProps = {
+type DeleteModalProps<T> = {
   openModal: boolean;
   setOpenModal: React.Dispatch<React.SetStateAction<boolean>>;
   title: string;
   description: string;
-  deleteFn: (data?: any) => Promise<any>;
+  deleteFn: (
+    data?: T | React.MouseEvent<HTMLButtonElement, MouseEvent>
+  ) => Promise<void>;
 };
 
-const DeleteModal = ({
+const DeleteModal = <T,>({
   openModal,
   setOpenModal,
   title,
   description,
   deleteFn,
-}: DeleteModalProps) => {
+}: DeleteModalProps<T>) => {
   return (
     <AlertDialog open={openModal} onOpenChange={setOpenModal}>
       <AlertDialogContent id="hide" className="flex flex-col gap-6">

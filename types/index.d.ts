@@ -11,6 +11,7 @@ import {
 } from "@/schema/health-officials.schema";
 import { inventorySchema } from "@/schema/inventory.schema";
 import { medicalHistorySchema } from "@/schema/medical-history.schema";
+import { outreachProgramSchema } from "@/schema/outreach-programs.schema";
 import {
   patientAdditionalInformationSchema,
   patientEmergencyContactSchema,
@@ -123,3 +124,6 @@ export type HealthOfficialAdditionalInformationType = z.infer<
 export type HealthOfficialEmergencyContactType = z.infer<
   typeof healthOfficialEmergencyContactSchema
 >;
+
+// Outreach Programs Schema
+export type OutreachProgramType = z.infer<typeof outreachProgramSchema>;

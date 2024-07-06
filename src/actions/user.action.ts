@@ -14,6 +14,7 @@ import {
   LoginType,
   ResetPasswordType,
   ResponseData,
+  User,
 } from "@/types/index";
 import { cookies } from "next/headers";
 
@@ -77,6 +78,16 @@ export const currentUser = async () => {
 
     return getErrors(error, false);
   }
+};
+
+export const currentServerUser = async () => {
+  const result = await currentUser();
+
+  if (!result.success) {
+    return null;
+  }
+
+  return result.data as Omit<User, "password">;
 };
 
 // logout

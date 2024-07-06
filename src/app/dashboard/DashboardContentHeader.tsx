@@ -22,9 +22,10 @@ const DashboardContentHeader = ({
 }: DashboardContentHeaderProps) => {
   return (
     <section className="flex items-center justify-between py-3">
-      <h2 className="text-secondary-gray capitalize text-xl font-semibold">
+      <h2 className="text-secondary-gray capitalize text-xl md:text-2xl font-semibold">
         {headerTitle}
       </h2>
+
       <div className="flex items-center gap-2">
         {showDate && (
           <p className="text-secondary-gray font-light italic">

@@ -26,6 +26,7 @@ export default function AppLayout({
           sofia.className,
           "scroll-smooth overflow-x-hidden bg-secondary-gray/10 scrollbar-hide"
         )}
+        suppressHydrationWarning
       >
         <JotaiProvider>
           <AppProvider>{children}</AppProvider>

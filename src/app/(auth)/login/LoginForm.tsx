@@ -3,7 +3,6 @@
 import React, { useState } from "react";
 import ClipLoader from "react-spinners/ClipLoader";
 import Link from "next/link";
-import { useSearchParams, useRouter } from "next/navigation";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "react-toastify";

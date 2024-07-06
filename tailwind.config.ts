@@ -40,6 +40,7 @@ const config = {
           DEFAULT: "hsl(var(--secondary))",
           foreground: "hsl(var(--secondary-foreground))",
           gray: "#2D4763",
+          light: "#D9D9D9",
         },
         destructive: {
           DEFAULT: "hsl(var(--destructive))",

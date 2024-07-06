@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import { BiDownArrow, BiUpArrow } from "react-icons/bi";
+import { cn } from "@/lib/utils";
 
 type FilterOption = {
   value: string;
@@ -22,6 +23,9 @@ type CustomFilterDropdownProps = {
   handleFilter: (value: string, index?: number) => void;
   filterOptions: FilterOption[];
   index?: number;
+  filterName?: string;
+  className?: string;
+  iconClassName?: string;
 };
 
 const CustomFilterDropdown = ({
@@ -29,6 +33,9 @@ const CustomFilterDropdown = ({
   handleFilter,
   filterOptions,
   index,
+  filterName,
+  className,
+  iconClassName,
 }: CustomFilterDropdownProps) => {
   const [openDropdown, setOpenDropdown] = useState(false);
 
@@ -37,13 +44,24 @@ const CustomFilterDropdown = ({
       <DropdownMenuTrigger asChild>
         <Button
           onClick={() => setOpenDropdown(!openDropdown)}
-          className="flex items-center gap-2 bg-white rounded-2xl sm:px-5 border border-secondary-gray py-2 text-secondary-gray hover:bg-white hover:text-secondary-gray outline-none focus:outline-none ring-0 focus:ring-0 w-full sm:w-fit"
+          className={cn(
+            "flex items-center gap-2 bg-white rounded-2xl sm:px-5 border border-secondary-gray py-2 text-secondary-gray hover:bg-white hover:text-secondary-gray outline-none focus:outline-none ring-0 focus:ring-0 w-full sm:w-fit",
+            className
+          )}
         >
-          <span>Filter by {filterBy}</span>
+          <span>
+            {filterName ? filterName : "Filter by"} {filterBy}
+          </span>
           {openDropdown ? (
-            <BiUpArrow size={15} className="text-secondary-gray" />
+            <BiUpArrow
+              size={15}
+              className={cn("text-secondary-gray", iconClassName)}
+            />
           ) : (
-            <BiDownArrow size={15} className="text-secondary-gray" />
+            <BiDownArrow
+              size={15}
+              className={cn("text-secondary-gray", iconClassName)}
+            />
           )}
         </Button>
       </DropdownMenuTrigger>

@@ -22,6 +22,7 @@
     "@ramonak/react-progress-bar": "^5.2.0",
     "@tanstack/react-query": "^5.40.1",
     "@tanstack/react-query-devtools": "^5.40.1",
+    "add-to-calendar-button": "^2.6.18",
     "axios": "^1.7.2",
     "chart.js": "^4.4.3",
     "cjs": "^0.0.11",

@@ -43,6 +43,7 @@ type LineChartProps = {
   scalesYGridColor?: string;
   scalesYTickColor?: string;
   position?: "center" | "left" | "right" | "top" | "bottom" | "chartArea";
+  smooth?: boolean;
 };
 
 const LineChart = ({
@@ -54,6 +55,7 @@ const LineChart = ({
   scalesYTickColor,
   scalesYGridColor,
   position,
+  smooth,
 }: LineChartProps) => {
   const lineChartData: ChartData<"line"> = {
     labels: labels,
@@ -69,6 +71,11 @@ const LineChart = ({
         labels: {
           color: legendLabelsColor,
         },
+      },
+    },
+    elements: {
+      line: {
+        tension: smooth ? 0.4 : 0,
       },
     },
     scales: {

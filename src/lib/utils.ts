@@ -1,3 +1,4 @@
+import { TicketStatus } from "@/types/index";
 import { QueryClient } from "@tanstack/react-query";
 import axios from "axios";
 import { type ClassValue, clsx } from "clsx";
@@ -123,4 +124,19 @@ export const getAllMonths = (startMonth: number = 1, all: boolean = false) => {
   }
 
   return months.map((month) => monthsInWords[month - 1]);
+};
+
+// get status color based on status value
+export const getStatusColor = (status: TicketStatus) => {
+  const statusColors = {
+    open: "#002E6D",
+    closed: "#D00D2D",
+    pending: "#FFFF00", // Yellow
+    resolved: "#0000FF", // Blue
+    inProgress: "#FFA500", // Orange
+    onHold: "#800080", // Purple
+    cancelled: "#808080", // Gray
+  };
+
+  return statusColors[status] || "#002E6D";
 };

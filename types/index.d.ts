@@ -25,7 +25,7 @@ import {
   settingsNotificationsSchema,
   settingsSchema,
 } from "@/schema/setting.schema";
-import { ticketSchema } from "@/schema/ticket.schema";
+import { superAdminTicketSchema, ticketSchema } from "@/schema/ticket.schema";
 import { treatmentPlanSchema } from "@/schema/treatment-plan.schema";
 import {
   forgotPasswordSchema,
@@ -48,6 +48,15 @@ export type ErrorResponse = {
 };
 
 export type ResponseData = SuccessResponse | ErrorResponse;
+
+export type TicketStatus =
+  | "open"
+  | "closed"
+  | "pending"
+  | "resolved"
+  | "inProgress"
+  | "onHold"
+  | "cancelled";
 
 // User Schema
 export type User = z.infer<typeof userSchema>;
@@ -91,6 +100,7 @@ export type SettingsNotificationsType = z.infer<
 
 // Ticket Schema
 export type TicketType = z.infer<typeof ticketSchema>;
+export type SuperAdminTicketType = z.infer<typeof superAdminTicketSchema>;
 
 // Medical History Schema
 export type MedicalHistoryType = z.infer<typeof medicalHistorySchema>;

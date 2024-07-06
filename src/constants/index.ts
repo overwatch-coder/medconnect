@@ -2885,3 +2885,156 @@ export const MEDCONNECT_DASHBOARD_REPORT_TYPES_ADMIN = [
     ],
   },
 ];
+
+export const MEDCONNECT_DASHBOARD_SUPER_ADMIN_TICKETS = [
+  {
+    status: "open",
+    requestedBy: "Patrick Effiong",
+    ticketID: "T001",
+    subject: "Login Issue",
+    description:
+      "User unable to login with correct credentials. The system returns an error message stating 'invalid username or password'. The issue persists across different browsers and devices.",
+    priority: "high",
+    createdAt: "2024-07-01",
+  },
+  {
+    status: "open",
+    requestedBy: "Amaka Okafor",
+    ticketID: "T002",
+    subject: "System Crash",
+    description:
+      "The application crashes randomly while processing transactions. Users report losing unsaved data and experiencing system slowdowns before the crash.",
+    priority: "high",
+    createdAt: "2024-07-02",
+  },
+  {
+    status: "closed",
+    requestedBy: "Bola Adedeji",
+    ticketID: "T003",
+    subject: "Password Reset",
+    description:
+      "User requested a password reset but did not receive the reset email. Repeated attempts to request a new password reset email have failed.",
+    priority: "medium",
+    createdAt: "2024-07-03",
+  },
+  {
+    status: "pending",
+    requestedBy: "Chidi Nwosu",
+    ticketID: "T004",
+    subject: "Account Lockout",
+    description:
+      "User account is locked after multiple failed login attempts. User is unable to unlock the account using the provided unlock link.",
+    priority: "high",
+    createdAt: "2024-07-04",
+  },
+  {
+    status: "open",
+    requestedBy: "Damilola Johnson",
+    ticketID: "T005",
+    subject: "Data Sync Issue",
+    description:
+      "Data between the web application and mobile app is not syncing correctly. Users report missing or outdated information on one platform compared to the other.",
+    priority: "high",
+    createdAt: "2024-07-05",
+  },
+  {
+    status: "in progress",
+    requestedBy: "Esther Adeyemi",
+    ticketID: "T006",
+    subject: "UI Bug",
+    description:
+      "Certain UI elements are not displaying correctly on the dashboard page. Buttons and text are misaligned, and some images are not loading.",
+    priority: "low",
+    createdAt: "2024-07-06",
+  },
+  {
+    status: "closed",
+    requestedBy: "Femi Akinyemi",
+    ticketID: "T007",
+    subject: "Email Notification Issue",
+    description:
+      "Users are not receiving email notifications for updates and alerts. This issue affects multiple users and impacts important communication.",
+    priority: "medium",
+    createdAt: "2024-07-07",
+  },
+  {
+    status: "open",
+    requestedBy: "Grace Osei",
+    ticketID: "T008",
+    subject: "Payment Gateway Error",
+    description:
+      "Users are encountering errors during the payment process. Transactions are failing with a 'payment gateway error' message.",
+    priority: "high",
+    createdAt: "2024-07-08",
+  },
+  {
+    status: "open",
+    requestedBy: "Hassan Bello",
+    ticketID: "T009",
+    subject: "Slow Performance",
+    description:
+      "The application is experiencing slow performance during peak hours. Users report long loading times and delayed responses.",
+    priority: "high",
+    createdAt: "2024-07-09",
+  },
+  {
+    status: "pending",
+    requestedBy: "Idris Abubakar",
+    ticketID: "T010",
+    subject: "Feature Request",
+    description:
+      "User requested a new feature to allow batch processing of transactions. This feature would enhance productivity and user experience.",
+    priority: "low",
+    createdAt: "2024-07-10",
+  },
+  {
+    status: "in progress",
+    requestedBy: "Jane Mensah",
+    ticketID: "T011",
+    subject: "Database Error",
+    description:
+      "Users are experiencing 'database error' messages when trying to access certain records. This issue occurs intermittently and affects multiple users.",
+    priority: "high",
+    createdAt: "2024-07-11",
+  },
+  {
+    status: "closed",
+    requestedBy: "Kingsley Eze",
+    ticketID: "T012",
+    subject: "Security Vulnerability",
+    description:
+      "A potential security vulnerability was identified in the user authentication module. Immediate action is required to investigate and resolve the issue.",
+    priority: "critical",
+    createdAt: "2024-07-12",
+  },
+  {
+    status: "open",
+    requestedBy: "Linda Owusu",
+    ticketID: "T013",
+    subject: "Report Generation Issue",
+    description:
+      "Users are unable to generate reports. The system returns an error message 'report generation failed' and logs indicate a timeout error.",
+    priority: "medium",
+    createdAt: "2024-07-13",
+  },
+  {
+    status: "pending",
+    requestedBy: "Michael Yeboah",
+    ticketID: "T014",
+    subject: "API Integration Problem",
+    description:
+      "Issues with API integration are causing data discrepancies. Users report missing or incorrect data being displayed on the dashboard.",
+    priority: "high",
+    createdAt: "2024-07-14",
+  },
+  {
+    status: "in progress",
+    requestedBy: "Ngozi Obi",
+    ticketID: "T015",
+    subject: "Session Timeout",
+    description:
+      "Users are being logged out of the application prematurely due to session timeouts. This issue disrupts workflow and user experience.",
+    priority: "high",
+    createdAt: "2024-07-15",
+  },
+];

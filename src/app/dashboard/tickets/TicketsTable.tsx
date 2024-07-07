@@ -57,7 +57,7 @@ const TicketsTable = ({
         <TableRow className="bg-primary-green hover:bg-primary-green w-full">
           <TableHead
             onClick={handleSelectAll}
-            className="text-white flex items-center gap-2"
+            className="flex items-center gap-2 text-white"
           >
             {markedTicketId.length === filteredTickets.length ? (
               <GrCheckboxSelected
@@ -83,7 +83,7 @@ const TicketsTable = ({
 
           return (
             <TableRow key={data.ticketID}>
-              <TableCell className="text-secondary-gray font-semibold flex items-center gap-2">
+              <TableCell className="text-secondary-gray flex items-center gap-2 font-semibold">
                 <span
                   onClick={() => handleMarkCompound(data.ticketID)}
                   className="cursor-pointer"
@@ -91,12 +91,12 @@ const TicketsTable = ({
                   {markedTicketId.includes(data.ticketID) ? (
                     <GrCheckboxSelected
                       size={15}
-                      className="text-secondary-gray cursor-pointer flex items-center gap-2"
+                      className="text-secondary-gray flex items-center gap-2 cursor-pointer"
                     />
                   ) : (
                     <GrCheckbox
                       size={15}
-                      className="text-secondary-gray cursor-pointer flex items-center gap-2"
+                      className="text-secondary-gray flex items-center gap-2 cursor-pointer"
                     />
                   )}
                 </span>
@@ -108,13 +108,20 @@ const TicketsTable = ({
               <TableCell className="text-secondary-gray font-semibold">
                 {data.subject}
               </TableCell>
-              <TableCell className="text-secondary-gray capitalize font-semibold">
+              <TableCell className="text-secondary-gray font-semibold capitalize">
                 {data.priority}
               </TableCell>
               <TableCell
-                className={`text-primary-gray capitalize bg-['${statusColor}'] p-2 rounded-none font-semibold`}
+                className={`text-primary-gray capitalize text-center font-semibold`}
               >
-                {data.status}
+                <span
+                  className="p-2 rounded text-sm"
+                  style={{
+                    backgroundColor: statusColor,
+                  }}
+                >
+                  {data.status}
+                </span>
               </TableCell>
               <TableCell className="text-secondary-gray font-semibold">
                 {data.createdAt}

@@ -17,10 +17,12 @@ import { useMutation } from "@tanstack/react-query";
 import CustomErrorElement from "@/components/CustomErrorElement";
 import { LoginType } from "@/types/index";
 import { MdEmail } from "react-icons/md";
+import { useAuth } from "@/hooks";
 
 const LoginForm = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [submitFormErrors, setSubmitFormErrors] = useState<string[]>([]);
+  const [auth, setAuth] = useAuth();
 
   const {
     register,
@@ -37,14 +39,18 @@ const LoginForm = () => {
     mutationKey: ["user"],
     mutationFn: loginFormSubmit,
     onSettled: (result) => {
-      if (!result?.success) {
+      console.log({ result });
+
+      if (!result?.status) {
         setSubmitFormErrors(result?.errors!);
         reset({ password: "" });
         return;
       }
 
+      setAuth(result.data);
+
       reset();
-      toast.success(result?.message);
+      toast.success("Login successful");
     },
   });
 

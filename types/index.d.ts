@@ -36,14 +36,14 @@ import {
 import { visitLogsSchema } from "@/schema/visit-logs.schema";
 import { z } from "zod";
 
-export type SuccessResponse = {
-  success: true;
+export type SuccessResponse<TData = Record<string, any>> = {
+  status: true;
   message: string;
-  data: any;
+  data: TData;
 };
 
 export type ErrorResponse = {
-  success: false;
+  status: false;
   message: string;
 };
 

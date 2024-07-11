@@ -2,8 +2,8 @@ import DashboardSidebar from "@/app/dashboard/DashboardSidebar";
 import { Metadata } from "next";
 import React from "react";
 import DashboardHeader from "@/app/dashboard/DashboardHeader";
-import { getUserFromCookies } from "@/actions/user.action";
 import { redirect } from "next/navigation";
+import { getUserFromCookies } from "@/actions/user-cookie.action";
 
 type DashboardLayoutProps = {
   children: React.ReactNode;

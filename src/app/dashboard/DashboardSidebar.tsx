@@ -2,68 +2,22 @@
 import React from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { Separator } from "@/components/ui/separator";
 import {
   MEDCONNECT_DASHBOARD_LINKS,
   MEDCONNECT_SUPER_ADMIN_DASHBOARD_LINKS,
 } from "@/constants";
 
-import { useUserAtom } from "@/hooks";
-import { toast } from "react-toastify";
-import { useQuery } from "@tanstack/react-query";
-import { currentUser, removeUserFromCookies } from "@/actions/user.action";
+import { useAuth } from "@/hooks";
 import LogoutModal from "@/app/dashboard/LogoutModal";
 
 const DashboardSidebar = () => {
-  const [user, setUser] = useUserAtom();
+  const [auth] = useAuth();
   const pathname = usePathname();
-  const router = useRouter();
 
-  const { data } = useQuery({
-    queryKey: ["user"],
-    queryFn: async () => {
-      const result = await currentUser();
-
-      if (!result.success) {
-        if (result.errors && result?.errors[0]!.includes("Forbidden")) {
-          toast.info("Session expired. Please log in again to continue");
-
-          setUser({
-            user: null,
-          });
-
-          await removeUserFromCookies();
-
-          router.replace(`/login?redirect=${pathname}`);
-        }
-
-        throw new Error(result?.errors ? result.errors[0] : result.message);
-      }
-
-      setUser({
-        user: {
-          ...result.data,
-          availableServices:
-            result.data.availableServices.length > 0
-              ? result.data.availableServices.join(", ")
-              : "",
-        },
-      });
-
-      return result;
-    },
-    refetchInterval: 1 * (60 * 60 * 1000),
-  });
-
-  if (data?.errors) {
-    toast.error(data.errors[0]);
-  }
-
-  // get correct dashboard links
-  // TODO: Change condition to user roles instead of compound name
   const dashboardLinks =
-    user.user?.compoundName.toLowerCase() === "admin"
+    auth?.role === "Admin"
       ? MEDCONNECT_SUPER_ADMIN_DASHBOARD_LINKS
       : MEDCONNECT_DASHBOARD_LINKS;
 

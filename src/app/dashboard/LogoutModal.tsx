@@ -14,25 +14,28 @@ import {
 } from "@/components/ui/alert-dialog";
 
 import { RiLogoutCircleLine } from "react-icons/ri";
-import { useUserAtom } from "@/hooks";
+import { useAuth } from "@/hooks";
 import { toast } from "react-toastify";
 import { X } from "lucide-react";
-import { logout, removeUserFromCookies } from "@/actions/user.action";
+import { logout } from "@/actions/user.action";
+import { removeUserFromCookies } from "@/actions/user-cookie.action";
+import { useRouter } from "next/navigation";
 
 const LogoutModal = ({ showLogoutName }: { showLogoutName?: boolean }) => {
-  const [user, setUser] = useUserAtom();
+  const [_, setAuth] = useAuth();
+  const router = useRouter();
 
   // handle logout
   const handleLogout = async () => {
     const data = await logout();
-
-    data.success ? toast.success(data.message) : toast.error(data.message);
-
-    await removeUserFromCookies();
-
-    setUser({
-      user: null,
-    });
+    if (!data.status) {
+      toast.error("Logout Failed");
+    } else {
+      await removeUserFromCookies();
+      setAuth(null);
+      toast.success("Logout Successful");
+      router.replace("/login");
+    }
   };
 
   return (

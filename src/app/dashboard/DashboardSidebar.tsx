@@ -2,7 +2,7 @@
 import React from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { Separator } from "@/components/ui/separator";
 import {
   MEDCONNECT_DASHBOARD_LINKS,
@@ -11,10 +11,42 @@ import {
 
 import { useAuth } from "@/hooks";
 import LogoutModal from "@/app/dashboard/LogoutModal";
+import { useQuery } from "@tanstack/react-query";
+import { getPatients } from "@/actions/patients.action";
+import { toast } from "react-toastify";
+import { removeUserFromCookies } from "@/actions/user-cookie.action";
 
 const DashboardSidebar = () => {
-  const [user] = useAuth();
+  const [user, setUser] = useAuth();
+  const router = useRouter();
   const pathname = usePathname();
+
+  const { data } = useQuery({
+    queryKey: ["user"],
+    queryFn: async () => {
+      const result = await getPatients();
+
+      if (!result.status) {
+        if (
+          result.message.includes("Invalid or Expired token") ||
+          result.errors.some((error) =>
+            error.includes("Invalid or Expired token")
+          )
+        ) {
+          toast.info("Session expired. Please log in again to continue");
+
+          setUser(null);
+
+          await removeUserFromCookies();
+
+          router.replace(`/login?redirect=${pathname}`);
+        }
+      }
+
+      return result;
+    },
+    refetchInterval: 1 * (60 * 60 * 1000),
+  });
 
   const dashboardLinks = user?.isSuperAdmin
     ? MEDCONNECT_SUPER_ADMIN_DASHBOARD_LINKS

@@ -44,29 +44,19 @@ export const loginFormSubmit = async (data: LoginType) => {
     const resData = await mutateData("/auth/login", parsedData.data);
 
     if (!resData.status) {
-      console.log({ resData });
       return resData;
     }
 
-    console.log({ resData });
-
-    const isAdmin = hasField(resData.data, "admin");
-    const adminData = isAdmin ? (resData.data?.admin as AdminData) : null;
-    const staffData = isAdmin ? (resData.data?.staff as StaffData) : null;
+    const isSuperAdmin = hasField(resData.data, "admin");
+    const adminData = isSuperAdmin ? (resData.data?.admin as AdminData) : null;
+    const staffData = !isSuperAdmin ? (resData.data?.staff as StaffData) : null;
     const authData = resData.data?.auth as AuthData;
 
-    console.log({ authData, adminData, staffData });
-
     const cookieData = {
-      token: authData.token,
-      email: authData.email,
-      role: isAdmin ? "Admin" : ("Staff" as "Admin" | "Staff"),
-      authId: authData.id,
-      name: isAdmin ? adminData?.name : staffData?.fullName,
-      contact: isAdmin ? adminData?.contact : staffData?.contact,
-      adminId: isAdmin ? (adminData?._id as string) : null,
-      staffId: isAdmin ? null : (staffData?._id as string),
-      chpsCompoundId: isAdmin ? null : (staffData?.chpsCompoundId as string),
+      auth: authData,
+      admin: adminData,
+      staff: staffData,
+      isSuperAdmin: isSuperAdmin,
     };
 
     await saveUserToCookies(cookieData);
@@ -159,12 +149,21 @@ export const resetPasswordFormSubmit = async (data: ResetPasswordType) => {
 // logout user
 export const logout = async () => {
   const user = await getUserFromCookies();
+
+  if (!user) {
+    return {
+      status: false,
+      error: "User not logged in",
+      errors: ["User not logged in"],
+    };
+  }
+
   try {
     const resData = await mutateData(
       "/auth/logout",
       {},
       {
-        token: user?.token,
+        token: user.auth.token,
       }
     );
 

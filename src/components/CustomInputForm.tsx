@@ -23,6 +23,23 @@ type CustomInputFormProps<T extends FieldValues> = {
   disableField?: boolean;
 };
 
+// Helper function to get nested errors
+const getNestedError = <T extends FieldValues>(
+  errors: FieldErrors<T>,
+  inputName: Path<T>
+): string | undefined => {
+  const keys = inputName.split(".") as (keyof T)[];
+  let error = errors;
+  for (const key of keys) {
+    if (error[key]) {
+      error = error[key] as FieldErrors<T>;
+    } else {
+      return undefined;
+    }
+  }
+  return (error as FieldErrors<FieldValues>).message as unknown as string;
+};
+
 const CustomInputForm = <T extends FieldValues>({
   labelName,
   inputName,
@@ -36,6 +53,8 @@ const CustomInputForm = <T extends FieldValues>({
   isInputPassword,
   disableField,
 }: CustomInputFormProps<T>) => {
+  const errorMessage = getNestedError(errors, inputName);
+
   return (
     <div className={cn("flex flex-col space-y-4 w-full", className)}>
       {inputType !== "hidden" && (
@@ -113,10 +132,8 @@ const CustomInputForm = <T extends FieldValues>({
         />
       )}
 
-      {errors[inputName] && (
-        <p className="text-red-500 text-xs py-2">
-          {errors[inputName]?.message as string}
-        </p>
+      {errorMessage && (
+        <p className="text-red-500 text-xs py-2">{errorMessage}</p>
       )}
     </div>
   );

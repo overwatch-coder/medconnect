@@ -4,20 +4,29 @@ import React, { useState } from "react";
 import { MEDCONNECT_DASHBOARD_PATIENTS as patientsData } from "@/constants";
 import GeneratePatientsTable from "@/app/dashboard/patients/GeneratePatientsTable";
 import CustomFilterDropdown from "@/components/CustomFilterDropdown";
+import { Patient } from "@/types/backend";
 
 export type PatientsDataType = (typeof patientsData)[number];
 
-const PatientsTable = () => {
+type PatientsTableProps = {
+  patients: Patient[];
+};
+
+const PatientsTable = ({ patients }: PatientsTableProps) => {
   const [searchTerm, setSearchTerm] = useState("");
-  const [filterPatients, setFilterPatients] =
-    useState<PatientsDataType[]>(patientsData);
+  const [filterPatients, setFilterPatients] = useState<Patient[]>(patients);
   const [filterBy, setFilterBy] = useState("Patient Name");
 
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(e.target.value);
-    const filtered = patientsData.filter((patient) =>
-      patient.patientName.toLowerCase().includes(e.target.value.toLowerCase())
+    const filtered = patients.filter(
+      (patient) =>
+        patient.firstName
+          .toLowerCase()
+          .includes(e.target.value.toLowerCase()) ||
+        patient.lastName.toLowerCase().includes(e.target.value.toLowerCase())
     );
+
     setFilterPatients(filtered);
   };
 
@@ -43,31 +52,31 @@ const PatientsTable = () => {
   };
 
   const filterOptions: {
-    value: keyof PatientsDataType;
+    value: keyof Patient;
     label: string;
   }[] = [
     {
-      value: "patientName",
-      label: "Patient Name",
+      value: "firstName",
+      label: "First Name",
     },
     {
-      value: "age",
-      label: "Age",
+      value: "location",
+      label: "Location",
     },
     {
       value: "gender",
       label: "Gender",
     },
     {
-      value: "bloodGroup",
-      label: "Blood Group",
+      value: "lastName",
+      label: "Last Name",
     },
     {
-      value: "phoneNumber",
-      label: "Phone Number",
+      value: "contact",
+      label: "Contact",
     },
     {
-      value: "dateAdded",
+      value: "createdAt",
       label: "Date Added",
     },
   ];

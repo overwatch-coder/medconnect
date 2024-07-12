@@ -18,11 +18,13 @@ import CustomErrorElement from "@/components/CustomErrorElement";
 import { LoginType } from "@/types/index";
 import { MdEmail } from "react-icons/md";
 import { useAuth } from "@/hooks";
+import { useRouter } from "next/navigation";
 
 const LoginForm = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [submitFormErrors, setSubmitFormErrors] = useState<string[]>([]);
-  const [auth, setAuth] = useAuth();
+  const [user, setUser] = useAuth();
+  const router = useRouter();
 
   const {
     register,
@@ -47,10 +49,11 @@ const LoginForm = () => {
         return;
       }
 
-      setAuth(result.data);
+      setUser(result.data);
 
       reset();
       toast.success("Login successful");
+      router.push("/dashboard");
     },
   });
 

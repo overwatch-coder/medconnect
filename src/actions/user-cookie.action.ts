@@ -1,22 +1,11 @@
 "use server";
 
+import { MedConnect } from "@/types/backend";
 import { cookies } from "next/headers";
-
-export type UserDataSaved = {
-  token: string;
-  authId: string;
-  role: "Admin" | "Staff";
-  email: string;
-  name: string | undefined;
-  contact: string | undefined;
-  adminId: string | null;
-  staffId: string | null;
-  chpsCompoundId: string | null;
-};
 
 // save user data to cookies
 export const saveUserToCookies = async (
-  userData: UserDataSaved
+  userData: MedConnect
 ): Promise<void> => {
   const cookieStore = cookies();
   cookieStore.set("user", JSON.stringify(userData), {
@@ -34,7 +23,7 @@ export const removeUserFromCookies = async (): Promise<void> => {
 };
 
 // get user data from cookies
-export const getUserFromCookies = async (): Promise<UserDataSaved | null> => {
+export const getUserFromCookies = async (): Promise<MedConnect | null> => {
   const cookieStore = cookies();
   const user = cookieStore.get("user");
   return user?.value ? JSON.parse(user.value) : null;

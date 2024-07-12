@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import { Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import AddPatientGeneralInfo from "@/app/dashboard/patients/add-patients/AddPatientGeneralInfo";
+import AddPatientInfo from "@/app/dashboard/patients/add-patients/AddPatientInfo";
 
 const AddPatient = () => {
   const [openAddPatient, setOpenAddPatient] = useState(false);
@@ -18,10 +18,7 @@ const AddPatient = () => {
         <span className="font-semibold">Add Patient</span>
       </Button>
 
-      <AddPatientGeneralInfo
-        open={openAddPatient}
-        setOpen={setOpenAddPatient}
-      />
+      <AddPatientInfo open={openAddPatient} setOpen={setOpenAddPatient} />
     </>
   );
 };

@@ -25,6 +25,9 @@ const ForgotPasswordForm = () => {
     handleSubmit,
   } = useForm<ForgotPasswordType>({
     resolver: zodResolver(forgotPasswordSchema),
+    defaultValues: {
+      email: "",
+    },
     mode: "all",
   });
 
@@ -32,7 +35,7 @@ const ForgotPasswordForm = () => {
   const mutation = useMutation({
     mutationFn: forgotPasswordFormSubmit,
     onSettled: (result) => {
-      if (!result?.success) {
+      if (!result?.status) {
         setSubmitFormErrors(result?.errors!);
         return;
       }

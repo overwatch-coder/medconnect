@@ -1,8 +1,7 @@
-import { Metadata } from "next";
 import React from "react";
-import { MEDCONNECT_DASHBOARD_PATIENTS as patientsData } from "@/constants";
 import { redirect } from "next/navigation";
 import PatientDetails from "@/app/dashboard/patients/[patientId]/PatientDetails";
+import { getPatient } from "@/actions/patients.action";
 
 type PatientInfoProps = {
   params: {
@@ -10,12 +9,10 @@ type PatientInfoProps = {
   };
 };
 
-export const generateMetadata = ({
+export const generateMetadata = async ({
   params: { patientId },
-}: PatientInfoProps): Metadata => {
-  const patient = patientsData.find(
-    (patient) => patient.patientID === patientId
-  );
+}: PatientInfoProps) => {
+  const patient = await getPatient(patientId);
 
   if (!patient) {
     return {
@@ -29,30 +26,28 @@ export const generateMetadata = ({
   }
 
   return {
-    title: `${patient.patientName} | Patient Details`,
-    description: `${patient.patientName} | Patient Details`,
+    title: `${patient.firstName} ${patient.lastName} | Patient Details`,
+    description: `${patient.firstName} ${patient.lastName} | Patient Details`,
     openGraph: {
-      title: `${patient.patientName} | Patient Details`,
-      description: `${patient.patientName} | Patient Details`,
+      title: `${patient.firstName} ${patient.lastName} | Patient Details`,
+      description: `${patient.firstName} ${patient.lastName} | Patient Details`,
       images: [
         {
-          url: patient.image,
+          url: patient.profilePictureUrl,
           width: 1200,
           height: 630,
-          alt: `${patient.patientName} | Patient Details`,
+          alt: `${patient.firstName} ${patient.lastName} | Patient Details`,
         },
       ],
     },
   };
 };
 
-const PatientInfo = ({ params: { patientId } }: PatientInfoProps) => {
-  const patient = patientsData.find(
-    (patient) => patient.patientID === patientId
-  );
+const PatientInfo = async ({ params: { patientId } }: PatientInfoProps) => {
+  const patient = await getPatient(patientId);
 
   if (!patient) {
-    return redirect("/");
+    return redirect("/dashboard/patients");
   }
 
   return (

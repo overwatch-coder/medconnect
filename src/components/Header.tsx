@@ -6,10 +6,10 @@ import Link from "next/link";
 import MobileNav from "@/components/MobileNav";
 import { NAV_ITEMS } from "@/constants";
 import { usePathname } from "next/navigation";
-import { useUserAtom } from "@/hooks";
+import { useAuth } from "@/hooks";
 
 const Header = () => {
-  const [user] = useUserAtom();
+  const [user] = useAuth();
   const pathname = usePathname();
   const [scrolled, setScrolled] = useState(false);
 
@@ -66,10 +66,10 @@ const Header = () => {
           );
         })}
         <Link
-          href={user.user ? "/dashboard" : "/login"}
+          href={user ? "/dashboard" : "/login"}
           className="bg-primary-green hover:scale-105 transition text-white rounded px-8 py-2"
         >
-          {user.user ? "Dashboard" : "Login"}
+          {user ? "Dashboard" : "Login"}
         </Link>
       </nav>
 

@@ -1,36 +1,28 @@
 "use client";
 import ContentHeader from "@/app/dashboard/patients/[patientId]/ContentHeader";
-import EditPatient from "@/app/dashboard/patients/edit-patients/EditPatient";
-import EditPatientAdditionalInfo from "@/app/dashboard/patients/edit-patients/EditPatientAdditionalInfo";
-import EditPatientEmergencyContact from "@/app/dashboard/patients/edit-patients/EditPatientEmergencyContact";
-import EditPatientGeneralInfo from "@/app/dashboard/patients/edit-patients/EditPatientGeneralInfo";
-import { PatientsDataType } from "@/app/dashboard/patients/PatientsTable";
+import EditPatientInfo from "@/app/dashboard/patients/edit-patients/EditPatientInfo";
+import { Patient } from "@/types/backend";
 import { Edit } from "lucide-react";
 import Image from "next/image";
 import React, { useState } from "react";
 
 type GeneralInformationProps = {
-  patient: PatientsDataType;
+  patient: Patient;
 };
 
 const GeneralInformation = ({ patient }: GeneralInformationProps) => {
-  const [
-    openEditPatientGeneralInformation,
-    setOpenEditPatientGeneralInformation,
-  ] = useState(false);
-  const [openEditPatientAdditionalInfo, setOpenEditPatientAdditionalInfo] =
-    useState(false);
-  const [
-    openEditPatientEmergencyContactInfo,
-    setOpenEditPatientEmergencyContactInfo,
-  ] = useState(false);
+  const [step, setStep] = useState(1);
+  const [openEdit, setOpenEdit] = useState(false);
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 w-full gap-3 2xl:gap-5">
       {/* Basic Information */}
       <section className="col-span-1 bg-white px-5 py-3 flex flex-col gap-4 w-full h-full">
         <ContentHeader
-          handleClick={() => setOpenEditPatientGeneralInformation(true)}
+          handleClick={() => {
+            setStep(1);
+            setOpenEdit(true);
+          }}
           title="Basic Information"
         >
           <span className="text-sm text-white">Modify</span>
@@ -40,26 +32,35 @@ const GeneralInformation = ({ patient }: GeneralInformationProps) => {
         <div className="flex flex-col gap-2">
           {/* Image and Name */}
           <div className="grid grid-cols-2 place-content-start place-items-start text-sm py-5">
-            <Image
-              src={patient.image}
-              alt={patient.patientName}
-              width={100}
-              height={100}
-              className="rounded-full object-cover"
-            />
+            {patient.profilePictureUrl ? (
+              <Image
+                src={patient.profilePictureUrl}
+                alt={patient.firstName + " " + patient.lastName}
+                width={100}
+                height={100}
+                className="rounded-full object-cover"
+              />
+            ) : (
+              <div className="w-24 h-24 bg-primary-green/10 rounded-full flex items-center justify-center">
+                <p className="text-primary-gray text-xl font-bold">
+                  {patient.firstName.charAt(0)}
+                  {patient.lastName.charAt(0)}
+                </p>
+              </div>
+            )}
 
             <div className="flex flex-col gap-1">
               <h2 className="text-base font-bold text-secondary-gray">
-                {patient.patientName}
+                {patient.firstName} {patient.lastName}
               </h2>
               <p className="text-sm font-medium text-primary-gray">
-                {patient.patientID}
+                {patient.patientId}
               </p>
               <p className="text-sm font-medium text-primary-gray">
                 {patient.gender}
               </p>
               <p className="text-sm font-medium text-primary-gray">
-                {patient.phoneNumber}
+                {patient.contact}
               </p>
             </div>
           </div>
@@ -69,30 +70,21 @@ const GeneralInformation = ({ patient }: GeneralInformationProps) => {
             <div className="grid grid-cols-2 place-content-start place-items-start text-sm">
               <h3 className="text-primary-gray font-semibold">Patient ID</h3>
               <p className="text-primary-gray/50 font-medium">
-                {patient.patientID}
+                {patient.patientId}
               </p>
             </div>
 
             <div className="grid grid-cols-2 place-content-start place-items-start text-sm">
               <h3 className="text-primary-gray font-semibold">First Name</h3>
               <p className="text-primary-gray/50 font-medium">
-                {patient.patientName.split(" ")[0]}
+                {patient.firstName}
               </p>
             </div>
 
             <div className="grid grid-cols-2 place-content-start place-items-start text-sm">
               <h3 className="text-primary-gray font-semibold">Last Name</h3>
               <p className="text-primary-gray/50 font-medium">
-                {patient.patientName.split(" ")[1]}
-              </p>
-            </div>
-
-            <div className="grid grid-cols-2 place-content-start place-items-start text-sm">
-              <h3 className="text-primary-gray font-semibold">Date of Birth</h3>
-              <p className="text-primary-gray/50 font-medium">
-                {`${Math.floor(Math.random() * 100 + 1900)}/${Math.floor(Math.random() * 12)}/${Math.floor(
-                  Math.random() * 30
-                )}`}
+                {patient.lastName}
               </p>
             </div>
 
@@ -106,7 +98,7 @@ const GeneralInformation = ({ patient }: GeneralInformationProps) => {
             <div className="grid grid-cols-2 place-content-start place-items-start text-sm">
               <h3 className="text-primary-gray font-semibold">National ID</h3>
               <p className="text-primary-gray/50 font-medium">
-                {Math.floor(Math.random() * 1000000000)}
+                {patient.nationalId}
               </p>
             </div>
 
@@ -115,34 +107,29 @@ const GeneralInformation = ({ patient }: GeneralInformationProps) => {
                 Contact Number
               </h3>
               <p className="text-primary-gray/50 font-medium">
-                {patient.phoneNumber}
+                {patient.contact}
               </p>
             </div>
 
             <div className="grid grid-cols-2 place-content-start place-items-start text-sm">
               <h3 className="text-primary-gray font-semibold">Email Address</h3>
               <p className="text-primary-gray/50 font-medium">
-                {`${patient.patientName.toLowerCase().split(" ").join(".")}@mdc.com`}
-              </p>
-            </div>
-
-            <div className="grid grid-cols-2 place-content-start place-items-start text-sm">
-              <h3 className="text-primary-gray font-semibold">Address</h3>
-              <p className="text-primary-gray/50 font-medium">
-                {"123 Main Street, New York, 10010"}
+                {patient.email}
               </p>
             </div>
 
             <div className="grid grid-cols-2 place-content-start place-items-start text-sm">
               <h3 className="text-primary-gray font-semibold">Location</h3>
               <p className="text-primary-gray/50 font-medium">
-                {"New York, NY"}
+                {patient.location}
               </p>
             </div>
 
             <div className="grid grid-cols-2 place-content-start place-items-start text-sm">
               <h3 className="text-primary-gray font-semibold">District</h3>
-              <p className="text-primary-gray/50 font-medium">{"New York"}</p>
+              <p className="text-primary-gray/50 font-medium">
+                {patient.district}
+              </p>
             </div>
 
             <div className="grid grid-cols-2 place-content-start place-items-start text-sm">
@@ -150,28 +137,21 @@ const GeneralInformation = ({ patient }: GeneralInformationProps) => {
                 Marital Status
               </h3>
               <p className="text-primary-gray/50 font-medium">
-                {
-                  ["Single", "Married", "Divorced", "Widowed"][
-                    Math.floor(Math.random() * 4)
-                  ]
-                }
+                {patient.maritalStatus}
               </p>
             </div>
           </div>
         </div>
-
-        <EditPatientGeneralInfo
-          open={openEditPatientGeneralInformation}
-          setOpen={setOpenEditPatientGeneralInformation}
-          patient={patient}
-        />
       </section>
 
       <section className="col-span-1 flex flex-col gap-5 w-full h-full">
         {/* Additional Information */}
         <div className="flex flex-col gap-3 bg-white px-5 py-3 w-full h-full">
           <ContentHeader
-            handleClick={() => setOpenEditPatientAdditionalInfo(true)}
+            handleClick={() => {
+              setStep(2);
+              setOpenEdit(true);
+            }}
             title="Additional Information"
           >
             <span className="text-sm text-white">Modify</span>
@@ -181,7 +161,11 @@ const GeneralInformation = ({ patient }: GeneralInformationProps) => {
           <div className="grid grid-cols-2 place-content-start place-items-start text-sm">
             <h3 className="text-primary-gray font-semibold">Allergies</h3>
             <p className="text-primary-gray/50 font-medium">
-              {"Peanuts, Milk"}
+              {patient.additional && patient.additional.allergies
+                ? patient.additional.allergies.length > 0
+                  ? patient.additional.allergies.join(", ")
+                  : "No Allergies"
+                : "No Allergies"}
             </p>
           </div>
 
@@ -189,170 +173,111 @@ const GeneralInformation = ({ patient }: GeneralInformationProps) => {
             <h3 className="text-primary-gray font-semibold">
               Known Conditions
             </h3>
-            <p className="text-primary-gray/50 font-medium">{"Asthma"}</p>
+            <p className="text-primary-gray/50 font-medium">
+              {patient.additional && patient.additional.knownCondition
+                ? patient.additional.knownCondition
+                : "No known Conditions"}
+            </p>
           </div>
 
           <div className="grid grid-cols-2 place-content-start place-items-start text-sm">
             <h3 className="text-primary-gray font-semibold">
               Primary Care Physician
             </h3>
-            <p className="text-primary-gray/50 font-medium">{"Dr. John Doe"}</p>
+            <p className="text-primary-gray/50 font-medium">
+              {patient.additional && patient.additional.primaryPhysician
+                ? patient.additional.primaryPhysician
+                : "N/a"}
+            </p>
           </div>
 
           <div className="grid grid-cols-2 place-content-start place-items-start text-sm">
             <h3 className="text-primary-gray font-semibold">
               Insurance Provider
             </h3>
-            <p className="text-primary-gray/50 font-medium">{"N.H.I.S"}</p>
+            <p className="text-primary-gray/50 font-medium">
+              {patient.additional && patient.additional.insuranceProvider
+                ? patient.additional.insuranceProvider
+                : "N/a"}
+            </p>
           </div>
 
           <div className="grid grid-cols-2 place-content-start place-items-start text-sm">
             <h3 className="text-primary-gray font-semibold">
               Insurance Policy Number
             </h3>
-            <p className="text-primary-gray/50 font-medium">{`HF${Math.floor(Math.random() * 1000000000)}`}</p>
+            <p className="text-primary-gray/50 font-medium">
+              {patient.additional && patient.additional.insurancePolicyNumber
+                ? patient.additional.insurancePolicyNumber
+                : "N/a"}
+            </p>
           </div>
-
-          <EditPatientAdditionalInfo
-            open={openEditPatientAdditionalInfo}
-            setOpen={setOpenEditPatientAdditionalInfo}
-          />
         </div>
 
         {/* Emergency Contact Information */}
         <div className="flex flex-col gap-4 bg-white px-5 py-3 w-full h-full">
           <ContentHeader
-            handleClick={() => setOpenEditPatientEmergencyContactInfo(true)}
+            handleClick={() => {
+              setStep(3);
+              setOpenEdit(true);
+            }}
             title="Emergency Contact Information"
           >
             <span className="text-sm text-white">Modify</span>
             <Edit className="text-white" size={20} />
           </ContentHeader>
 
-          {/* Contact 1 Information */}
-          <div className="flex flex-col gap-2">
-            <h2 className="text-primary-green font-medium">Contact Person 1</h2>
-            <div className="grid grid-cols-2 place-content-start place-items-start text-sm">
-              <h3 className="text-primary-gray font-semibold">Contact Name</h3>
-              <p className="text-primary-gray/50 font-medium">
-                {
-                  [
-                    "John Doe",
-                    "Jane Ashley",
-                    "Mike Smith",
-                    "Sarah Johnson",
-                    "David Lee",
-                    "Emily Brown",
-                    "Michael Johnson",
-                    "Rachel Smith",
-                    "Ashley Johnson",
-                    "Madison Brown",
-                  ][Math.floor(Math.random() * 8)]
-                }
-              </p>
-            </div>
+          {/* Contact Information */}
+          {patient.emergencyContacts.map((contact, index) => (
+            <div className="flex flex-col gap-2" key={index}>
+              <h2 className="text-primary-green font-medium">
+                Contact Person {index + 1}
+              </h2>
+              <div className="grid grid-cols-2 place-content-start place-items-start text-sm">
+                <h3 className="text-primary-gray font-semibold">
+                  Contact Name
+                </h3>
+                <p className="text-primary-gray/50 font-medium">
+                  {contact.name}
+                </p>
+              </div>
 
-            <div className="grid grid-cols-2 place-content-start place-items-start text-sm">
-              <h3 className="text-primary-gray font-semibold">
-                Contact Relationship
-              </h3>
-              <p className="text-primary-gray/50 font-medium">
-                {
-                  [
-                    "Father",
-                    "Mother",
-                    "Brother",
-                    "Sister",
-                    "Spouse",
-                    "Friend",
-                    "Other",
-                  ][Math.floor(Math.random() * 6)]
-                }
-              </p>
+              <div className="grid grid-cols-2 place-content-start place-items-start text-sm">
+                <h3 className="text-primary-gray font-semibold">
+                  Contact Relationship
+                </h3>
+                <p className="text-primary-gray/50 font-medium">
+                  {contact.relationship}
+                </p>
+              </div>
+              <div className="grid grid-cols-2 place-content-start place-items-start text-sm">
+                <h3 className="text-primary-gray font-semibold">
+                  Contact Number
+                </h3>
+                <p className="text-primary-gray/50 font-medium">
+                  {contact.contact}
+                </p>
+              </div>
+              <div className="grid grid-cols-2 place-content-start place-items-start text-sm">
+                <h3 className="text-primary-gray font-semibold">
+                  Contact Address
+                </h3>
+                <p className="text-primary-gray/50 font-medium">
+                  {contact.address}
+                </p>
+              </div>
             </div>
-            <div className="grid grid-cols-2 place-content-start place-items-start text-sm">
-              <h3 className="text-primary-gray font-semibold">
-                Contact Number
-              </h3>
-              <p className="text-primary-gray/50 font-medium">
-                + {Math.floor(Math.random() * 1000000000)}
-              </p>
-            </div>
-            <div className="grid grid-cols-2 place-content-start place-items-start text-sm">
-              <h3 className="text-primary-gray font-semibold">
-                Contact Address
-              </h3>
-              <p className="text-primary-gray/50 font-medium">
-                {"New York, NY"}
-              </p>
-            </div>
-          </div>
-
-          {/* Contact 2 Information */}
-          <div className="flex flex-col gap-2">
-            <h2 className="text-primary-green font-medium">Contact Person 2</h2>
-            <div className="grid grid-cols-2 place-content-start place-items-start text-sm">
-              <h3 className="text-primary-gray font-semibold">Contact Name</h3>
-              <p className="text-primary-gray/50 font-medium">
-                {
-                  [
-                    "John Doe",
-                    "Jane Ashley",
-                    "Mike Smith",
-                    "Sarah Johnson",
-                    "David Lee",
-                    "Emily Brown",
-                    "Michael Johnson",
-                    "Rachel Smith",
-                    "Ashley Johnson",
-                    "Madison Brown",
-                  ][Math.floor(Math.random() * 8)]
-                }
-              </p>
-            </div>
-
-            <div className="grid grid-cols-2 place-content-start place-items-start text-sm">
-              <h3 className="text-primary-gray font-semibold">
-                Contact Relationship
-              </h3>
-              <p className="text-primary-gray/50 font-medium">
-                {
-                  [
-                    "Father",
-                    "Mother",
-                    "Brother",
-                    "Sister",
-                    "Spouse",
-                    "Friend",
-                    "Other",
-                  ][Math.floor(Math.random() * 6)]
-                }
-              </p>
-            </div>
-            <div className="grid grid-cols-2 place-content-start place-items-start text-sm">
-              <h3 className="text-primary-gray font-semibold">
-                Contact Number
-              </h3>
-              <p className="text-primary-gray/50 font-medium">
-                + {Math.floor(Math.random() * 1000000000)}
-              </p>
-            </div>
-            <div className="grid grid-cols-2 place-content-start place-items-start text-sm">
-              <h3 className="text-primary-gray font-semibold">
-                Contact Address
-              </h3>
-              <p className="text-primary-gray/50 font-medium">
-                {"New York, NY"}
-              </p>
-            </div>
-          </div>
-
-          <EditPatientEmergencyContact
-            open={openEditPatientEmergencyContactInfo}
-            setOpen={setOpenEditPatientEmergencyContactInfo}
-          />
+          ))}
         </div>
       </section>
+
+      <EditPatientInfo
+        open={openEdit}
+        setOpen={setOpenEdit}
+        step={step}
+        setStep={setStep}
+        patient={patient}
+      />
     </div>
   );
 };

@@ -3,7 +3,7 @@
 import CustomInputForm from "@/components/CustomInputForm";
 import NotificationModal from "@/components/NotificationModal";
 import { Button } from "@/components/ui/button";
-import { useUserAtom } from "@/hooks";
+import { useAuth } from "@/hooks";
 import { settingsSchema } from "@/schema/setting.schema";
 import { SettingsType } from "@/types/index";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -14,8 +14,8 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import ClipLoader from "react-spinners/ClipLoader";
 
 const AccountSettings = () => {
-  const [user, setUser] = useUserAtom();
-  const isSuperAdmin = user.user?.compoundName === "admin";
+  const [user] = useAuth();
+  const isSuperAdmin = user?.isSuperAdmin;
   const [showAccountUpdateModal, setShowAccountUpdateModal] = useState(false);
 
   const {
@@ -60,20 +60,16 @@ const AccountSettings = () => {
           />
           <p className="flex flex-col gap-1 text-white md:text-secondary-gray">
             <span className="font-bold text-lg capitalize">
-              {isSuperAdmin ? "MedConnect" : user.user?.compoundName ?? "Guest"}{" "}
-              C.H.P.S. Compound
+              {isSuperAdmin ? user.admin?.name : user?.staff?.fullName}
             </span>
-            {user.user?.region && (
+            {user?.staff?.contact && (
               <span className="text-primary-gray/50 font-semibold">
-                {user.user.region}{" "}
-                {user.user.region.toLowerCase().includes("region")
-                  ? ""
-                  : "Region"}
+                {user.staff.contact}
               </span>
             )}
-            {user.user?.location && (
+            {user?.staff?.position && (
               <span className="font-light text-primary-gray/50 text-sm">
-                {user.user.location}
+                {user.staff.position}
               </span>
             )}
           </p>
@@ -95,7 +91,9 @@ const AccountSettings = () => {
                 errors={errors}
                 inputType="text"
                 register={register}
-                value={user.user?.compoundName}
+                value={
+                  user?.isSuperAdmin ? user.admin?.name : user?.staff?.fullName
+                }
                 placeholderText="Enter your compound name"
               />
 
@@ -105,7 +103,6 @@ const AccountSettings = () => {
                 errors={errors}
                 inputType="text"
                 register={register}
-                value={user.user?.location}
                 placeholderText="Enter your location"
               />
 
@@ -115,7 +112,6 @@ const AccountSettings = () => {
                 errors={errors}
                 inputType="text"
                 register={register}
-                value={user.user?.region}
                 placeholderText="Enter your region"
               />
             </div>
@@ -127,7 +123,6 @@ const AccountSettings = () => {
                 errors={errors}
                 inputType="text"
                 register={register}
-                value={user.user?.district}
                 placeholderText="Enter your district"
               />
 
@@ -137,7 +132,9 @@ const AccountSettings = () => {
                 errors={errors}
                 inputType="text"
                 register={register}
-                value={""}
+                value={
+                  isSuperAdmin ? user.admin?.contact : user?.staff?.contact
+                }
                 placeholderText="Enter your contact information"
               />
 
@@ -147,7 +144,6 @@ const AccountSettings = () => {
                 errors={errors}
                 inputType="text"
                 register={register}
-                value={user.user?.availableServices}
                 placeholderText="Enter available services"
               />
             </div>
@@ -170,7 +166,6 @@ const AccountSettings = () => {
                 errors={errors}
                 inputType="text"
                 register={register}
-                value={user.user?.operatingHours}
                 placeholderText="Enter operating hours"
               />
 

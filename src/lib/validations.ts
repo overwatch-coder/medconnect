@@ -56,10 +56,22 @@ export const formatResponse = (
     };
   }
 
+  let error = "";
+  let customMessage = resData.message === "Request failed with status code 400";
+
+  if (customMessage) {
+    error =
+      "You have entered invalid data, please try again. Check the data you have entered and try again.";
+  }
+
   return {
     status: false,
     message: resData?.message ?? "An error occurred, please try again later.",
-    errors: [resData?.message ?? "An error occurred, please try again."],
+    errors: customMessage
+      ? [error]
+      : Array.isArray(resData?.message)
+        ? resData?.message
+        : [resData?.message ?? "An error occurred, please try again."],
   };
 };
 

@@ -40,7 +40,7 @@ const ResetPasswordForm = () => {
   const mutation = useMutation({
     mutationFn: resetPasswordFormSubmit,
     onSettled: (result) => {
-      if (!result?.success) {
+      if (!result?.status) {
         setSubmitFormErrors(result?.errors!);
         reset({ password: "", confirmPassword: "" });
         return;

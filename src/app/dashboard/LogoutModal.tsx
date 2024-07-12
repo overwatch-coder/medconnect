@@ -1,9 +1,8 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import {
   AlertDialog,
-  AlertDialogAction,
   AlertDialogCancel,
   AlertDialogContent,
   AlertDialogDescription,
@@ -20,19 +19,25 @@ import { X } from "lucide-react";
 import { logout } from "@/actions/user.action";
 import { removeUserFromCookies } from "@/actions/user-cookie.action";
 import { useRouter } from "next/navigation";
+import { Button } from "@/components/ui/button";
+import ClipLoader from "react-spinners/ClipLoader";
 
 const LogoutModal = ({ showLogoutName }: { showLogoutName?: boolean }) => {
-  const [_, setAuth] = useAuth();
+  const [_, setUser] = useAuth();
+  const [pending, setPending] = useState(false);
   const router = useRouter();
 
   // handle logout
   const handleLogout = async () => {
+    setPending(true);
     const data = await logout();
     if (!data.status) {
-      toast.error("Logout Failed");
+      setPending(false);
+      toast.error("An error occurred while logging out");
     } else {
       await removeUserFromCookies();
-      setAuth(null);
+      setUser(null);
+      setPending(false);
       toast.success("Logout Successful");
       router.replace("/login");
     }
@@ -73,12 +78,17 @@ const LogoutModal = ({ showLogoutName }: { showLogoutName?: boolean }) => {
 
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction
+            <Button
               onClick={handleLogout}
+              disabled={pending}
               className="text-white bg-primary-green md:px-10 py-3 w-full md:w-fit"
             >
-              Confirm
-            </AlertDialogAction>
+              {pending ? (
+                <ClipLoader loading={pending} size={20} color="white" />
+              ) : (
+                "Confirm"
+              )}
+            </Button>
           </AlertDialogFooter>
         </AlertDialogHeader>
       </AlertDialogContent>

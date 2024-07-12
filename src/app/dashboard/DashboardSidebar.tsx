@@ -13,13 +13,12 @@ import { useAuth } from "@/hooks";
 import LogoutModal from "@/app/dashboard/LogoutModal";
 
 const DashboardSidebar = () => {
-  const [auth] = useAuth();
+  const [user] = useAuth();
   const pathname = usePathname();
 
-  const dashboardLinks =
-    auth?.role === "Admin"
-      ? MEDCONNECT_SUPER_ADMIN_DASHBOARD_LINKS
-      : MEDCONNECT_DASHBOARD_LINKS;
+  const dashboardLinks = user?.isSuperAdmin
+    ? MEDCONNECT_SUPER_ADMIN_DASHBOARD_LINKS
+    : MEDCONNECT_DASHBOARD_LINKS;
 
   return (
     <section className="hidden bg-secondary-gray scrollbar-hide pb-7 lg:w-60 lg:items-start fixed top-0 left-0 md:flex flex-col items-center w-16 h-full gap-3 px-5 overflow-y-scroll">

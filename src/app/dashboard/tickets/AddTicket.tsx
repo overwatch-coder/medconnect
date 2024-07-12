@@ -17,7 +17,7 @@ import CustomInputForm from "@/components/CustomInputForm";
 import { toast } from "react-toastify";
 import { useMutation } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
-import { useUserAtom } from "@/hooks";
+import { useAuth } from "@/hooks";
 import { SuperAdminTicketType as TicketType } from "@/types/index";
 import { superAdminTicketSchema as ticketSchema } from "@/schema/ticket.schema";
 
@@ -26,7 +26,7 @@ type AddTicketProps = {
 };
 
 const AddTicket = ({ tickets }: AddTicketProps) => {
-  const [user] = useUserAtom();
+  const [user] = useAuth();
 
   const newTicketNumber =
     parseInt(tickets[tickets.length - 1].ticketID.split("T")[1]) + 1;
@@ -46,7 +46,7 @@ const AddTicket = ({ tickets }: AddTicketProps) => {
   } = useForm<TicketType>({
     resolver: zodResolver(ticketSchema),
     defaultValues: {
-      userId: user.user?._id,
+      userId: user?.auth.id,
       ticketID: `T${newTicketNumberString}`,
     },
     mode: "all",

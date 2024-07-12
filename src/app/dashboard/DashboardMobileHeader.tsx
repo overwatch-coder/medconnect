@@ -13,14 +13,14 @@ import { MdOutlineQuestionMark } from "react-icons/md";
 import Image from "next/image";
 import Link from "next/link";
 import { Separator } from "@/components/ui/separator";
-import { useUserAtom } from "@/hooks";
+import { useAuth } from "@/hooks";
 import { usePathname } from "next/navigation";
 import NotificationsModal from "@/app/dashboard/notifications/NotificationsModal";
 import HelpModal from "@/app/dashboard/help/HelpModal";
 
 const DashboardMobileHeader = () => {
-  const [user] = useUserAtom();
-  const isSuperAdmin = user.user?.compoundName === "admin";
+  const [user] = useAuth();
+  const isSuperAdmin = user?.isSuperAdmin;
   const pathname = usePathname();
 
   return (
@@ -94,10 +94,17 @@ const DashboardMobileHeader = () => {
           />
           <p className="flex flex-col gap-1 text-white md:text-secondary-gray">
             <span className="font-bold text-lg capitalize">
-              {isSuperAdmin ? "MedConnect" : user.user?.compoundName ?? "Guest"}
+              {isSuperAdmin
+                ? user.admin?.name.split(" ")[0]
+                : user?.staff?.fullName.split(" ")[0]}
             </span>
             <span className="font-medium text-base">
-              {isSuperAdmin ? "Super Admin" : "C.H.P.S. Compound"}
+              {isSuperAdmin
+                ? "Super Admin"
+                : user?.staff?.fullName.substring(
+                    0,
+                    user?.staff?.fullName.indexOf(" ") + 1
+                  )}
             </span>
           </p>
         </div>

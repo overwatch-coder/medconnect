@@ -5,7 +5,7 @@ import ReportAnalytics from "@/app/dashboard/reports/ReportAnalytics";
 import CustomInputForm from "@/components/CustomInputForm";
 import { Button } from "@/components/ui/button";
 import { getAllMonths, getAllYears } from "@/lib/utils";
-import { User } from "@/types/index";
+import { UserType } from "@/types/backend";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
 import React, { useState } from "react";
@@ -16,7 +16,7 @@ import { z } from "zod";
 
 type GenerateReportsProps = {
   reports: ReportType[];
-  user: Omit<User, "password">;
+  user: UserType;
   isAdmin: boolean;
 };
 
@@ -48,7 +48,7 @@ const GenerateReports = ({ reports, user, isAdmin }: GenerateReportsProps) => {
   } = useForm<GenerateReportsFormData>({
     resolver: zodResolver(generateReportSchema),
     defaultValues: {
-      userId: user._id,
+      userId: user?.auth.id,
       reportType: selectedReport.type,
       reportName: selectedReport.name,
     },
@@ -167,7 +167,7 @@ const GenerateReports = ({ reports, user, isAdmin }: GenerateReportsProps) => {
                 register={register}
                 errors={errors}
                 inputType="hidden"
-                value={user._id}
+                value={user?.auth.id}
                 placeholderText="Enter User ID"
               />
 

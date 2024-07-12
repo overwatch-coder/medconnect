@@ -1,7 +1,7 @@
 "use client";
 import { MEDCONNECT_SUPER_ADMIN_DASHBOARD_COMPOUNDS_WITH_ACTIONS as compoundsData } from "@/constants";
 import { FormSectionHeader } from "@/app/dashboard/compounds/add-new/AddCompoundForm";
-import { useUserAtom } from "@/hooks";
+import { useAuth } from "@/hooks";
 import { ArrowLeft } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
@@ -12,8 +12,8 @@ type CompoundDetailsProps = {
 };
 
 const CompoundDetails = ({ id }: CompoundDetailsProps) => {
-  const [user] = useUserAtom();
-  const isSuperAdmin = user.user?.compoundName === "admin";
+  const [user] = useAuth();
+  const isSuperAdmin = user?.isSuperAdmin;
   const router = useRouter();
   const compoundData = compoundsData.find(
     (compound) => compound.compoundId === id
@@ -58,7 +58,7 @@ const CompoundDetails = ({ id }: CompoundDetailsProps) => {
             <span className="font-bold text-lg capitalize">
               {compoundData.compoundName} C.H.P.S. Compound
             </span>
-            {user.user?.region && (
+            {user?.isSuperAdmin && (
               <span className="text-primary-gray/50 font-semibold">
                 {compoundData.region}{" "}
                 {compoundData.region.toLowerCase().includes("region")
@@ -89,7 +89,7 @@ const CompoundDetails = ({ id }: CompoundDetailsProps) => {
             </div>
             <div className="grid grid-cols-2 text-secondary-gray/70">
               <h2>District</h2>
-              <p>{user.user?.district}</p>
+              <p>{"Not Available"}</p>
             </div>
             <div className="grid grid-cols-2 text-secondary-gray/70">
               <h2>Contact Information</h2>
@@ -97,7 +97,7 @@ const CompoundDetails = ({ id }: CompoundDetailsProps) => {
             </div>
             <div className="grid grid-cols-2 text-secondary-gray/70">
               <h2>Available Services</h2>
-              <p>{user.user?.availableServices || "No services available"}</p>
+              <p>{"No services available"}</p>
             </div>
           </div>
         </div>
@@ -109,7 +109,7 @@ const CompoundDetails = ({ id }: CompoundDetailsProps) => {
           <div className="flex flex-col gap-4">
             <div className="grid grid-cols-2 text-secondary-gray/70">
               <h2>Operating Hours</h2>
-              <p>{user.user?.operatingHours}</p>
+              <p>{"Not Available"}</p>
             </div>
             <div className="grid grid-cols-2 text-secondary-gray/70">
               <h2>Staff Information</h2>

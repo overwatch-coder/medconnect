@@ -24,7 +24,7 @@ import { useRouter } from "next/navigation";
 import NotificationModal from "@/components/NotificationModal";
 import CustomInputForm from "@/components/CustomInputForm";
 import { SettingsType } from "@/types/index";
-import { useUserAtom } from "@/hooks";
+import { useAuth } from "@/hooks";
 
 type EditCompoundModalProps = {
   openModal: boolean;
@@ -40,7 +40,7 @@ const EditCompoundModal = ({
   setEditCompoundId,
 }: EditCompoundModalProps) => {
   const router = useRouter();
-  const [user] = useUserAtom();
+  const [user] = useAuth();
 
   const [showEditNotificationModal, setShowEditNotificationModal] =
     useState(false);
@@ -61,12 +61,12 @@ const EditCompoundModal = ({
     resolver: zodResolver(settingsSchema.partial()),
     defaultValues: {
       compoundName: compoundData?.compoundName,
-      email: user.user?.email,
+      email: user?.auth.email,
       location: compoundData?.location,
       region: compoundData?.region,
-      district: user.user?.district,
+      district: compoundData?.location,
       contactInformation: "",
-      availableServices: user.user?.availableServices,
+      availableServices: "",
       operatingHours: "",
       staffInformation: "",
       facilityDetails: "",
@@ -75,7 +75,7 @@ const EditCompoundModal = ({
       emergencyContact: "",
       notifications: false,
       profilePicture: null,
-      userId: user.user?._id,
+      userId: user?.auth.id,
       compoundId: compoundData?.compoundId,
     },
     mode: "all",

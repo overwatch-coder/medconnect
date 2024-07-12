@@ -14,12 +14,13 @@ import { IoPerson } from "react-icons/io5";
 import { Eye, EyeOff, LockIcon, Mail } from "lucide-react";
 import Image from "next/image";
 import { useMutation } from "@tanstack/react-query";
-import { useUserAtom } from "@/hooks";
+import { useAuth } from "@/hooks";
 import CustomErrorElement from "@/components/CustomErrorElement";
 import { CreateUserType } from "@/types/index";
+import { UserType } from "@/types/backend";
 
 const RegisterForm = () => {
-  const [user, setUser] = useUserAtom();
+  const [user, setUser] = useAuth();
   const [showPassword, setShowPassword] = useState(false);
   const [submitFormErrors, setSubmitFormErrors] = useState<string[]>([]);
 
@@ -45,15 +46,13 @@ const RegisterForm = () => {
     mutationKey: ["user"],
     mutationFn: createUserFormSubmit,
     onSettled: (result) => {
-      if (!result?.success) {
+      if (!result?.status) {
         setSubmitFormErrors(result?.errors!);
         reset({ password: "" });
         return;
       }
 
-      setUser({
-        user: result?.data,
-      });
+      setUser(result?.data as UserType);
       reset();
       toast.success(result?.message);
       router.replace(redirectUrl);

@@ -6,7 +6,7 @@ import {
   MEDCONNECT_DASHBOARD_REPORTS,
   MEDCONNECT_SUPER_ADMIN_DASHBOARD_COMPOUNDS,
 } from "@/constants";
-import { useUserAtom } from "@/hooks";
+import { useAuth } from "@/hooks";
 import { Trash2 } from "lucide-react";
 import React, { useState } from "react";
 import { GrPowerCycle } from "react-icons/gr";
@@ -16,8 +16,8 @@ import GenerateTable from "@/app/dashboard/GenerateTable";
 import { TableCell, TableRow } from "@/components/ui/table";
 
 const SuperAdminDashboard = () => {
-  const [user] = useUserAtom();
-  const isUserAdmin = user.user?.compoundName === "admin";
+  const [user] = useAuth();
+  const isUserAdmin = user?.isSuperAdmin;
   const [currentTablePage, setCurrentTablePage] = useState(1);
   const tableDataPerPage = 5;
   const tableData = MEDCONNECT_SUPER_ADMIN_DASHBOARD_COMPOUNDS;

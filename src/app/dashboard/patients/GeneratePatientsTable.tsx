@@ -11,33 +11,36 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { PatientsDataType } from "@/app/dashboard/patients/PatientsTable";
 import { toast } from "react-toastify";
 import DeleteModal from "@/components/DeleteModal";
 import EditPatient from "@/app/dashboard/patients/edit-patients/EditPatient";
 import Link from "next/link";
 import GenerateTablePagination from "@/components/GenerateTablePagination";
+import { Patient } from "@/types/backend";
+import { deletePatient } from "@/actions/patients.action";
+import { useRouter } from "next/navigation";
 
 const tableHeaderNames = [
   "Patient Name",
-  "Age",
+  "Patient ID",
   "Gender",
-  "Blood Group",
+  "Location",
   "Phone Number",
   "Date Added",
 ];
 
+type PatientsTableProps = {
+  filteredPatientsData: Patient[];
+  setFilteredPatientsData: React.Dispatch<React.SetStateAction<Patient[]>>;
+};
+
 const GeneratePatientsTable = ({
   filteredPatientsData,
   setFilteredPatientsData,
-}: {
-  filteredPatientsData: PatientsDataType[];
-  setFilteredPatientsData: React.Dispatch<
-    React.SetStateAction<PatientsDataType[]>
-  >;
-}) => {
+}: PatientsTableProps) => {
+  const router = useRouter();
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
-  const [patientToDelete, setPatientToDelete] = useState<PatientsDataType>();
+  const [patientToDelete, setPatientToDelete] = useState<Patient>();
   const [currentTablePage, setCurrentTablePage] = useState(1);
   const dataPerPage = 7;
 
@@ -60,18 +63,17 @@ const GeneratePatientsTable = ({
   };
 
   // Handle delete
-  const handleDelete = async (patient: PatientsDataType) => {
-    const data = filteredPatientsData.filter(
-      (p) => p.patientID !== patient.patientID
-    );
+  const handleDelete = async (patient: Patient) => {
+    await deletePatient(patient._id);
 
     toast.success("Patient deleted successfully");
-
-    setFilteredPatientsData(data);
-
+    setFilteredPatientsData(
+      filteredPatientsData.filter((p) => p._id !== patient._id)
+    );
     setPatientToDelete(undefined);
-
     setOpenDeleteModal(false);
+
+    router.refresh()
   };
 
   return (
@@ -110,35 +112,34 @@ const GeneratePatientsTable = ({
 
         <TableBody className="w-full">
           {currentData.map((patient) => (
-            <TableRow key={patient.patientName}>
+            <TableRow key={patient._id}>
               <TableCell className="text-secondary-gray flex items-center gap-2">
                 <div className="flex items-center justify-center gap-2 h-10 w-10 rounded-full p-2 bg-primary-gray/10">
                   <p className="text-primary-green font-bold text-center">
-                    {patient.patientName.split(" ")[0].charAt(0)}{" "}
-                    {patient.patientName.split(" ")[1].charAt(0)}
+                    {patient.firstName.charAt(0)} {patient.lastName.charAt(0)}
                   </p>
                 </div>
                 <Link
-                  href={`/dashboard/patients/${patient.patientID}`}
+                  href={`/dashboard/patients/${patient._id}`}
                   className="hover:underline"
                 >
-                  {patient.patientName}
+                  {patient.firstName} {patient.lastName}
                 </Link>
               </TableCell>
               <TableCell className="text-secondary-gray">
-                {patient.age}
+                {patient.patientId}
               </TableCell>
               <TableCell className="text-secondary-gray">
                 {patient.gender}
               </TableCell>
               <TableCell className="text-secondary-gray">
-                {patient.bloodGroup}
+                {patient.location}
               </TableCell>
               <TableCell className="text-secondary-gray">
-                {patient.phoneNumber}
+                {patient.contact}
               </TableCell>
               <TableCell className="text-secondary-gray">
-                {patient.dateAdded}
+                {patient.createdAt.split("T")[0]}
               </TableCell>
               <TableCell className="flex items-center gap-3">
                 <EditPatient patient={patient} />

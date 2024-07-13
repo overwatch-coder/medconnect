@@ -1,7 +1,7 @@
 "use client";
 
 import EditProgram from "@/app/dashboard/outreach-programs/EditProgram";
-import { useUserAtom } from "@/hooks";
+import { useAuth } from "@/hooks";
 import { OutreachProgramType } from "@/types/index";
 import Image from "next/image";
 import Link from "next/link";
@@ -15,8 +15,8 @@ const OutreachProgramCard = ({
   program,
   children,
 }: OutreachProgramCardProps) => {
-  const [user] = useUserAtom();
-  const isAdmin = user.user?.compoundName === "admin";
+  const [user] = useAuth();
+  const isSuperAdmin = user?.isSuperAdmin;
 
   return (
     <>
@@ -47,7 +47,7 @@ const OutreachProgramCard = ({
             {program.targetGroup}
           </p>
 
-          {!isAdmin && (
+          {!isSuperAdmin && (
             <Link
               href={`/dashboard/outreach-programs/${program.id}`}
               className="bg-[#767676]/30 p-2 rounded text-center text-black w-fit text-xs shadow"
@@ -56,7 +56,7 @@ const OutreachProgramCard = ({
             </Link>
           )}
 
-          {isAdmin && (
+          {isSuperAdmin && (
             <div className="flex items-center gap-4">
               <EditProgram program={program} />
 

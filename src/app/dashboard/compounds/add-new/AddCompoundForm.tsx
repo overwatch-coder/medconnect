@@ -13,28 +13,33 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import ClipLoader from "react-spinners/ClipLoader";
 import { toast } from "react-toastify";
 import { SettingsType } from "@/types/index";
-import { useUserAtom } from "@/hooks";
+import { useAuth } from "@/hooks";
+import { useMutation } from "@tanstack/react-query";
 
 const AddCompoundForm = () => {
   const router = useRouter();
-  const [user] = useUserAtom();
+  const [user] = useAuth();
 
   const {
     register,
-    formState: { errors, isSubmitting: pending },
+    formState: { errors },
     handleSubmit,
     watch,
     setValue,
   } = useForm<SettingsType>({
     resolver: zodResolver(settingsSchema),
     defaultValues: {
-      compoundName: user.user?.compoundName,
-      email: user.user?.email,
-      location: user.user?.location,
-      region: user.user?.region,
-      district: user.user?.district,
-      contactInformation: "",
-      availableServices: user.user?.availableServices,
+      compoundName: user?.isSuperAdmin
+        ? user.admin?.name
+        : user?.staff?.fullName,
+      email: user?.auth.email,
+      location: "",
+      region: "",
+      district: "",
+      contactInformation: user?.isSuperAdmin
+        ? user.admin?.contact
+        : user?.staff?.contact,
+      availableServices: "",
       operatingHours: "",
       staffInformation: "",
       facilityDetails: "",
@@ -43,18 +48,28 @@ const AddCompoundForm = () => {
       emergencyContact: "",
       notifications: false,
       profilePicture: null,
-      userId: user.user?._id,
+      userId: user?.auth.id,
     },
     mode: "all",
   });
 
   const profilePicture = watch("profilePicture");
 
+  const { mutateAsync, isPending: pending } = useMutation({
+    mutationKey: ["compound"],
+    mutationFn: async (data: SettingsType) => {
+      return data;
+    },
+    onSettled: (result) => {
+      toast.success("Compound added successfully");
+      const compoundId = "mck001";
+      router.replace(`/dashboard/compounds/${compoundId}`);
+    },
+  });
+
   const submitAddCompound: SubmitHandler<SettingsType> = async (data) => {
     console.log({ data });
-    toast.success("Compound added successfully");
-    const compoundId = "mck001";
-    router.replace(`/dashboard/compounds/${compoundId}`);
+    await mutateAsync(data);
   };
 
   return (

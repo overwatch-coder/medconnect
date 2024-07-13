@@ -1,6 +1,6 @@
 import { ReportType } from "@/app/dashboard/reports/page";
 import { Button } from "@/components/ui/button";
-import { User } from "@/types/index";
+import { UserType } from "@/types/backend";
 import { ArrowLeft, Download, Maximize2 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -8,7 +8,7 @@ import React from "react";
 
 type DownloadReportProps = {
   report: ReportType;
-  user: Omit<User, "password">;
+  user: UserType;
   isAdmin: boolean;
   setShowDownload: (showDownload: boolean) => void;
 };

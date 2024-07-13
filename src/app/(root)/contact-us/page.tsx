@@ -30,7 +30,7 @@ const Contact = () => {
   const mutation = useMutation({
     mutationFn: contactFormSubmit,
     onSettled: (result) => {
-      if (!result?.success) {
+      if (!result?.status) {
         setSubmitFormErrors(result?.errors!);
         return;
       }

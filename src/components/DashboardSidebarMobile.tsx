@@ -11,7 +11,7 @@ import {
   MEDCONNECT_DASHBOARD_LINKS,
   MEDCONNECT_SUPER_ADMIN_DASHBOARD_LINKS,
 } from "@/constants";
-import { useUserAtom } from "@/hooks";
+import { useAuth } from "@/hooks";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -19,12 +19,11 @@ import { MdOutlineDashboard } from "react-icons/md";
 
 const DashboardSidebarMobile = () => {
   const pathname = usePathname();
-  const [user] = useUserAtom();
+  const [user] = useAuth();
 
-  const dashboardLinks =
-    user.user?.compoundName.toLowerCase() === "admin"
-      ? MEDCONNECT_SUPER_ADMIN_DASHBOARD_LINKS
-      : MEDCONNECT_DASHBOARD_LINKS;
+  const dashboardLinks = user?.isSuperAdmin
+    ? MEDCONNECT_SUPER_ADMIN_DASHBOARD_LINKS
+    : MEDCONNECT_DASHBOARD_LINKS;
 
   return (
     <Sheet>

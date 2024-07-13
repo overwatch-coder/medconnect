@@ -1540,6 +1540,60 @@ export const MEDCONNECT_DASHBOARD_DIAGNOSTIC_SUPPORT = [
           "I recommend taking paracetamol and resting. If the symptoms persist, visit the clinic.",
         time: "10:40 AM",
       },
+      {
+        doctor: "Dr. Yaw Boateng",
+        message: "Good morning, can you describe your symptoms?",
+        time: "10:30 AM",
+      },
+      {
+        user: "Ama Serwaa",
+        message:
+          "I've been having a high fever and severe headache since last night.",
+        time: "10:32 AM",
+      },
+      {
+        doctor: "Dr. Yaw Boateng",
+        message: "Any other symptoms like nausea or dizziness?",
+        time: "10:35 AM",
+      },
+      {
+        user: "Ama Serwaa",
+        message: "Yes, I've been feeling a bit dizzy.",
+        time: "10:37 AM",
+      },
+      {
+        doctor: "Dr. Yaw Boateng",
+        message:
+          "I recommend taking paracetamol and resting. If the symptoms persist, visit the clinic.",
+        time: "10:40 AM",
+      },
+      {
+        doctor: "Dr. Yaw Boateng",
+        message: "Good morning, can you describe your symptoms?",
+        time: "10:30 AM",
+      },
+      {
+        user: "Ama Serwaa",
+        message:
+          "I've been having a high fever and severe headache since last night.",
+        time: "10:32 AM",
+      },
+      {
+        doctor: "Dr. Yaw Boateng",
+        message: "Any other symptoms like nausea or dizziness?",
+        time: "10:35 AM",
+      },
+      {
+        user: "Ama Serwaa",
+        message: "Yes, I've been feeling a bit dizzy.",
+        time: "10:37 AM",
+      },
+      {
+        doctor: "Dr. Yaw Boateng",
+        message:
+          "I recommend taking paracetamol and resting. If the symptoms persist, visit the clinic.",
+        time: "10:40 AM",
+      },
     ],
   },
   {
@@ -1576,6 +1630,60 @@ export const MEDCONNECT_DASHBOARD_DIAGNOSTIC_SUPPORT = [
           "Try to drink plenty of water and avoid solid foods for a few hours. If the pain worsens, visit the hospital.",
         time: "01:55 PM",
       },
+      {
+        doctor: "Dr. Akua Nyamekye",
+        message: "Hello, what seems to be the problem?",
+        time: "01:45 PM",
+      },
+      {
+        user: "Kofi Owusu",
+        message: "I've been having severe stomach pain since this morning.",
+        time: "01:47 PM",
+      },
+      {
+        doctor: "Dr. Akua Nyamekye",
+        message: "Have you eaten anything unusual or felt this pain before?",
+        time: "01:50 PM",
+      },
+      {
+        user: "Kofi Owusu",
+        message:
+          "No, nothing unusual. This is the first time I'm experiencing this.",
+        time: "01:52 PM",
+      },
+      {
+        doctor: "Dr. Akua Nyamekye",
+        message:
+          "Try to drink plenty of water and avoid solid foods for a few hours. If the pain worsens, visit the hospital.",
+        time: "01:55 PM",
+      },
+      {
+        doctor: "Dr. Akua Nyamekye",
+        message: "Hello, what seems to be the problem?",
+        time: "01:45 PM",
+      },
+      {
+        user: "Kofi Owusu",
+        message: "I've been having severe stomach pain since this morning.",
+        time: "01:47 PM",
+      },
+      {
+        doctor: "Dr. Akua Nyamekye",
+        message: "Have you eaten anything unusual or felt this pain before?",
+        time: "01:50 PM",
+      },
+      {
+        user: "Kofi Owusu",
+        message:
+          "No, nothing unusual. This is the first time I'm experiencing this.",
+        time: "01:52 PM",
+      },
+      {
+        doctor: "Dr. Akua Nyamekye",
+        message:
+          "Try to drink plenty of water and avoid solid foods for a few hours. If the pain worsens, visit the hospital.",
+        time: "01:55 PM",
+      },
     ],
   },
   {
@@ -1585,6 +1693,60 @@ export const MEDCONNECT_DASHBOARD_DIAGNOSTIC_SUPPORT = [
     description: "Patient has developed a red, itchy rash on the arms.",
     time: "09:15 AM",
     chats: [
+      {
+        doctor: "Dr. Kojo Agyeman",
+        message: "Good morning, how can I assist you today?",
+        time: "09:15 AM",
+      },
+      {
+        user: "Esi Gyamfi",
+        message: "I've developed a red, itchy rash on my arms.",
+        time: "09:17 AM",
+      },
+      {
+        doctor: "Dr. Kojo Agyeman",
+        message:
+          "Have you used any new products or been in contact with any allergens?",
+        time: "09:20 AM",
+      },
+      {
+        user: "Esi Gyamfi",
+        message: "I started using a new lotion a couple of days ago.",
+        time: "09:22 AM",
+      },
+      {
+        doctor: "Dr. Kojo Agyeman",
+        message:
+          "Stop using the lotion and apply hydrocortisone cream to the rash. If it doesn't improve, please see a dermatologist.",
+        time: "09:25 AM",
+      },
+      {
+        doctor: "Dr. Kojo Agyeman",
+        message: "Good morning, how can I assist you today?",
+        time: "09:15 AM",
+      },
+      {
+        user: "Esi Gyamfi",
+        message: "I've developed a red, itchy rash on my arms.",
+        time: "09:17 AM",
+      },
+      {
+        doctor: "Dr. Kojo Agyeman",
+        message:
+          "Have you used any new products or been in contact with any allergens?",
+        time: "09:20 AM",
+      },
+      {
+        user: "Esi Gyamfi",
+        message: "I started using a new lotion a couple of days ago.",
+        time: "09:22 AM",
+      },
+      {
+        doctor: "Dr. Kojo Agyeman",
+        message:
+          "Stop using the lotion and apply hydrocortisone cream to the rash. If it doesn't improve, please see a dermatologist.",
+        time: "09:25 AM",
+      },
       {
         doctor: "Dr. Kojo Agyeman",
         message: "Good morning, how can I assist you today?",

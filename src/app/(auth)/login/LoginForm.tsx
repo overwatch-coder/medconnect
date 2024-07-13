@@ -17,10 +17,16 @@ import { useMutation } from "@tanstack/react-query";
 import CustomErrorElement from "@/components/CustomErrorElement";
 import { LoginType } from "@/types/index";
 import { MdEmail } from "react-icons/md";
+import { useAuth } from "@/hooks";
+import { useRouter, useSearchParams } from "next/navigation";
 
 const LoginForm = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [submitFormErrors, setSubmitFormErrors] = useState<string[]>([]);
+  const [user, setUser] = useAuth();
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const redirect = searchParams.get("redirect");
 
   const {
     register,
@@ -37,14 +43,19 @@ const LoginForm = () => {
     mutationKey: ["user"],
     mutationFn: loginFormSubmit,
     onSettled: (result) => {
-      if (!result?.success) {
+      console.log({ result });
+
+      if (!result?.status) {
         setSubmitFormErrors(result?.errors!);
         reset({ password: "" });
         return;
       }
 
+      setUser(result.data);
+
       reset();
-      toast.success(result?.message);
+      toast.success("Login successful");
+      router.push(redirect ? redirect : "/dashboard");
     },
   });
 

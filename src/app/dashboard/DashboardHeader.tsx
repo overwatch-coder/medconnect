@@ -6,14 +6,14 @@ import { MdOutlineQuestionMark } from "react-icons/md";
 import DashboardMobileHeader from "@/app/dashboard/DashboardMobileHeader";
 import Link from "next/link";
 import Image from "next/image";
-import { useUserAtom } from "@/hooks";
+import { useAuth } from "@/hooks";
 import { usePathname } from "next/navigation";
 import NotificationsModal from "@/app/dashboard/notifications/NotificationsModal";
 import DashboardSidebarMobile from "@/components/DashboardSidebarMobile";
 
 const DashboardHeader = () => {
-  const [user] = useUserAtom();
-  const isSuperAdmin = user.user?.compoundName === "admin";
+  const [user] = useAuth();
+  const isSuperAdmin = user?.isSuperAdmin;
   const pathname = usePathname();
 
   return (
@@ -24,8 +24,7 @@ const DashboardHeader = () => {
         </div>
 
         <h2 className="text-xl capitalize md:text-2xl text-secondary-gray font-extrabold">
-          {isSuperAdmin ? "MedConnect" : user.user?.compoundName ?? "Guest"}{" "}
-          {!isSuperAdmin && <span>CHPS Compound</span>}
+          {isSuperAdmin ? user.admin?.name : user?.staff?.fullName}
         </h2>
 
         {/* MobileNav */}
@@ -68,22 +67,31 @@ const DashboardHeader = () => {
             <Image
               src={
                 isSuperAdmin
-                  ? "/assets/avatars/super-admin.svg"
+                  ? user.admin?.profilePictureUrl ??
+                    "/assets/icons/dashboard-header.svg"
                   : "/assets/icons/dashboard-header.svg"
               }
               alt="avatar"
               width={50}
               height={50}
               className="rounded-full object-cover"
+              onError={(e) => {
+                e.currentTarget.onerror = null;
+                e.currentTarget.src = "/assets/icons/dashboard-header.svg";
+              }}
             />
             <p className="flex flex-col gap-1 text-secondary-gray">
               <span className="font-bold capitalize">
                 {isSuperAdmin
-                  ? "MedConnect"
-                  : user.user?.compoundName ?? "Guest"}
+                  ? user.admin?.name.split(" ")[0]
+                  : user?.staff?.fullName.split(" ")[0]}
               </span>
               <span className="font-medium text-sm">
-                {isSuperAdmin ? "Super Admin" : "C.H.P.S. Compound"}
+                {isSuperAdmin
+                  ? "Super Admin"
+                  : user?.staff?.fullName.substring(
+                      user?.staff?.fullName.indexOf(" ") + 1
+                    )}
               </span>
             </p>
           </div>

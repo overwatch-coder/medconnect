@@ -9,63 +9,48 @@ import {
   MEDCONNECT_SUPER_ADMIN_DASHBOARD_LINKS,
 } from "@/constants";
 
-import { useUserAtom } from "@/hooks";
-import { toast } from "react-toastify";
-import { useQuery } from "@tanstack/react-query";
-import { currentUser, removeUserFromCookies } from "@/actions/user.action";
+import { useAuth } from "@/hooks";
 import LogoutModal from "@/app/dashboard/LogoutModal";
+import { useQuery } from "@tanstack/react-query";
+import { getPatients } from "@/actions/patients.action";
+import { toast } from "react-toastify";
+import { removeUserFromCookies } from "@/actions/user-cookie.action";
 
 const DashboardSidebar = () => {
-  const [user, setUser] = useUserAtom();
-  const pathname = usePathname();
+  const [user, setUser] = useAuth();
   const router = useRouter();
+  const pathname = usePathname();
 
   const { data } = useQuery({
     queryKey: ["user"],
     queryFn: async () => {
-      const result = await currentUser();
+      const result = await getPatients();
 
-      if (!result.success) {
-        if (result.errors && result?.errors[0]!.includes("Forbidden")) {
+      if (!result.status) {
+        if (
+          result.message.includes("Invalid or Expired token") ||
+          result.errors.some((error) =>
+            error.includes("Invalid or Expired token")
+          )
+        ) {
           toast.info("Session expired. Please log in again to continue");
 
-          setUser({
-            user: null,
-          });
+          setUser(null);
 
           await removeUserFromCookies();
 
           router.replace(`/login?redirect=${pathname}`);
         }
-
-        throw new Error(result?.errors ? result.errors[0] : result.message);
       }
-
-      setUser({
-        user: {
-          ...result.data,
-          availableServices:
-            result.data.availableServices.length > 0
-              ? result.data.availableServices.join(", ")
-              : "",
-        },
-      });
 
       return result;
     },
     refetchInterval: 1 * (60 * 60 * 1000),
   });
 
-  if (data?.errors) {
-    toast.error(data.errors[0]);
-  }
-
-  // get correct dashboard links
-  // TODO: Change condition to user roles instead of compound name
-  const dashboardLinks =
-    user.user?.compoundName.toLowerCase() === "admin"
-      ? MEDCONNECT_SUPER_ADMIN_DASHBOARD_LINKS
-      : MEDCONNECT_DASHBOARD_LINKS;
+  const dashboardLinks = user?.isSuperAdmin
+    ? MEDCONNECT_SUPER_ADMIN_DASHBOARD_LINKS
+    : MEDCONNECT_DASHBOARD_LINKS;
 
   return (
     <section className="hidden bg-secondary-gray scrollbar-hide pb-7 lg:w-60 lg:items-start fixed top-0 left-0 md:flex flex-col items-center w-16 h-full gap-3 px-5 overflow-y-scroll">

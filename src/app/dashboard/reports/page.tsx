@@ -5,7 +5,7 @@ import {
   MEDCONNECT_DASHBOARD_REPORT_TYPES_ADMIN,
   MEDCONNECT_DASHBOARD_REPORT_TYPES_SUPER_ADMIN,
 } from "@/constants";
-import { currentServerUser } from "@/actions/user.action";
+import { currentUser } from "@/actions/user.action";
 import GenerateReports from "@/app/dashboard/reports/GenerateReports";
 
 export const dynamic = "force-dynamic";
@@ -22,8 +22,8 @@ export const metadata: Metadata = {
 };
 
 const Reports = async () => {
-  const user = await currentServerUser();
-  const isAdmin = user?.compoundName.toLowerCase() === "admin";
+  const user = await currentUser();
+  const isAdmin = user?.isSuperAdmin;
 
   const reportTypes = isAdmin
     ? MEDCONNECT_DASHBOARD_REPORT_TYPES_SUPER_ADMIN
@@ -33,7 +33,7 @@ const Reports = async () => {
     <div className="flex flex-col gap-5 w-full my-5 relative">
       <DashboardContentHeader headerTitle={"Reports"} showDate={false} />
 
-      <GenerateReports reports={reportTypes} user={user!} isAdmin={isAdmin} />
+      <GenerateReports reports={reportTypes} user={user!} isAdmin={isAdmin!} />
     </div>
   );
 };

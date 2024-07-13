@@ -11,7 +11,7 @@ import {
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
 import { z } from "zod";
-import { useUserAtom } from "@/hooks";
+import { useAuth } from "@/hooks";
 import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 import { Button } from "@/components/ui/button";
@@ -31,7 +31,7 @@ const BecomeASupporterSchema = z.object({
 type BecomeASupporterType = z.infer<typeof BecomeASupporterSchema>;
 
 const BecomeASupporter = ({ program }: { program: OutreachProgramType }) => {
-  const [user] = useUserAtom();
+  const [user] = useAuth();
 
   const {
     register,
@@ -41,7 +41,7 @@ const BecomeASupporter = ({ program }: { program: OutreachProgramType }) => {
   } = useForm<BecomeASupporterType>({
     resolver: zodResolver(BecomeASupporterSchema),
     defaultValues: {
-      userId: user.user?._id,
+      userId: user?.auth.id,
       programId: program?.id,
     },
     mode: "all",
@@ -160,7 +160,7 @@ const BecomeASupporter = ({ program }: { program: OutreachProgramType }) => {
               errors={errors}
               register={register}
               inputType="hidden"
-              value={user.user?._id}
+              value={user?.auth.id}
             />
 
             <CustomInputForm

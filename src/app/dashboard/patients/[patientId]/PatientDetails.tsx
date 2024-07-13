@@ -1,5 +1,4 @@
 "use client";
-import { PatientsDataType } from "@/app/dashboard/patients/PatientsTable";
 import { ArrowLeft } from "lucide-react";
 import { useRouter } from "next/navigation";
 import React from "react";
@@ -10,10 +9,7 @@ import Prescription from "@/app/dashboard/patients/[patientId]/Prescription";
 import TreatmentPlan from "@/app/dashboard/patients/[patientId]/TreatmentPlan";
 import DiagnosisReport from "@/app/dashboard/patients/[patientId]/DiagnosisReport";
 import VisitLogs from "@/app/dashboard/patients/[patientId]/VisitLogs";
-
-type PatientDetailsProps = {
-  patient: PatientsDataType;
-};
+import { Patient } from "@/types/backend";
 
 const tabsMenu = [
   {
@@ -42,8 +38,13 @@ const tabsMenu = [
   },
 ];
 
+type PatientDetailsProps = {
+  patient: Patient;
+};
+
 const PatientDetails = ({ patient }: PatientDetailsProps) => {
   const router = useRouter();
+
   return (
     <div className="flex flex-col rounded w-full scrollbar-hide">
       <section className="flex items-center justify-between w-full gap-4 bg-primary-green">
@@ -57,7 +58,8 @@ const PatientDetails = ({ patient }: PatientDetailsProps) => {
           />
 
           <p className="text-white text-center font-medium">
-            {patient.patientName} ({patient.patientID.toUpperCase()})
+            {patient.firstName} {patient.lastName} (
+            {patient.patientId.toUpperCase()})
           </p>
         </div>
       </section>

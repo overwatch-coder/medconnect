@@ -1,9 +1,11 @@
-import { User } from "@/types/index";
-import { useAtom } from "jotai";
+import { UserType, Patient } from "@/types/backend";
+import { atom, useAtom } from "jotai";
 import { atomWithStorage } from "jotai/utils";
 
-export const userAtom = atomWithStorage("user", {
-  user: null as Omit<User, "password"> | null,
-});
+// === Auth ===
+export const authAtom = atomWithStorage("auth", null as UserType | null);
+export const useAuth = () => useAtom(authAtom);
 
-export const useUserAtom = () => useAtom(userAtom);
+// === Patient ===
+export const patientsAtom = atom([] as Patient[]);
+export const usePatients = () => useAtom(patientsAtom);

@@ -6,7 +6,7 @@ import {
   MEDCONNECT_DASHBOARD_REPORTS,
   MEDCONNECT_DASHBOARD_UPCOMING_APPOINTMENTS,
 } from "@/constants";
-import { useUserAtom } from "@/hooks";
+import { useAuth } from "@/hooks";
 import { Trash2 } from "lucide-react";
 import React, { useState } from "react";
 import { BsChatText } from "react-icons/bs";
@@ -16,10 +16,14 @@ import { IoCheckboxOutline } from "react-icons/io5";
 import { LiaFemaleSolid, LiaMaleSolid } from "react-icons/lia";
 import { TableCell, TableRow } from "@/components/ui/table";
 import GenerateTable from "@/app/dashboard/GenerateTable";
+import { Patient } from "@/types/backend";
 
-const AdminDashboard = () => {
-  const [user] = useUserAtom();
-  const isUserAdmin = user.user?.compoundName === "admin";
+type AdminDashboardProps = {
+  patients: Patient[];
+};
+const AdminDashboard = ({ patients }: AdminDashboardProps) => {
+  const [user] = useAuth();
+  const isUserAdmin = user?.isSuperAdmin;
 
   const [currentTablePage, setCurrentTablePage] = useState(1);
   const tableDataPerPage = 5;
@@ -50,7 +54,7 @@ const AdminDashboard = () => {
               <div className="flex flex-col gap-4 md:flex-row justify-between">
                 <div className="flex flex-col gap-4 relative">
                   <p className="font-bold text-2xl relative text-primary-green">
-                    <span>200</span>
+                    <span>{patients.length}</span>
                     <span className="text-red-500 text-xs absolute bottom-0 left-10 flex items-center">
                       <IoIosArrowRoundUp size={10} className="text-red-500" />{" "}
                       <span>10%</span>
@@ -64,7 +68,13 @@ const AdminDashboard = () => {
                         className="text-secondary-gray/20"
                       />
                       <p className="flex flex-col gap-1 text-secondary-gray">
-                        <span className="font-bold text-sm">55</span>
+                        <span className="font-bold text-sm">
+                          {
+                            patients.filter(
+                              (patient) => patient.gender === "Male"
+                            ).length
+                          }
+                        </span>
                         <span className="font-light text-xs">Male</span>
                       </p>
                     </div>
@@ -75,7 +85,13 @@ const AdminDashboard = () => {
                         className="text-secondary-gray/20"
                       />
                       <p className="flex flex-col gap-1 text-secondary-gray">
-                        <span className="font-bold text-sm">145</span>
+                        <span className="font-bold text-sm">
+                          {
+                            patients.filter(
+                              (patient) => patient.gender === "Female"
+                            ).length
+                          }
+                        </span>
                         <span className="font-light text-xs">Female</span>
                       </p>
                     </div>

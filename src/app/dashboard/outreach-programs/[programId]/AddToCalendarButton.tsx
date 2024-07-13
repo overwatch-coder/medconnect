@@ -3,19 +3,19 @@ import React from "react";
 import { OutreachProgramType } from "@/types/index";
 import "add-to-calendar-button";
 import { getEndTime } from "@/lib/utils";
-import { useUserAtom } from "@/hooks";
+import { useAuth } from "@/hooks";
 
 const getTime = (time: string) => {
   return time.split(" ")[0];
 };
 
 const AddToCalendarButton = ({ program }: { program: OutreachProgramType }) => {
-  const [user] = useUserAtom();
+  const [user] = useAuth();
   const name = `[Reminder] Add ${program.title} to Calendar`;
   const startDate = `${program.programDate}`;
   const startTime = program.programStartTime;
   const endTime = getEndTime(startTime);
-  const attendee = `${user.user?.compoundName}|${user.user?.email}`;
+  const attendee = `${user?.isSuperAdmin ? user?.admin?.name : user?.staff?.fullName}|${user?.auth.email}`;
   const organizer = `${program.organizerName}|${program.id}@gmail.com`;
 
   return (

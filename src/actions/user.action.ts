@@ -1,239 +1,179 @@
-"use server";
-
-import { getErrors } from "@/lib/parse-error";
-import { axiosInstance } from "@/lib/utils";
+import { fetchData, mutateData } from "@/actions/api-request.action";
+import {
+  getUserFromCookies,
+  removeUserFromCookies,
+  saveUserToCookies,
+} from "@/actions/user-cookie.action";
+import { handleApiError, hasField, validateSchema } from "@/lib/validations";
 import {
   forgotPasswordSchema,
   loginSchema,
   resetPasswordSchema,
   userSchema,
 } from "@/schema/user.schema";
+import { AdminData, AuthData, StaffData } from "@/types/backend";
 import {
   CreateUserType,
   ForgotPasswordType,
   LoginType,
   ResetPasswordType,
-  ResponseData,
-  User,
 } from "@/types/index";
-import { cookies } from "next/headers";
 
-// save user data to cookies
-export const saveUserToCookies = async (token: string, userId: string) => {
-  const cookieStore = cookies();
-
-  cookieStore.set("user", JSON.stringify({ token, userId }), {
-    httpOnly: true,
-    sameSite: "strict",
-    path: "/",
-    expires: new Date(Date.now() + 60 * 60 * 5 * 1000), // 5 hour
-  });
-};
-
-// remove user data from cookies
-export const removeUserFromCookies = async () => {
-  const cookieStore = cookies();
-  cookieStore.delete("user");
-};
-
-// get user data from cookies
-export const getUserFromCookies = async () => {
-  const cookieStore = cookies();
-
-  const user = cookieStore.get("user");
-
-  if (!user?.value) {
-    return null;
-  }
-
-  return JSON.parse(user.value) as { token: string; userId: string };
-};
-
-// get current user data
+// get current user
 export const currentUser = async () => {
-  try {
-    const user = await getUserFromCookies();
-
-    if (!user) {
-      throw new Error("Not authenticated, please login");
-    }
-
-    const res = await axiosInstance.get(`/users/${user.userId}`, {
-      headers: {
-        Authorization: `Bearer ${user.token}`,
-      },
-    });
-
-    const resData: ResponseData = res.data;
-
-    // return the data response
-    return {
-      success: resData.success,
-      message: resData.message,
-      data: resData.success ? resData.data : null,
-      errors: !resData.success ? [resData.message] : [],
-    };
-  } catch (error: any) {
-    console.log("current user error => ", { error });
-
-    return getErrors(error, false);
-  }
-};
-
-export const currentServerUser = async () => {
-  const result = await currentUser();
-
-  if (!result.success) {
-    return null;
-  }
-
-  return result.data as Omit<User, "password">;
-};
-
-// logout
-export const logout = async () => {
   const user = await getUserFromCookies();
 
-  const res = await axiosInstance.post(
-    "/auth/logout",
-    {},
-    {
-      headers: {
-        Authorization: `Bearer ${user?.token}`,
-      },
-    }
-  );
+  if (!user) {
+    return null;
+  }
 
-  const resData: ResponseData = res.data;
-
-  return resData;
+  return user;
 };
 
-// login
+// login form submit
 export const loginFormSubmit = async (data: LoginType) => {
   try {
-    // validate data and check for errors
-    const validatedData = loginSchema.safeParse(data);
+    const parsedData = validateSchema(loginSchema, data);
 
-    if (!validatedData.success) {
-      return getErrors({}, true, validatedData.error);
+    if (!parsedData.status) {
+      return {
+        ...parsedData,
+      };
     }
 
-    // submit data
-    const res = await axiosInstance.post("/auth/login", validatedData.data);
+    const resData = await mutateData("/auth/login", parsedData.data);
 
-    const resData: ResponseData = res.data;
-
-    if (resData.success) {
-      await saveUserToCookies(resData.data.token, resData.data._id);
+    if (!resData.status) {
+      return resData;
     }
 
-    // return the data response
+    const isSuperAdmin = hasField(resData.data, "admin");
+    const adminData = isSuperAdmin ? (resData.data?.admin as AdminData) : null;
+    const staffData = !isSuperAdmin ? (resData.data?.staff as StaffData) : null;
+    const authData = resData.data?.auth as AuthData;
+
+    const cookieData = {
+      auth: authData,
+      admin: adminData,
+      staff: staffData,
+      isSuperAdmin: isSuperAdmin,
+    };
+
+    await saveUserToCookies(cookieData);
+
     return {
-      success: resData.success,
-      message: resData.message,
-      data: resData.success ? resData.data : null,
-      errors: !resData.success ? [resData.message] : [],
+      ...resData,
+      data: cookieData,
     };
   } catch (error: any) {
-    console.log("login submit error => ", { error });
-
-    return getErrors(error, false);
+    console.log({ error });
+    return handleApiError(error);
   }
 };
 
-// create a new user
+// create user form submit
 export const createUserFormSubmit = async (data: CreateUserType) => {
   try {
-    // validate data and check for errors
-    const validatedData = userSchema.omit({ _id: true }).safeParse(data);
+    const parsedData = validateSchema(userSchema.omit({ _id: true }), data);
 
-    if (!validatedData.success) {
-      return getErrors({}, true, validatedData.error);
+    if (!parsedData.status) {
+      return {
+        ...parsedData,
+      };
     }
 
-    const services = validatedData.data.availableServices;
+    const services = parsedData.data!.availableServices;
 
-    // submit data
-    const res = await axiosInstance.post("/users", {
-      ...validatedData.data,
+    const resData = await mutateData("/users", {
+      ...parsedData.data,
       availableServices: services ? services.split(",") : [],
     });
 
-    const resData: ResponseData = res.data;
+    if (!resData.status) {
+      return resData;
+    }
 
-    // return the data response
-    return {
-      success: resData.success,
-      message: resData.message,
-      data: resData.success ? resData.data : null,
-      errors: !resData.success ? [resData.message] : [],
-    };
+    return resData;
   } catch (error: any) {
-    console.log("create user submit error => ", { error });
-
-    return getErrors(error, false);
+    return handleApiError(error);
   }
 };
 
-// forgot-passowrd
+// forgot password form submit
 export const forgotPasswordFormSubmit = async (data: ForgotPasswordType) => {
   try {
-    // validate data and check for errors
-    const validatedData = forgotPasswordSchema.safeParse(data);
+    const parsedData = validateSchema(forgotPasswordSchema, data);
 
-    if (!validatedData.success) {
-      return getErrors({}, true, validatedData.error);
+    if (!parsedData.status) {
+      return {
+        ...parsedData,
+      };
     }
 
-    // submit data to backend
-    const res = await axiosInstance.post(
-      "/auth/forgot-password",
-      validatedData.data
-    );
+    const resData = await mutateData("/auth/forgot-password", parsedData.data);
 
-    const resData: ResponseData = res.data;
+    if (!resData.status) {
+      return resData;
+    }
 
-    // return the data response
-    return {
-      success: resData.success,
-      message: resData.message,
-      data: resData.success ? resData.data : null,
-      errors: !resData.success ? [resData.message] : [],
-    };
+    return resData;
   } catch (error: any) {
-    console.log("forgot password submit error => ", { error });
-
-    return getErrors(error, false);
+    return handleApiError(error);
   }
 };
 
-// reset-passowrd
+// reset password form submit
 export const resetPasswordFormSubmit = async (data: ResetPasswordType) => {
   try {
-    // validate data and check for errors
-    const validatedData = resetPasswordSchema.safeParse(data);
+    const parsedData = validateSchema(resetPasswordSchema, data);
 
-    if (!validatedData.success) {
-      return getErrors({}, true, validatedData.error);
+    if (!parsedData.status) {
+      return {
+        ...parsedData,
+      };
     }
 
-    // submit data to backend
-    const { confirmPassword, ...dataToSubmit } = validatedData.data;
-    const res = await axiosInstance.post("/auth/reset-password", dataToSubmit);
+    const { confirmPassword, ...dataToSubmit } = parsedData.data;
+    const resData = await mutateData("/auth/reset-password", dataToSubmit);
 
-    const resData: ResponseData = res.data;
+    if (!resData.status) {
+      return resData;
+    }
 
-    // return the data response
-    return {
-      success: resData.success,
-      message: resData.message,
-      data: resData.success ? resData.data : null,
-      errors: !resData.success ? [resData.message] : [],
-    };
+    return resData;
   } catch (error: any) {
-    console.log("reset password submit error => ", { error });
+    return handleApiError(error);
+  }
+};
 
-    return getErrors(error, false);
+// logout user
+export const logout = async () => {
+  const user = await getUserFromCookies();
+
+  if (!user) {
+    return {
+      status: false,
+      error: "User not logged in",
+      errors: ["User not logged in"],
+    };
+  }
+
+  try {
+    const resData = await mutateData(
+      "/auth/logout",
+      {},
+      {
+        token: user.auth.token,
+      }
+    );
+
+    if (!resData.status) {
+      return resData;
+    }
+
+    await removeUserFromCookies();
+    return resData;
+  } catch (error: any) {
+    return handleApiError(error);
   }
 };

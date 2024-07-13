@@ -1,9 +1,8 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import {
   AlertDialog,
-  AlertDialogAction,
   AlertDialogCancel,
   AlertDialogContent,
   AlertDialogDescription,
@@ -14,25 +13,34 @@ import {
 } from "@/components/ui/alert-dialog";
 
 import { RiLogoutCircleLine } from "react-icons/ri";
-import { useUserAtom } from "@/hooks";
+import { useAuth } from "@/hooks";
 import { toast } from "react-toastify";
 import { X } from "lucide-react";
-import { logout, removeUserFromCookies } from "@/actions/user.action";
+import { logout } from "@/actions/user.action";
+import { removeUserFromCookies } from "@/actions/user-cookie.action";
+import { useRouter } from "next/navigation";
+import { Button } from "@/components/ui/button";
+import ClipLoader from "react-spinners/ClipLoader";
 
 const LogoutModal = ({ showLogoutName }: { showLogoutName?: boolean }) => {
-  const [user, setUser] = useUserAtom();
+  const [_, setUser] = useAuth();
+  const [pending, setPending] = useState(false);
+  const router = useRouter();
 
   // handle logout
   const handleLogout = async () => {
+    setPending(true);
     const data = await logout();
-
-    data.success ? toast.success(data.message) : toast.error(data.message);
-
-    await removeUserFromCookies();
-
-    setUser({
-      user: null,
-    });
+    if (!data.status) {
+      setPending(false);
+      toast.error("An error occurred while logging out");
+    } else {
+      await removeUserFromCookies();
+      setUser(null);
+      setPending(false);
+      toast.success("Logout Successful");
+      router.replace("/login");
+    }
   };
 
   return (
@@ -70,12 +78,17 @@ const LogoutModal = ({ showLogoutName }: { showLogoutName?: boolean }) => {
 
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction
+            <Button
               onClick={handleLogout}
+              disabled={pending}
               className="text-white bg-primary-green md:px-10 py-3 w-full md:w-fit"
             >
-              Confirm
-            </AlertDialogAction>
+              {pending ? (
+                <ClipLoader loading={pending} size={20} color="white" />
+              ) : (
+                "Confirm"
+              )}
+            </Button>
           </AlertDialogFooter>
         </AlertDialogHeader>
       </AlertDialogContent>

@@ -1,22 +1,29 @@
 "use client";
+
 import React, { useState } from "react";
-import { MEDCONNECT_DASHBOARD_DIAGNOSTIC_SUPPORT as diagnosticSupportData } from "@/constants";
 import { MessageCirclePlus, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import DiagnosticConversation from "@/app/dashboard/diagnostic-support/DiagnosticConversation";
-
-export type DiagnosticSupportDataType = (typeof diagnosticSupportData)[number];
-export type DiagnosticSupportChatType =
-  (typeof diagnosticSupportData)[0]["chats"][number];
+import { usePatients } from "@/hooks";
+import { Conversation } from "@/types/backend";
+import moment from "moment-timezone";
 
 const DiagnosticSupportChat = () => {
-  const [convos, setConvos] = useState<DiagnosticSupportDataType[]>(
-    diagnosticSupportData
-  );
+  const [patients] = usePatients();
+  const patientConversations: Conversation[] = patients.map((patient) => ({
+    id: crypto.randomUUID(),
+    name: patient.firstName + " " + patient.lastName,
+    shortPatientId: patient.patientId,
+    patientId: patient._id,
+    time: patient.createdAt.split("T")[1].split(".")[0],
+    date: patient.createdAt,
+    compoundId: patient.chpsCompoundId,
+    chats: [],
+  }));
 
-  const [selectedConvo, setSelectedConvo] = useState<DiagnosticSupportDataType>(
-    diagnosticSupportData[0]
-  );
+  const [convos, setConvos] = useState<Conversation[]>(patientConversations);
+
+  const [selectedConvo, setSelectedConvo] = useState<Conversation>(convos[0]);
 
   const [searchConvo, setSearchConvo] = useState("");
 
@@ -26,17 +33,18 @@ const DiagnosticSupportChat = () => {
     setSearchConvo(value);
 
     if (!value) {
-      setConvos(diagnosticSupportData);
+      setConvos(patientConversations);
       return;
     }
 
-    const filteredConvos = diagnosticSupportData.filter((convo) => {
+    const filteredConvos = patientConversations.filter((convo) => {
       return (
-        convo.title.toLowerCase().includes(value.toLowerCase()) ||
-        convo.description.toLowerCase().includes(value.toLowerCase()) ||
-        convo.compoundId.toLowerCase().includes(value.toLowerCase()) ||
+        convo.name.toLowerCase().includes(value) ||
+        convo.shortPatientId.toLowerCase().includes(value) ||
         convo.chats.some((chat) =>
-          chat.message.toLowerCase().includes(value.toLowerCase())
+          chat.role === "ai"
+            ? chat.answer.toLowerCase().includes(value)
+            : chat.message.toLowerCase().includes(value)
         )
       );
     });
@@ -72,8 +80,13 @@ const DiagnosticSupportChat = () => {
             <hr className="bg-secondary-gray/30 w-full h-[1px]" />
           </div>
 
-          {convos.map((convo, index) => {
-            const isSelected = selectedConvo.id === convo.id;
+          {convos?.map((convo, index) => {
+            const isSelected = selectedConvo?.id === convo?.id;
+            const lastChat = convo?.chats[convo?.chats.length - 1];
+            const lastMessage =
+              lastChat?.role === "user" ? lastChat?.message : lastChat?.answer;
+            const chatLength = convo?.chats.length as number;
+
             return (
               <div
                 onClick={() => setSelectedConvo(convo)}
@@ -86,14 +99,16 @@ const DiagnosticSupportChat = () => {
               >
                 <div className="flex flex-col gap-2">
                   <h2 className="text-secondary-gray text-sm font-medium">
-                    {convo.compoundId}: {convo.title}
+                    {convo?.shortPatientId}: {convo?.name}
                   </h2>
                   <p className="text-primary-gray/50 text-xs">
-                    {convo.description}
+                    {chatLength === 0
+                      ? "Send your first message to start a conversation."
+                      : lastMessage?.slice(0, 60)}
                   </p>
                 </div>
-                <p className="text-primary-gray/50 font-light text-xs">
-                  {convo.time}
+                <p className="text-primary-gray/50 font-light text-xs flex items-center gap-1">
+                  {moment(new Date(`${convo?.date}`)).format("h:mm A")}
                 </p>
               </div>
             );
@@ -108,7 +123,11 @@ const DiagnosticSupportChat = () => {
       </section>
 
       {/* Converstions */}
-      <DiagnosticConversation selectedConvo={selectedConvo} />
+      <DiagnosticConversation
+        selectedConvo={selectedConvo}
+        convos={convos}
+        setConvos={setConvos}
+      />
     </div>
   );
 };

@@ -1,17 +1,23 @@
 import { z } from "zod";
 
 export const patientGeneralInformationSchema = z.object({
-  patientId: z.string().trim().min(1, "Patient ID is required"),
   firstName: z.string().trim().min(1, "First Name is required"),
   lastName: z.string().trim().min(1, "Last Name is required"),
-  gender: z.string().trim().min(1, "Gender is required"),
-  dateOfBirth: z.string().trim().min(1, "Date of Birth is required"),
-  address: z.string().trim().min(1, "Address is required"),
-  nationalId: z.string().trim().min(1, "National ID is required"),
-  phoneNumber: z
+  gender: z
+    .string()
+    .trim()
+    .min(1, "Gender is required")
+    .transform((value) => value.charAt(0).toUpperCase() + value.slice(1)),
+  nationalId: z
+    .string()
+    .trim()
+    .min(1, "National ID is required")
+    .min(10, "National ID must be less than 10 digits"),
+  contact: z
     .string()
     .trim()
     .min(1, "Phone Number is required")
+    .min(9, "Phone Number must not be less than 9 digits")
     .max(15, "Phone Number must be less than 15 digits"),
   email: z
     .string()
@@ -20,22 +26,19 @@ export const patientGeneralInformationSchema = z.object({
     .email({ message: "Please enter a valid email address" }),
   location: z.string().trim().min(1, "Location is required"),
   district: z.string().trim().min(1, "District is required"),
-  maritalStatus: z.string().trim().min(1, "Marital Status is required"),
-  profilePicture: z.any().optional(),
+  maritalStatus: z
+    .string()
+    .trim()
+    .min(1, "Marital Status is required")
+    .transform((value) => value.charAt(0).toUpperCase() + value.slice(1)),
 });
 
 export const patientAdditionalInformationSchema = z.object({
-  allergies: z.string().trim().min(1, "Allergies is required"),
-  knownConditions: z.string().trim().min(1, "Known Conditions is required"),
-  primaryCarePhysician: z
-    .string()
-    .trim()
-    .min(1, "Primary Care Physician is required"),
-  insuranceProvider: z.string().trim().min(1, "Insurance Provider is required"),
-  insurancePolicyNumber: z
-    .string()
-    .trim()
-    .min(1, "Insurance Policy Number is required"),
+  allergies: z.string().trim().optional(),
+  knownCondition: z.string().trim().optional(),
+  primaryPhysician: z.string().trim().optional(),
+  insuranceProvider: z.string().trim().optional(),
+  insurancePolicyNumber: z.string().trim().optional(),
 });
 
 export const patientEmergencyContactSchema = z.object({
@@ -47,6 +50,7 @@ export const patientEmergencyContactSchema = z.object({
     .string()
     .trim()
     .min(1, "Emergency Contact Phone Number is required")
+    .min(9, "Emergency Contact Phone Number must not be less than 9 digits")
     .max(15, "Emergency Contact Phone Number must be less than 15 digits"),
   emergencyContactAddressOne: z
     .string()
@@ -64,6 +68,7 @@ export const patientEmergencyContactSchema = z.object({
     .string()
     .trim()
     .min(1, "Emergency Contact Phone Number is required")
+    .min(9, "Emergency Contact Phone Number must not be less than 9 digits")
     .max(15, "Emergency Contact Phone Number must be less than 15 digits"),
   emergencyContactAddressTwo: z
     .string()
@@ -76,7 +81,7 @@ export const patientEmergencyContactSchema = z.object({
 });
 
 export const patientSchema = z.object({
-  generalInformation: patientGeneralInformationSchema,
-  additionalInformation: patientAdditionalInformationSchema,
-  emergencyContact: patientEmergencyContactSchema,
+  general: patientGeneralInformationSchema,
+  additional: patientAdditionalInformationSchema,
+  emergency: patientEmergencyContactSchema,
 });

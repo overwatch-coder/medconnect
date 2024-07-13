@@ -19,12 +19,12 @@ import { toast } from "react-toastify";
 import { OutreachProgramType } from "@/types/index";
 import { useMutation } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
-import { useUserAtom } from "@/hooks";
+import { useAuth } from "@/hooks";
 import { outreachProgramSchema } from "@/schema/outreach-programs.schema";
 
 const AddProgram = () => {
-  const [user, setUser] = useUserAtom();
-  const isAdmin = user.user?.compoundName.toLowerCase() === "admin";
+  const [user, setUser] = useAuth();
+  const isSuperAdmin = user?.isSuperAdmin;
 
   const {
     register,
@@ -60,7 +60,7 @@ const AddProgram = () => {
           <Button className="bg-primary-green hover:bg-primary-green hover:scale-105 transition py-2 px-5 flex items-center gap-3 rounded-md text-white">
             <Plus className="text-white" size={20} />
             <span className="font-bold">
-              {isAdmin ? "Add Program" : "Suggest a Program"}
+              {isSuperAdmin ? "Add Program" : "Suggest a Program"}
             </span>
           </Button>
         </DialogTrigger>
@@ -72,7 +72,7 @@ const AddProgram = () => {
           <DialogHeader className="overflow-y-scroll scrollbar-hide">
             <DialogTitle className="flex items-center justify-between">
               <span className="text-xl md:text-2xl text-secondary-gray font-bold">
-                {isAdmin
+                {isSuperAdmin
                   ? "Add an Outreach Program"
                   : "Suggest an Outreach Program"}
               </span>

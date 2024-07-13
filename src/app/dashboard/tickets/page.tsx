@@ -2,7 +2,7 @@ import DashboardContentHeader from "@/app/dashboard/DashboardContentHeader";
 import { Metadata } from "next";
 import React from "react";
 import { MEDCONNECT_DASHBOARD_SUPER_ADMIN_TICKETS as tickets } from "@/constants";
-import { currentServerUser } from "@/actions/user.action";
+import { currentUser } from "@/actions/user.action";
 import AddTicket from "@/app/dashboard/tickets/AddTicket";
 import TicketsWithSearch from "@/app/dashboard/tickets/TicketsWithSearch";
 import TicketsAnalyticsSummary from "@/app/dashboard/tickets/TicketsAnalyticsSummary";
@@ -18,13 +18,16 @@ export const metadata: Metadata = {
 };
 
 const Tickets = async () => {
-  const user = await currentServerUser();
+  const user = await currentUser();
 
   return (
     <div className="flex flex-col gap-5 w-full my-5 relative">
       <DashboardContentHeader headerTitle={"Help & Support"} showDate={false}>
         <AddTicket
-          tickets={tickets.map((ticket) => ({ ...ticket, userId: user?._id }))}
+          tickets={tickets.map((ticket) => ({
+            ...ticket,
+            userId: user?.auth.id,
+          }))}
         />
       </DashboardContentHeader>
 

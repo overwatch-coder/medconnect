@@ -1,4 +1,4 @@
-import { getUserFromCookies } from "@/actions/user.action";
+import { currentUser } from "@/actions/user.action";
 import { redirect } from "next/navigation";
 import React from "react";
 
@@ -7,9 +7,9 @@ const AuthLayout = async ({
 }: Readonly<{
   children: React.ReactNode;
 }>) => {
-  const user = await getUserFromCookies();
+  const user = await currentUser();
 
-  if (user?.userId && user?.token) {
+  if (user !== null) {
     return redirect("/dashboard");
   }
 

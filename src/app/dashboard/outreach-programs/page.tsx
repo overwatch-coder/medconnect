@@ -3,7 +3,7 @@ import AddProgram from "@/app/dashboard/outreach-programs/AddProgram";
 import { Metadata } from "next";
 import React from "react";
 import { MEDCONNECT_DASHBOARD_OUTREACH_PROGRAMS as outreachPrograms } from "@/constants";
-import { currentServerUser } from "@/actions/user.action";
+import { currentUser } from "@/actions/user.action";
 import { IoIosArrowRoundUp } from "react-icons/io";
 import OutreachProgramsWithSearch from "@/app/dashboard/outreach-programs/OutreachProgramsWithSearch";
 
@@ -18,8 +18,8 @@ export const metadata: Metadata = {
 };
 
 const OutreachPrograms = async () => {
-  const user = await currentServerUser();
-  const isAdmin = user?.compoundName.toLowerCase() === "admin";
+  const user = await currentUser();
+  const isSuperAdmin = user?.isSuperAdmin;
 
   return (
     <div className="flex flex-col gap-5 w-full my-5 relative">
@@ -30,13 +30,13 @@ const OutreachPrograms = async () => {
         <AddProgram />
       </DashboardContentHeader>
 
-      {!isAdmin && (
+      {!isSuperAdmin && (
         <p className="text-secondary-gray font-medium">
           Engaging and Supporting Our Rural Communities
         </p>
       )}
 
-      {isAdmin && (
+      {isSuperAdmin && (
         <div className="flex flex-col gap-2 w-full">
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-5">
             {/* Total Programs */}
@@ -105,12 +105,12 @@ const OutreachPrograms = async () => {
 
       <section className="bg-white rounded-md shadow w-full flex flex-col gap-5 p-5">
         <h2 className="text-secondary-gray text-xl font-medium">
-          {isAdmin ? "All Programs" : "Upcoming"}
+          {isSuperAdmin ? "All Programs" : "Upcoming"}
         </h2>
 
         <OutreachProgramsWithSearch
           outreachPrograms={outreachPrograms}
-          isAdmin={isAdmin}
+          isAdmin={isSuperAdmin!}
         />
       </section>
     </div>

@@ -1,5 +1,6 @@
 import { ErrorResponse, SuccessResponse } from "./index.d";
 
+// === AUTHENTICATION ===
 declare interface AuthData {
   id: string;
   role: "Admin" | "Staff";
@@ -40,6 +41,7 @@ declare interface UserType {
   isSuperAdmin: boolean;
 }
 
+// === PATIENT ===
 declare interface PatientAdditionInfo {
   allergies: string[];
   knownCondition: string;
@@ -78,3 +80,55 @@ export type Patient = PatientBasicInfo & {
   additional: PatientAdditionInfo | null;
   emergencyContacts: PatientEmergencyContact[];
 };
+
+// === CHPS COMPOUND ===
+declare interface ChpsCompound {
+  _id: string;
+  name: string;
+  contact: string;
+  emergencyContact: string;
+  location: string;
+  region: string;
+  district: string;
+  operatingHours: string;
+  availableServices: string[];
+  hasAcceptedTC: boolean;
+  profilePictureUrl?: string;
+  authUserId: string;
+  createdById: string;
+  __v: number;
+}
+
+// === DIAGNOSTIC SUPPORT ===
+declare interface ChatResponse {
+  observation: string[];
+  answer: string;
+  id: string;
+  patientId: string;
+  status: true;
+  message: string;
+}
+
+declare interface AiChat {
+  observation: string[];
+  answer: string;
+  role: "ai";
+}
+
+declare interface UserChat {
+  message: string;
+  role: "user";
+}
+
+export type ConversationChats = AiChat | UserChat;
+
+declare interface Conversation {
+  id: string;
+  shortPatientId: string;
+  patientId: string;
+  time: string;
+  date: string;
+  name: string;
+  compoundId: string;
+  chats: ConversationChats[];
+}

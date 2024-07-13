@@ -18,13 +18,15 @@ import CustomErrorElement from "@/components/CustomErrorElement";
 import { LoginType } from "@/types/index";
 import { MdEmail } from "react-icons/md";
 import { useAuth } from "@/hooks";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 
 const LoginForm = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [submitFormErrors, setSubmitFormErrors] = useState<string[]>([]);
   const [user, setUser] = useAuth();
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const redirect = searchParams.get("redirect");
 
   const {
     register,
@@ -53,7 +55,7 @@ const LoginForm = () => {
 
       reset();
       toast.success("Login successful");
-      router.push("/dashboard");
+      router.push(redirect ? redirect : "/dashboard");
     },
   });
 

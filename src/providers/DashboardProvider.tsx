@@ -1,13 +1,13 @@
 "use client";
 
 import { getChpsPatients } from "@/actions/patients.action";
-import { usePatientsAtom } from "@/hooks";
+import { usePatients } from "@/hooks";
 import { Patient } from "@/types/backend";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import React, { useEffect } from "react";
 
 const DashboardProvider = ({ children }: { children: React.ReactNode }) => {
-  const [_, setPatients] = usePatientsAtom();
+  const [_, setPatients] = usePatients();
   const queryClient = useQueryClient();
 
   const { data } = useQuery({

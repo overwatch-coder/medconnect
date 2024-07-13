@@ -3,13 +3,11 @@
 import {
   Sheet,
   SheetContent,
-  SheetDescription,
   SheetHeader,
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import { Menu, Settings, Bell } from "lucide-react";
-import { MdOutlineQuestionMark } from "react-icons/md";
+import { Menu, Settings } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { Separator } from "@/components/ui/separator";

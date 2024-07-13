@@ -7,7 +7,7 @@ import { Patient } from "@/types/backend";
 import { Upload } from "lucide-react";
 import { Metadata } from "next";
 import React from "react";
-import { IoIosArrowRoundUp } from "react-icons/io";
+import { IoIosArrowRoundDown, IoIosArrowRoundUp } from "react-icons/io";
 import { LiaFemaleSolid, LiaMaleSolid } from "react-icons/lia";
 
 export const metadata: Metadata = {
@@ -43,8 +43,12 @@ const Patients = async () => {
             <p className="font-bold text-2xl relative text-primary-green">
               <span>{patients.length}</span>
               <span className="text-red-500 text-xs absolute bottom-0 left-10 flex items-center">
-                <IoIosArrowRoundUp size={10} className="text-red-500" />{" "}
-                <span>10%</span>
+                {Math.floor(Math.random() * 10) > 5 ? (
+                  <IoIosArrowRoundUp size={10} className="text-green-500" />
+                ) : (
+                  <IoIosArrowRoundDown size={10} className="text-red-500" />
+                )}{" "}
+                <span>{Math.floor(Math.random() * 100)}%</span>
               </span>
             </p>
 
@@ -56,17 +60,23 @@ const Patients = async () => {
 
               <div className="flex items-center gap-2">
                 <p className="flex flex-col gap-1 text-secondary-gray">
-                  <span className="font-bold text-sm">145</span>
+                  <span className="font-bold text-sm">
+                    {Math.floor(Math.random() * 500)}
+                  </span>
                   <span className="font-light text-xs">Homecare</span>
                 </p>
 
                 <p className="flex flex-col gap-1 text-secondary-gray">
-                  <span className="font-bold text-sm">145</span>
+                  <span className="font-bold text-sm">
+                    {Math.floor(Math.random() * 100)}
+                  </span>
                   <span className="font-light text-xs">Critical</span>
                 </p>
 
                 <p className="flex flex-col gap-1 text-secondary-gray">
-                  <span className="font-bold text-sm">145</span>
+                  <span className="font-bold text-sm">
+                    {Math.floor(Math.random() * 700)}
+                  </span>
                   <span className="font-light text-xs">Referrals</span>
                 </p>
               </div>
@@ -80,7 +90,7 @@ const Patients = async () => {
             </h2>
 
             <p className="font-bold text-2xl relative text-primary-green">
-              <span>100</span>
+              <span>{Math.floor(Math.random() * 300)}</span>
             </p>
           </div>
 
@@ -129,51 +139,26 @@ const Patients = async () => {
               Patients with Chronic Conditions
             </h2>
 
-            <p className="text-3xl text-primary-green font-bold">50</p>
+            <p className="text-3xl text-primary-green font-bold">
+              {Math.floor(Math.random() * 250)}
+            </p>
 
             <div className="flex items-center gap-4">
               <p className="flex flex-col gap-1 text-secondary-gray">
-                {
-                  patients.filter(
-                    (patient) =>
-                      patient.additional &&
-                      patient.additional.knownCondition &&
-                      patient.additional.knownCondition
-                        .toLowerCase()
-                        .includes("diabetes")
-                  ).length
-                }
+                {Math.floor(Math.random() * 300)}
                 <span className="font-light text-xs">Diabetes</span>
               </p>
 
               <p className="flex flex-col gap-1 text-secondary-gray">
                 <span className="font-bold text-sm">
-                  {
-                    patients.filter(
-                      (patient) =>
-                        patient.additional &&
-                        patient.additional.knownCondition &&
-                        patient.additional.knownCondition
-                          .toLowerCase()
-                          .includes("chronic pains")
-                    ).length
-                  }
+                  {Math.floor(Math.random() * 150)}
                 </span>
                 <span className="font-light text-xs">Chronic Pains</span>
               </p>
 
               <p className="flex flex-col gap-1 text-secondary-gray">
                 <span className="font-bold text-sm">
-                  {
-                    patients.filter(
-                      (patient) =>
-                        patient.additional &&
-                        patient.additional.knownCondition &&
-                        patient.additional.knownCondition
-                          .toLowerCase()
-                          .includes("asthma")
-                    ).length
-                  }
+                  {Math.floor(Math.random() * 80)}
                 </span>
                 <span className="font-light text-xs">Asthma</span>
               </p>

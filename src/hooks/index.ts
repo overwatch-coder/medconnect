@@ -8,4 +8,4 @@ export const useAuth = () => useAtom(authAtom);
 
 // === Patient ===
 export const patientsAtom = atom([] as Patient[]);
-export const usePatientsAtom = () => useAtom(patientsAtom);
+export const usePatients = () => useAtom(patientsAtom);

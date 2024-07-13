@@ -8,9 +8,9 @@ const middleware = async (req: NextRequest) => {
   // redirect to login page if user is not authenticated
   if (!user && url.pathname.startsWith("/dashboard")) {
     // attach the current url to the login page
-    const absoluteUrl = new URL(`/login?redirect=${url.pathname}`, req.url);
-
-    return NextResponse.redirect(absoluteUrl);
+    url.searchParams.set("redirect", url.pathname);
+    url.pathname = "/login";
+    return NextResponse.redirect(url);
   }
 
   // redirect to dashboard if user is authenticated

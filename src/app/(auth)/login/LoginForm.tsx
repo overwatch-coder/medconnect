@@ -43,8 +43,6 @@ const LoginForm = () => {
     mutationKey: ["user"],
     mutationFn: loginFormSubmit,
     onSettled: (result) => {
-      console.log({ result });
-
       if (!result?.status) {
         setSubmitFormErrors(result?.errors!);
         reset({ password: "" });

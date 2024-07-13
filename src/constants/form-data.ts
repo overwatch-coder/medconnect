@@ -1,4 +1,4 @@
-import { Patient } from "@/types/backend";
+import { Conversation, Patient } from "@/types/backend";
 import { PatientType } from "@/types/index";
 
 export const defaultPatientGeneralInformation = {
@@ -122,4 +122,18 @@ export const formatPatientInfo = (patient: Patient) => {
   };
 
   return formatted;
+};
+
+export const initialSelectedChat: Conversation = {
+  id: crypto.randomUUID(),
+  patient: {
+    name: "New Chat",
+    age: 20,
+    gender: "male",
+    location: "New York",
+  },
+  title: "New Chat",
+  chatId: "0",
+  chatObjectId: "0",
+  chats: [],
 };

@@ -10,7 +10,7 @@ import {
 } from "@/types/backend";
 import axios from "axios";
 
-const baseUrl = process.env.API_CHAT_URL!;
+const baseUrl = process.env.AI_CHAT_URL!;
 
 export type ChatPatient = {
   name: string;

@@ -99,36 +99,68 @@ declare interface ChpsCompound {
   __v: number;
 }
 
-// === DIAGNOSTIC SUPPORT ===
-declare interface ChatResponse {
+// === DIAGNOSTIC SUPPORT CHAT ===
+interface ChatAtomType {
+  chats: Conversation[];
+  selectedChat: Conversation;
+  newChat: boolean;
+  selectedPatient: Patient | null;
+}
+
+declare interface PostChatResponse {
   observation: string[];
   answer: string;
+  chatObjectId: string;
+  messageObjectId: string;
+}
+
+declare interface GetChatsResponse {
   id: string;
-  patientId: string;
-  status: true;
-  message: string;
+  patient: {
+    name: string;
+    age: number;
+    gender: string;
+    location: string;
+  };
+  title: string;
+  chatId: string;
+}
+
+declare interface MessageResponse {
+  id: string;
+  chatObjectId: string;
+  question: string;
+  observation: string[];
+  answer: string;
 }
 
 declare interface AiChat {
   observation: string[];
   answer: string;
   role: "ai";
+  chatId: string;
+  messageId: string;
 }
 
 declare interface UserChat {
   message: string;
   role: "user";
+  chatId: string;
+  messageId: string;
 }
 
 export type ConversationChats = AiChat | UserChat;
 
 declare interface Conversation {
   id: string;
-  shortPatientId: string;
-  patientId: string;
-  time: string;
-  date: string;
-  name: string;
-  compoundId: string;
+  patient: {
+    name: string;
+    age: number;
+    gender: string;
+    location: string;
+  };
+  title: string;
+  chatId: string;
+  chatObjectId: string;
   chats: ConversationChats[];
 }

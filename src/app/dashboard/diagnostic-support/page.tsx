@@ -1,8 +1,9 @@
+import { getChatsWithMessages } from "@/actions/ai-chat.action";
 import DashboardContentHeader from "@/app/dashboard/DashboardContentHeader";
+import ConversationSidebar from "@/app/dashboard/diagnostic-support/ConversationSidebar";
+import DiagnosticConversation from "@/app/dashboard/diagnostic-support/DiagnosticConversation";
 import { Metadata } from "next";
-import DiagnosticSupportChat from "@/app/dashboard/diagnostic-support/DiagnosticSupportChat";
-import { getChpsCompound } from "@/actions/chps-compound.action";
-import { ChpsCompound } from "@/types/backend";
+import React from "react";
 
 export const metadata: Metadata = {
   title: "Diagnostic Support - MedConnect",
@@ -13,20 +14,24 @@ export const metadata: Metadata = {
 };
 
 const DiagnosticSupport = async () => {
-  // const result = await getChpsCompound();
-
-  // const chpsCompound = result.status ? (result.data as ChpsCompound) : null;
+  const results = await getChatsWithMessages();
 
   return (
     <div className="flex flex-col gap-5 w-full my-5">
-      <section className="flex flex-col gap-5 w-full h-full">
-        <DashboardContentHeader
-          headerTitle="Diagnostic Support"
-          showDate={true}
+      <DashboardContentHeader
+        headerTitle="Diagnostic Support"
+        showDate={true}
+      />
+
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-5 w-full h-full md:h-[95vh]">
+        <ConversationSidebar
+          conversations={results.status ? results.conversations : []}
         />
 
-        <DiagnosticSupportChat />
-      </section>
+        <DiagnosticConversation
+          conversations={results.status ? results.conversations : []}
+        />
+      </div>
     </div>
   );
 };

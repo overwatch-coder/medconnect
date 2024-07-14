@@ -1,3 +1,4 @@
+import { getChats } from "@/actions/ai-chat.action";
 import { initialSelectedChat } from "@/constants/form-data";
 import { UserType, Patient, Conversation, ChatAtomType } from "@/types/backend";
 import { atom, useAtom } from "jotai";
@@ -12,10 +13,12 @@ export const patientsAtom = atomWithStorage("patients", [] as Patient[]);
 export const usePatients = () => useAtom(patientsAtom);
 
 // === Chats ===
+
 export const chatsAtom = atomWithStorage<ChatAtomType>("chats", {
   chats: [] as Conversation[],
   selectedChat: initialSelectedChat,
   newChat: true,
   selectedPatient: null as Patient | null,
 });
+
 export const useChats = () => useAtom(chatsAtom);

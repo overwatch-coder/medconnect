@@ -10,7 +10,8 @@ import {
 } from "@/types/backend";
 import axios from "axios";
 
-const baseUrl = process.env.AI_CHAT_URL!;
+// const baseUrl = process.env.AI_CHAT_URL!;
+const baseUrl = "http://localhost:8080/chats";
 
 export type ChatPatient = {
   name: string;
@@ -120,7 +121,7 @@ export const getChats = async () => {
   try {
     // Fetch all chats
     const res = await axios.get(`${baseUrl}/chats`);
-
+    console.log("CHATS=========", res.data);
     if (res.status !== 200) {
       throw new Error("Could not fetch chats");
     }

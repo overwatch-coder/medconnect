@@ -1,83 +1,49 @@
 "use client";
 
 import NewChatModal from "@/app/dashboard/diagnostic-support/NewChatModal";
+import { SmallLoading } from "@/app/loading";
 import { Button } from "@/components/ui/button";
 import { initialSelectedChat } from "@/constants/form-data";
 import { useChats } from "@/hooks";
-import { Conversation } from "@/types/backend";
+import { useConvos } from "@/hooks/useConvos";
+import { Conversation, Convo } from "@/types/backend";
+import axios from "axios";
 import { MessageCirclePlus, Search } from "lucide-react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import React, { useEffect, useState } from "react";
+import { StartChatModal } from "./StartChatModal";
 
 type ConversationSidebarProps = {
   conversations: Conversation[];
 };
 
+const baseUrl = process.env.AI_CHAT_URL!;
+
 const ConversationSidebar = ({ conversations }: ConversationSidebarProps) => {
-  const [{ chats, selectedChat }, setConvos] = useChats();
+  // const [{}, setConvos] = useChats();
   const [searchConvo, setSearchConvo] = useState("");
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const chatId = searchParams.get("chatId");
 
-  useEffect(() => {
-    if (conversations && conversations.length > 0) {
-      setConvos((prev) => ({
-        ...prev,
-        chats: conversations,
-      }));
-    }
-  }, [conversations, setConvos]);
+  const { isLoadedChats, chats, filteredChats, setFilteredChats } = useConvos();
 
   // search for a diagnostic support conversation
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value.toLowerCase();
-    setSearchConvo(value);
-
-    if (!value) {
-      setConvos((prev) => ({
-        ...prev,
-        chats: conversations,
-      }));
-      return;
-    }
-
-    const filteredConvos = conversations?.filter((convo) => {
+    if (!value) setFilteredChats(chats);
+    const filteredConvos = chats?.filter((convo) => {
       return (
         convo.title.toLowerCase().includes(value) ||
-        convo.patient.name.toLowerCase().includes(value) ||
-        convo.chats.some((chat) =>
-          chat.role === "ai"
-            ? chat.answer.toLowerCase().includes(value)
-            : chat.message.toLowerCase().includes(value)
-        )
+        convo.patient.name.toLowerCase().includes(value)
       );
     });
 
-    setConvos((prev) => ({
-      ...prev,
-      chats: filteredConvos,
-    }));
+    setFilteredChats(filteredConvos);
   };
 
-  const handleChangeChat = (convo: Conversation) => {
-    setConvos((prev) => ({
-      ...prev,
-      selectedPatient: null,
-      newChat: false,
-      selectedChat: convo,
-    }));
-
-    router.push(`/dashboard/diagnostic-support?chatId=${convo?.id}`);
-  };
-
-  const handleNewChat = () => {
-    setConvos((prev) => ({
-      ...prev,
-      newChat: true,
-      selectedPatient: null,
-      selectedChat: initialSelectedChat,
-    }));
-
-    router.push("/dashboard/diagnostic-support");
+  const handleChangeChat = (convo: string) => {
+    router.push(`/dashboard/diagnostic-support?chatId=${convo}`);
   };
 
   return (
@@ -92,26 +58,23 @@ const ConversationSidebar = ({ conversations }: ConversationSidebarProps) => {
           <input
             type="text"
             placeholder="Search"
-            value={searchConvo}
             className="w-full px-7 text-secondary-gray text-sm py-1 bg-transparent rounded-md outline-none border-0"
             onChange={handleSearch}
           />
         </div>
       </div>
-
       <hr className="bg-secondary-gray/50 w-full h-[1px]" />
-
       <div className="mb-auto h-full w-full pt-3 gap-2 flex flex-col overflow-y-scroll scrollbar-hide pb-10">
-        {chats &&
-          chats.length > 0 &&
-          chats
-            ?.filter((convo) => convo.chatId !== "Unknown")
+        {filteredChats &&
+          filteredChats.length > 0 &&
+          filteredChats
+            // ?.filter((convo) => convo.chatId !== "Unknown")
             ?.map((convo, index) => {
-              const isSelected = selectedChat?.id === convo?.id;
+              const isSelected = chatId === convo?.id;
 
               return (
                 <div
-                  onClick={() => handleChangeChat(convo)}
+                  onClick={() => handleChangeChat(convo?.id)}
                   className={`${
                     isSelected
                       ? "bg-blue-100"
@@ -121,35 +84,35 @@ const ConversationSidebar = ({ conversations }: ConversationSidebarProps) => {
                 >
                   <div className="flex flex-col gap-2">
                     <h2 className="text-secondary-gray text-sm font-medium">
-                      {convo?.chatId}: {convo?.title}
+                      {convo?.title}
                     </h2>
                     <p className="text-primary-gray/50 text-xs">
                       {/* {chatLength === 0
                     ? "Send your first message to start a conversation."
                     : lastMessage?.slice(0, 60)} */}
-                      Send your first message to start a conversation.
+                      {convo.patient.name}
                     </p>
                   </div>
                 </div>
               );
             })}
 
-        {!chats?.length && (
-          <div className="flex flex-col items-center justify-center gap-5 w-full h-full mx-auto">
-            <p className="text-sm flex flex-col gap-2">
-              No chats found. Start a new chat to get started.
-            </p>
-          </div>
-        )}
+        <div className="flex flex-col items-center justify-center gap-5 w-full h-full mx-auto">
+          {!isLoadedChats ? (
+            <SmallLoading />
+          ) : (
+            <>
+              {!chats?.length && (
+                <p className="text-sm flex flex-col gap-2">
+                  No chats found. Start a new chat to get started.
+                </p>
+              )}
+            </>
+          )}
+        </div>
       </div>
-
       <div className="w-full flex items-center justify-end pb-5">
-        <Button
-          onClick={handleNewChat}
-          className="bg-transparent hover:bg-transparent"
-        >
-          <MessageCirclePlus size={30} className="text-primary-green" />
-        </Button>
+        <StartChatModal />
       </div>
     </section>
   );

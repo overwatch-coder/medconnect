@@ -69,6 +69,7 @@ declare interface PatientBasicInfo {
   location: string;
   district: string;
   profilePictureUrl?: string;
+  age?: string;
   chpsCompoundId: string;
   patientId: string;
   createdAt: string;
@@ -163,4 +164,39 @@ declare interface Conversation {
   chatId: string;
   chatObjectId: string;
   chats: ConversationChats[];
+}
+
+export interface Convo {
+  id: string;
+  patient: {
+    name: string;
+    age: number;
+    gender: string;
+    location: string;
+  };
+  title: string;
+  chatId: string;
+}
+
+export interface Message {
+  id: string;
+  chatObjectId: string;
+  question: string;
+  observation: string;
+  answer: string;
+}
+
+declare interface Question {
+  text: string;
+}
+
+export interface QuestionPayload {
+  question: Question;
+  userId: string;
+}
+
+export interface ChatPayload{
+  question:Question;
+  patient: string;
+  userId:string;
 }

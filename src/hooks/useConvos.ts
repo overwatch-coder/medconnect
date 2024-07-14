@@ -1,7 +1,7 @@
 import { ChatPayload, Convo, Message, QuestionPayload } from "@/types/backend";
 import axios from "axios";
 import { useSearchParams } from "next/navigation";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { useAuth } from ".";
 
 export const baseChatUrl = "https://medconnect-ai.onrender.com";
@@ -12,7 +12,7 @@ export const useConvos = (isMessages: boolean = false) => {
   const [chats, setChats] = useState<Convo[]>();
   const [filteredChats, setFilteredChats] = useState<Convo[]>();
   const [isLoadedChats, setIsLoadedChats] = useState<boolean>(false);
-  const handleGetChats = async () => {
+  const handleGetChats = useCallback(async () => {
     try {
       console.log("User", user);
       const res = await axios.get(
@@ -20,20 +20,20 @@ export const useConvos = (isMessages: boolean = false) => {
       );
       if (res.status == 200) {
         setChats(res.data);
-        setFilteredChats(res.data)
+        setFilteredChats(res.data);
       }
     } catch (error) {
       console.log("XYZ", error);
     } finally {
       setIsLoadedChats(true);
     }
-  };
+  }, [user]);
 
   const searchParams = useSearchParams();
   const chatId = searchParams.get("chatId");
   const [messages, setMessages] = useState<Message[]>([]);
   const [isLoadedMessages, setIsLoadedMessages] = useState<boolean>(false);
-  const handleGetMessages: () => void = async () => {
+  const handleGetMessages: () => void = useCallback(async () => {
     try {
       setIsLoadedMessages(false);
       const res = await axios.get(`${baseChatUrl}/messages/${chatId}`);
@@ -46,7 +46,7 @@ export const useConvos = (isMessages: boolean = false) => {
     } finally {
       setIsLoadedMessages(true);
     }
-  };
+  }, [chatId]);
 
   const [selectedChat, setSelectedChat] = useState<string>("");
 
@@ -69,7 +69,7 @@ export const useConvos = (isMessages: boolean = false) => {
   useEffect(() => {
     if (!isMessages) handleGetChats();
     else handleGetMessages();
-  }, [isMessages, chatId]);
+  }, [isMessages, chatId, handleGetChats, handleGetMessages]);
 
   return {
     chats,
@@ -82,6 +82,6 @@ export const useConvos = (isMessages: boolean = false) => {
     handleSendMessage,
     isSubmitting,
     setFilteredChats,
-    filteredChats
+    filteredChats,
   };
 };

@@ -224,7 +224,7 @@ const DiagnosticConversation = ({
                   </div>
 
                   <div
-                    key={index}
+                    key={index + 1}
                     className={`flex flex-col gap-2 w-1/2 p-5 text-sm rounded-lg shadow-md 
                         bg-primary-gray/10 self-start text-secondary-gray items-start"
                     `}

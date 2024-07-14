@@ -44,7 +44,7 @@ export const StartChatModal = () => {
     };
   };
 
-  const [open, setOpen] = useState<boolean>(false)
+  const [open, setOpen] = useState<boolean>(false);
   const handleStartChat = async (values: ChatPayload) => {
     try {
       const data = {
@@ -60,7 +60,7 @@ export const StartChatModal = () => {
           `/dashboard/diagnostic-support?chatId=${res.data.chatObjectId}`
         );
       }
-    } catch (error:any) {
+    } catch (error: any) {
       if (
         error.response &&
         error.response.status === 500 &&
@@ -73,9 +73,8 @@ export const StartChatModal = () => {
       } else {
         console.error("Error:", error);
       }
-    }
-    finally{
-        setOpen(false)
+    } finally {
+      setOpen(false);
     }
   };
 
@@ -103,7 +102,7 @@ export const StartChatModal = () => {
               <select id="patient" {...register("patient")} className="p-2">
                 <option value="">Select Patient</option>
                 {patients?.map((patient, index) => (
-                  <option value={patient._id}>
+                  <option key={index} value={patient._id}>
                     {patient.firstName}
                     {patient.lastName}
                   </option>

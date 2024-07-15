@@ -13,7 +13,7 @@ export const queryClient = new QueryClient();
 
 // create axios instance
 export const axiosInstance = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_URL!,
+  baseURL: "https://medconnect-backend.onrender.com/api",
 });
 
 // format time into moments in time

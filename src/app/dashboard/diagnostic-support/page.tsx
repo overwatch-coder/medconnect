@@ -1,4 +1,3 @@
-import { getChatsWithMessages } from "@/actions/ai-chat.action";
 import DashboardContentHeader from "@/app/dashboard/DashboardContentHeader";
 import ConversationSidebar from "@/app/dashboard/diagnostic-support/ConversationSidebar";
 import DiagnosticConversation from "@/app/dashboard/diagnostic-support/DiagnosticConversation";
@@ -14,8 +13,6 @@ export const metadata: Metadata = {
 };
 
 const DiagnosticSupport = async () => {
-  const results = await getChatsWithMessages();
-
   return (
     <div className="flex flex-col gap-5 w-full my-5">
       <DashboardContentHeader
@@ -24,13 +21,9 @@ const DiagnosticSupport = async () => {
       />
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-5 w-full h-full md:h-[95vh]">
-        <ConversationSidebar
-          conversations={results.status ? results.conversations : []}
-        />
+        <ConversationSidebar />
 
-        <DiagnosticConversation
-          conversations={results.status ? results.conversations : []}
-        />
+        <DiagnosticConversation />
       </div>
     </div>
   );

@@ -69,7 +69,6 @@ export const StartChatModal = () => {
         error.response.data.detail.includes("Could not parse LLM output:")
       ) {
         console.log("Encountered LLM parsing error. Reloading page...");
-        // window.location.reload();
       } else {
         console.error("Error:", error);
       }
@@ -103,8 +102,7 @@ export const StartChatModal = () => {
                 <option value="">Select Patient</option>
                 {patients?.map((patient, index) => (
                   <option key={index} value={patient._id}>
-                    {patient.firstName}
-                    {patient.lastName}
+                    {`${patient.firstName} ${patient.lastName}`}
                   </option>
                 ))}
               </select>

@@ -1,27 +1,13 @@
 "use client";
 
-import NewChatModal from "@/app/dashboard/diagnostic-support/NewChatModal";
 import { SmallLoading } from "@/app/loading";
-import { Button } from "@/components/ui/button";
-import { initialSelectedChat } from "@/constants/form-data";
-import { useChats } from "@/hooks";
 import { useConvos } from "@/hooks/useConvos";
-import { Conversation, Convo } from "@/types/backend";
-import axios from "axios";
-import { MessageCirclePlus, Search } from "lucide-react";
+import { Search } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { StartChatModal } from "./StartChatModal";
 
-type ConversationSidebarProps = {
-  conversations: Conversation[];
-};
-
-const baseUrl = process.env.AI_CHAT_URL!;
-
-const ConversationSidebar = ({ conversations }: ConversationSidebarProps) => {
-  // const [{}, setConvos] = useChats();
-  const [searchConvo, setSearchConvo] = useState("");
+const ConversationSidebar = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const chatId = searchParams.get("chatId");
@@ -68,8 +54,11 @@ const ConversationSidebar = ({ conversations }: ConversationSidebarProps) => {
         {filteredChats &&
           filteredChats.length > 0 &&
           filteredChats
-            // ?.filter((convo) => convo.chatId !== "Unknown")
-            ?.map((convo, index) => {
+            ?.sort(
+              (a, b) =>
+                parseInt(b.chatId.slice(5)) - parseInt(a.chatId.slice(5))
+            )
+            .map((convo, index) => {
               const isSelected = chatId === convo?.id;
 
               return (
@@ -87,9 +76,6 @@ const ConversationSidebar = ({ conversations }: ConversationSidebarProps) => {
                       {convo?.title}
                     </h2>
                     <p className="text-primary-gray/50 text-xs">
-                      {/* {chatLength === 0
-                    ? "Send your first message to start a conversation."
-                    : lastMessage?.slice(0, 60)} */}
                       {convo.patient.name}
                     </p>
                   </div>
@@ -97,14 +83,16 @@ const ConversationSidebar = ({ conversations }: ConversationSidebarProps) => {
               );
             })}
 
-        <div className="flex flex-col items-center justify-center gap-5 w-full h-full mx-auto">
+        <div>
           {!isLoadedChats ? (
-            <SmallLoading />
+            <div className="flex flex-col items-center justify-center gap-5 w-full h-full mx-auto">
+              <SmallLoading />
+            </div>
           ) : (
             <>
-              {!chats?.length && (
-                <p className="text-sm flex flex-col gap-2">
-                  No chats found. Start a new chat to get started.
+              {!filteredChats?.length && (
+                <p className="text-sm flex flex-col text-center pt-10 gap-2 mx-auto">
+                  No chats found
                 </p>
               )}
             </>

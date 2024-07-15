@@ -11,7 +11,7 @@ import {
 import axios from "axios";
 
 // const baseUrl = process.env.AI_CHAT_URL!;
-const baseUrl = "http://localhost:8080/chats";
+const baseUrl = "https://medconnect-ai.onrender.com";
 
 export type ChatPatient = {
   name: string;

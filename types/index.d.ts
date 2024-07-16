@@ -2,6 +2,7 @@ import {
   appointmentSchema,
   rescheduleAppointmentSchema,
 } from "@/schema/appointment.schema";
+import { compoundSchema } from "@/schema/compound.schema";
 import { contactFormSchema } from "@/schema/contact.schema";
 import { diagnosisReportSchema } from "@/schema/diagnosis-report.schema";
 import {
@@ -139,3 +140,6 @@ export type HealthStaffType = z.infer<typeof HealthStaffSchema>;
 
 // Outreach Programs Schema
 export type OutreachProgramType = z.infer<typeof outreachProgramSchema>;
+
+// Compound Schema
+export type CompoundType = z.infer<typeof compoundSchema>;

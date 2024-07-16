@@ -5,6 +5,41 @@ import { HealthSubmitData } from "@/app/dashboard/health-officials/add-official/
 import { axiosInstance } from "@/lib/utils";
 import { IStaff } from "@/types/backend";
 
+// === GET ALL STAFF ===
+export const getAllStaff = async (
+  role: string = "admin"
+): Promise<IStaff[]> => {
+  try {
+    const user = await currentUser();
+    if (!user || !user.isSuperAdmin) {
+      throw new Error("You are not authorized to access this feature");
+    }
+
+    const res = await axiosInstance.get(`/staff/${role}`, {
+      headers: {
+        Authorization: `Bearer ${user.auth.token}`,
+      },
+    });
+
+    const resData = res.data;
+
+    if (!resData?.status) {
+      throw new Error(resData?.message);
+    }
+
+    return resData?.data;
+  } catch (error: any) {
+    console.log({
+      error,
+      axios: error?.response?.data,
+      in: "staff.action.ts",
+    });
+
+    return [];
+  }
+};
+
+// === GET STAFF BY COMPOUND ID ===
 export const getStaffByCompoundId = async (
   chpsId: string
 ): Promise<IStaff[]> => {
@@ -26,7 +61,7 @@ export const getStaffByCompoundId = async (
   }
 };
 
-// create a new staff or edit an existing staff
+// === CREATE OR EDIT STAFF ===
 export const createOrEditStaff = async (data: {
   data: HealthSubmitData;
   staffId?: string;

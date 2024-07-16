@@ -2,28 +2,41 @@
 
 import { fetchData, mutateData } from "@/actions/api-request.action";
 import { currentUser } from "@/actions/user.action";
+import { axiosInstance } from "@/lib/utils";
 import { handleApiError } from "@/lib/validations";
 import { ChpsCompound } from "@/types/backend";
+import { CompoundType } from "@/types/index";
 
 // === GET ALL CHPS COMPOUNDS ===
-export const getAllChpsCompounds = async () => {
+export const getAllChpsCompounds = async (): Promise<ChpsCompound[]> => {
   try {
     const user = await currentUser();
-    if (!user) {
+    if (!user || !user.isSuperAdmin) {
       throw new Error("You are not authorized to access this feature");
     }
 
-    const resData = await fetchData(`/chps-compound`, {
-      token: user.auth.token,
+    const res = await axiosInstance.get("/chps-compound", {
+      headers: {
+        Authorization: `Bearer ${user.auth.token}`,
+      },
     });
 
-    if (!resData.status) {
-      return resData;
+    const resData = res.data;
+
+    if (!resData?.status) {
+      throw new Error(resData?.message);
     }
 
-    return resData;
+    return resData?.data;
   } catch (error: any) {
-    return handleApiError(error);
+    // return handleApiError(error);
+    console.log({
+      error,
+      axios: error?.response?.data,
+      in: "chps-compound.action.ts",
+    });
+
+    return [];
   }
 };
 
@@ -53,25 +66,46 @@ export const getChpsCompound = async () => {
 };
 
 // === CREATE CHPS COMPOUND ===
-export const createChpsCompound = async (data: ChpsCompound) => {
+export const createChpsCompound = async (
+  data: CompoundType
+): Promise<ChpsCompound> => {
   try {
     const user = await currentUser();
-    if (!user) {
+    if (!user || !user.isSuperAdmin) {
       throw new Error("You are not authorized to access this feature");
     }
 
-    const resData = await mutateData(`/chps-compound`, data, {
-      method: "POST",
-      token: user.auth.token,
+    const formatData = {
+      ...data,
+      createdById: user?.admin?._id!,
+      authUserId: user?.auth.id!,
+      availableServices: data.availableServices
+        ? data.availableServices.split(",")
+        : [],
+    };
+
+    const res = await axiosInstance.post("/chps-compound", formatData, {
+      headers: {
+        Authorization: `Bearer ${user.auth.token}`,
+      },
     });
 
-    if (!resData.status) {
-      return resData;
+    const resData = res.data;
+
+    if (!resData?.status) {
+      throw new Error(resData?.message);
     }
 
-    return resData;
+    return resData?.data as ChpsCompound;
   } catch (error: any) {
-    return handleApiError(error);
+    // return handleApiError(error);
+    console.log({
+      error,
+      axios: error?.response?.data,
+      in: "chps-compound.action.ts",
+    });
+
+    return error;
   }
 };
 

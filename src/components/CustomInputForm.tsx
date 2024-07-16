@@ -102,7 +102,7 @@ const CustomInputForm = <T extends FieldValues>({
               <option
                 className="text-secondary-gray"
                 key={index}
-                value={option.value.toLowerCase()}
+                value={option.value}
               >
                 {option.label}
               </option>

@@ -3,29 +3,24 @@
 import { Edit } from "lucide-react";
 import Image from "next/image";
 import React, { useState } from "react";
-import EditOfficialAdditionalInfo from "@/app/dashboard/health-officials/edit-official/EditOfficialAdditionalInfo";
-import EditOfficialEmergencyContact from "@/app/dashboard/health-officials/edit-official/EditOfficialEmergencyContact";
-import EditOfficialGeneralInfo from "@/app/dashboard/health-officials/edit-official/EditOfficialGeneralInfo";
 import ContentHeader from "@/app/dashboard/patients/[patientId]/ContentHeader";
-import { HealthOfficialType } from "@/types/index";
+import { IStaff } from "@/types/backend";
+import EditHealthOfficialInfo from "@/app/dashboard/health-officials/edit-official/EditHealthOfficialInfo";
 
 type GeneralInformationProps = {
-  healthOfficial: HealthOfficialType;
+  healthOfficial: IStaff;
 };
 
 const GeneralInformation = ({ healthOfficial }: GeneralInformationProps) => {
-  const [openEditGeneralInfo, setOpenEditGeneralInfo] = useState(false);
-  const [openEditAdditionalInfo, setOpenEditAdditionalInfo] = useState(false);
+  const [openEditModal, setOpenEditModal] = useState(false);
   useState(false);
-  const [openEditEmergencyContactInfo, setOpenEditEmergencyContactInfo] =
-    useState(false);
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 w-full gap-3 2xl:gap-5">
       {/* Basic Information */}
       <section className="col-span-1 bg-white px-5 py-3 flex flex-col gap-4 w-full h-full">
         <ContentHeader
-          handleClick={() => setOpenEditGeneralInfo(true)}
+          handleClick={() => setOpenEditModal(true)}
           title="Basic Information"
         >
           <span className="text-sm text-white">Modify</span>
@@ -37,17 +32,17 @@ const GeneralInformation = ({ healthOfficial }: GeneralInformationProps) => {
           <div className="grid grid-cols-2 place-content-start place-items-start text-sm py-5">
             <div className="flex items-center justify-center gap-2 h-20 w-20 rounded-full p-2 bg-primary-gray/10">
               <p className="text-primary-green font-bold text-2xl md:text-4xl text-center">
-                {healthOfficial.firstName.charAt(0)}{" "}
-                {healthOfficial.lastName.charAt(0)}
+                {healthOfficial.fullName.split(" ")[0].charAt(0)}{" "}
+                {healthOfficial.fullName.split(" ")[1].charAt(0)}
               </p>
             </div>
 
             <div className="flex flex-col gap-1">
               <h2 className="text-base font-bold text-secondary-gray">
-                {healthOfficial.firstName} {healthOfficial.lastName}
+                {healthOfficial.fullName}
               </h2>
               <p className="text-sm font-medium text-primary-gray">
-                {healthOfficial.staffID}
+                {healthOfficial.staffId}
               </p>
               <p className="text-sm font-medium text-primary-gray">
                 {healthOfficial.position}
@@ -56,7 +51,7 @@ const GeneralInformation = ({ healthOfficial }: GeneralInformationProps) => {
                 {healthOfficial.gender}
               </p>
               <p className="text-sm font-medium text-primary-gray">
-                {healthOfficial.contactNumber}
+                {healthOfficial.contact}
               </p>
             </div>
           </div>
@@ -65,28 +60,28 @@ const GeneralInformation = ({ healthOfficial }: GeneralInformationProps) => {
             <div className="grid grid-cols-2 place-content-start place-items-start text-sm">
               <h3 className="text-primary-gray font-semibold">Staff ID</h3>
               <p className="text-primary-gray/50 font-medium">
-                {healthOfficial.staffID}
+                {healthOfficial.staffId}
               </p>
             </div>
 
             <div className="grid grid-cols-2 place-content-start place-items-start text-sm">
               <h3 className="text-primary-gray font-semibold">First Name</h3>
               <p className="text-primary-gray/50 font-medium">
-                {healthOfficial.firstName}
+                {healthOfficial.fullName.split(" ")[0]}
               </p>
             </div>
 
             <div className="grid grid-cols-2 place-content-start place-items-start text-sm">
               <h3 className="text-primary-gray font-semibold">Last Name</h3>
               <p className="text-primary-gray/50 font-medium">
-                {healthOfficial.lastName}
+                {healthOfficial.fullName.split(" ")[1]}
               </p>
             </div>
 
             <div className="grid grid-cols-2 place-content-start place-items-start text-sm">
               <h3 className="text-primary-gray font-semibold">Date of Birth</h3>
               <p className="text-primary-gray/50 font-medium">
-                {healthOfficial.dob}
+                {healthOfficial.dateOfBirth.split("T")[0]}
               </p>
             </div>
 
@@ -102,7 +97,7 @@ const GeneralInformation = ({ healthOfficial }: GeneralInformationProps) => {
                 Contact Number
               </h3>
               <p className="text-primary-gray/50 font-medium">
-                {healthOfficial.contactNumber}
+                {healthOfficial.contact}
               </p>
             </div>
 
@@ -122,21 +117,25 @@ const GeneralInformation = ({ healthOfficial }: GeneralInformationProps) => {
             <div className="grid grid-cols-2 place-content-start place-items-start text-sm">
               <h3 className="text-primary-gray font-semibold">Location</h3>
               <p className="text-primary-gray/50 font-medium">
-                {healthOfficial.location}
+                {
+                  ["New York, NY", "Los Angeles, CA", "Chicago, IL"][
+                    Math.floor(Math.random() * 4)
+                  ]
+                }
               </p>
             </div>
             <div className="grid grid-cols-2 place-content-start place-items-start text-sm">
               <h3 className="text-primary-gray font-semibold">Date Started</h3>
               <p className="text-primary-gray/50 font-medium">
-                {healthOfficial.dateStarted}
+                {healthOfficial.dateOfHire.split("T")[0]}
               </p>
             </div>
           </div>
         </div>
 
-        <EditOfficialGeneralInfo
-          open={openEditGeneralInfo}
-          setOpen={setOpenEditGeneralInfo}
+        <EditHealthOfficialInfo
+          open={openEditModal}
+          setOpen={setOpenEditModal}
           healthOfficial={healthOfficial}
         />
       </section>
@@ -145,7 +144,7 @@ const GeneralInformation = ({ healthOfficial }: GeneralInformationProps) => {
         {/* Additional Information */}
         <div className="flex flex-col gap-3 bg-white px-5 py-3 w-full h-full">
           <ContentHeader
-            handleClick={() => setOpenEditAdditionalInfo(true)}
+            handleClick={() => setOpenEditModal(true)}
             title="Additional Information"
           >
             <span className="text-sm text-white">Modify</span>
@@ -160,22 +159,24 @@ const GeneralInformation = ({ healthOfficial }: GeneralInformationProps) => {
           </div>
 
           <div className="grid grid-cols-2 place-content-start place-items-start text-sm">
-            <h3 className="text-primary-gray font-semibold">Work Station</h3>
+            <h3 className="text-primary-gray font-semibold">Work Schedule</h3>
             <p className="text-primary-gray/50 font-medium">
-              {"Main Building"}
+              {healthOfficial.workSchedule.length > 0
+                ? healthOfficial.workSchedule.join(", ")
+                : "None"}
             </p>
           </div>
 
-          <EditOfficialAdditionalInfo
+          {/* <EditHealthOfficialInfo
             open={openEditAdditionalInfo}
             setOpen={setOpenEditAdditionalInfo}
-          />
+          /> */}
         </div>
 
         {/* Emergency Contact Information */}
         <div className="flex flex-col gap-4 bg-white px-5 py-3 w-full h-full">
           <ContentHeader
-            handleClick={() => setOpenEditEmergencyContactInfo(true)}
+            handleClick={() => setOpenEditModal(true)}
             title="Emergency Contact Information"
           >
             <span className="text-sm text-white">Modify</span>
@@ -227,10 +228,10 @@ const GeneralInformation = ({ healthOfficial }: GeneralInformationProps) => {
             </p>
           </div>
 
-          <EditOfficialEmergencyContact
+          {/* <EditOfficialEmergencyContact
             open={openEditEmergencyContactInfo}
             setOpen={setOpenEditEmergencyContactInfo}
-          />
+          /> */}
         </div>
       </section>
     </div>

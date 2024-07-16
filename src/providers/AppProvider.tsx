@@ -13,6 +13,12 @@ const AppProvider = ({
 }: Readonly<{
   children: React.ReactNode;
 }>) => {
+  queryClient.setDefaultOptions({
+    queries: {
+      refetchOnWindowFocus: true,
+      staleTime: 0,
+    },
+  });
   return (
     <QueryClientProvider client={queryClient}>
       <NextTopLoader color="#40E0D0" showSpinner={false} />

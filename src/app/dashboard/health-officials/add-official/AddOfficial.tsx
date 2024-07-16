@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import { Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import AddOfficialGeneralInfo from "@/app/dashboard/health-officials/add-official/AddOfficialGeneralInfo";
+import AddHealthOfficialInfo from "@/app/dashboard/health-officials/add-official/AddHealthOfficialInfo";
 
 const AddOfficial = () => {
   const [openAddOfficial, setOpenAddOfficial] = useState(false);
@@ -18,7 +18,7 @@ const AddOfficial = () => {
         <span className="font-semibold">Add Health Official</span>
       </Button>
 
-      <AddOfficialGeneralInfo
+      <AddHealthOfficialInfo
         open={openAddOfficial}
         setOpen={setOpenAddOfficial}
       />

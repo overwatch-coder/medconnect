@@ -19,9 +19,11 @@ import { patientSchema } from "@/schema/patient.schema";
 import CustomInputForm from "@/components/CustomInputForm";
 import { toast } from "react-toastify";
 import { PatientType } from "@/types/index";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useQueryClient } from "@tanstack/react-query";
 import { createOrEditPatient } from "@/actions/patients.action";
-import CustomErrorElement from "@/components/CustomErrorElement";
+import { useMutateData } from "@/hooks/useFetch";
+import RenderCustomError from "@/components/RenderCustomError";
+import { Patient } from "@/types/backend";
 
 type AddPatientInfoProps = {
   open: boolean;
@@ -29,7 +31,6 @@ type AddPatientInfoProps = {
 };
 
 const AddPatientInfo = ({ open, setOpen }: AddPatientInfoProps) => {
-  const [submittedFormErrors, setSubmittedFormErrors] = useState<string[]>([]);
   const [step, setStep] = useState(1);
   const queryClient = useQueryClient();
 
@@ -59,24 +60,16 @@ const AddPatientInfo = ({ open, setOpen }: AddPatientInfoProps) => {
     setStep(step - 1);
   };
 
-  const { mutateAsync, isPending: pending } = useMutation({
-    mutationFn: createOrEditPatient,
-    mutationKey: ["patients"],
-    onSettled: (result, error) => {
-      if (!result?.status) {
-        console.log({ result, error });
-        setSubmittedFormErrors(result?.errors!);
-        return;
-      }
-
-      setOpen(false);
-
-      setStep(1);
-
-      toast.success("Patient Information added successfully");
-      reset();
-
-      queryClient.invalidateQueries({ queryKey: ["patients"] });
+  const {
+    mutateAsync,
+    isPending: pending,
+    error,
+    isError,
+  } = useMutateData<PatientType, Patient>({
+    mutationFn: async (data) => createOrEditPatient(data),
+    config: {
+      queryKey: ["patients"],
+      reset: reset,
     },
   });
 
@@ -84,8 +77,19 @@ const AddPatientInfo = ({ open, setOpen }: AddPatientInfoProps) => {
     if (step !== 3) {
       setStep((prev) => prev + 1);
     } else {
-      setSubmittedFormErrors([]);
-      await mutateAsync(data);
+      await mutateAsync(data, {
+        onSuccess: (result) => {
+          setOpen(false);
+
+          toast.success("Patient Information added successfully");
+
+          reset();
+
+          setStep(1);
+
+          queryClient.invalidateQueries({ queryKey: ["patients"] });
+        },
+      });
     }
   };
 
@@ -115,7 +119,7 @@ const AddPatientInfo = ({ open, setOpen }: AddPatientInfoProps) => {
             </DialogTitle>
 
             <DialogDescription className="flex flex-col gap-5 w-full">
-              <CustomErrorElement errors={submittedFormErrors} />
+              <RenderCustomError isError={isError} error={error} />
 
               <form
                 onSubmit={handleSubmit(handleFormSubmit)}

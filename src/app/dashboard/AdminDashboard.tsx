@@ -16,12 +16,13 @@ import { IoCheckboxOutline } from "react-icons/io5";
 import { LiaFemaleSolid, LiaMaleSolid } from "react-icons/lia";
 import { TableCell, TableRow } from "@/components/ui/table";
 import GenerateTable from "@/app/dashboard/GenerateTable";
-import { Patient } from "@/types/backend";
+import { IStaff, Patient } from "@/types/backend";
 
 type AdminDashboardProps = {
   patients: Patient[];
+  healthOfficials: IStaff[];
 };
-const AdminDashboard = ({ patients }: AdminDashboardProps) => {
+const AdminDashboard = ({ patients, healthOfficials }: AdminDashboardProps) => {
   const [user] = useAuth();
   const isUserAdmin = user?.isSuperAdmin;
 
@@ -113,12 +114,12 @@ const AdminDashboard = ({ patients }: AdminDashboardProps) => {
                     </p>
 
                     <p className="flex flex-col gap-1 text-secondary-gray">
-                      <span className="font-bold text-sm">145</span>
+                      <span className="font-bold text-sm">25</span>
                       <span className="font-light text-xs">Critical</span>
                     </p>
 
                     <p className="flex flex-col gap-1 text-secondary-gray">
-                      <span className="font-bold text-sm">145</span>
+                      <span className="font-bold text-sm">50</span>
                       <span className="font-light text-xs">Referrals</span>
                     </p>
                   </div>
@@ -132,18 +133,32 @@ const AdminDashboard = ({ patients }: AdminDashboardProps) => {
                 Health Officials
               </h2>
 
-              <p className="text-3xl text-primary-green font-bold">10</p>
+              <p className="text-3xl text-primary-green font-bold">
+                {healthOfficials.length}
+              </p>
 
               <div className="flex items-center gap-2">
                 <p className="flex flex-col gap-1 text-secondary-gray">
-                  <span className="font-bold text-sm">7</span>
+                  <span className="font-bold text-sm">
+                    {
+                      healthOfficials.filter(
+                        (staff) => staff.position === "Nurse"
+                      ).length
+                    }
+                  </span>
                   <span className="font-light text-xs">Nurses</span>
                 </p>
 
                 <p className="flex flex-col gap-1 text-secondary-gray">
-                  <span className="font-bold text-sm">3</span>
+                  <span className="font-bold text-sm">
+                    {
+                      healthOfficials.filter(
+                        (staff) => staff.position === "Physician Assistant"
+                      ).length
+                    }
+                  </span>
                   <span className="font-light text-xs">
-                    Physician Assistant
+                    Physician Assistants
                   </span>
                 </p>
               </div>

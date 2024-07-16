@@ -195,8 +195,26 @@ export interface QuestionPayload {
   userId: string;
 }
 
-export interface ChatPayload{
-  question:Question;
+export interface ChatPayload {
+  question: Question;
   patient: string;
-  userId:string;
+  userId: string;
+}
+
+//  === STAFF (HEALTH OFFICIALS) ===
+export interface IStaff {
+  _id: string;
+  staffId: string;
+  fullName: string;
+  dateOfBirth: string;
+  dateOfHire: string;
+  contact: string;
+  position: string;
+  email: string;
+  gender: string;
+  workSchedule: string[];
+  chpsCompoundId: string;
+  createdAt: string;
+  updatedAt: string;
+  __v: number;
 }

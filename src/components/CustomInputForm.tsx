@@ -17,7 +17,15 @@ type CustomInputFormProps<T extends FieldValues> = {
   value?: string;
   placeholderText?: string;
   className?: string;
-  inputType?: "text" | "date" | "select" | "textarea" | "time" | "hidden";
+  inputType?:
+    | "text"
+    | "date"
+    | "select"
+    | "textarea"
+    | "time"
+    | "hidden"
+    | "number"
+    | "datetime-local";
   selectOptions?: { value: string; label: string }[];
   isInputPassword?: boolean;
   disableField?: boolean;
@@ -56,31 +64,18 @@ const CustomInputForm = <T extends FieldValues>({
   const errorMessage = getNestedError(errors, inputName);
 
   return (
-    <div className={cn("flex flex-col space-y-4 w-full", className)}>
+    <div
+      className={cn("flex flex-col items-start space-y-4 w-full", className)}
+    >
       {inputType !== "hidden" && (
         <label className="text-primary-gray/50" htmlFor={inputName as string}>
           {labelName}
         </label>
       )}
 
-      {inputType === "hidden" && (
-        <input type="hidden" {...register(inputName)} />
-      )}
-
-      {inputType === "date" && (
+      {!["select", "textarea"].includes(inputType!) && (
         <input
-          type="date"
-          className="px-3 py-2 rounded w-full focus:border-2 ring-0 outline-none border border-secondary-gray placeholder:text-secondary-gray/60"
-          {...register(inputName)}
-          placeholder={placeholderText}
-          defaultValue={value}
-          disabled={disableField}
-        />
-      )}
-
-      {inputType === "time" && (
-        <input
-          type="time"
+          type={isInputPassword ? "password" : inputType!}
           className="px-3 py-2 rounded w-full focus:border-2 ring-0 outline-none border border-secondary-gray placeholder:text-secondary-gray/60"
           {...register(inputName)}
           placeholder={placeholderText}
@@ -108,17 +103,6 @@ const CustomInputForm = <T extends FieldValues>({
               </option>
             ))}
         </select>
-      )}
-
-      {inputType === "text" && (
-        <input
-          type={isInputPassword ? "password" : "text"}
-          className="px-3 py-2 rounded w-full focus:border-2 ring-0 outline-none border border-secondary-gray placeholder:text-secondary-gray/60"
-          {...register(inputName)}
-          placeholder={placeholderText}
-          defaultValue={value}
-          disabled={disableField}
-        />
       )}
 
       {inputType === "textarea" && (

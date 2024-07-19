@@ -1,24 +1,39 @@
 "use client";
 import { Search } from "lucide-react";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { MEDCONNECT_DASHBOARD_PATIENT_VISIT_LOGS as visitLogsData } from "@/constants";
 import GenerateVisitLogsTable from "@/app/dashboard/patients/[patientId]/visit-logs/GenerateVisitLogsTable";
 import CustomFilterDropdown from "@/components/CustomFilterDropdown";
+import { IVisitLogs, Patient } from "@/types/backend";
+import { RenderEmptyComponent } from "@/app/dashboard/health-officials/HealthOfficialsTable";
+import { ClipLoader } from "react-spinners";
 
 export type VisitLogsDataType = (typeof visitLogsData)[number];
 
-const VisitLogsTable = () => {
+type VisitLogsTableProps = {
+  isLoading: boolean;
+  visitLogs: IVisitLogs[] | undefined;
+};
+
+const VisitLogsTable = ({ visitLogs, isLoading }: VisitLogsTableProps) => {
   const [searchTerm, setSearchTerm] = useState("");
-  const [filterVisitLogs, setFilterVisitLogs] =
-    useState<VisitLogsDataType[]>(visitLogsData);
+  const [filterVisitLogs, setFilterVisitLogs] = useState<IVisitLogs[]>([]);
   const [filterBy, setFilterBy] = useState("Date");
 
+  useEffect(() => {
+    if (visitLogs) {
+      setFilterVisitLogs(visitLogs);
+    }
+  }, [visitLogs]);
+
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (!visitLogs) return;
+
     setSearchTerm(e.target.value);
-    const filtered = visitLogsData.filter(
+    const filtered = visitLogs.filter(
       (log) =>
-        log.logID.toLowerCase().includes(e.target.value.toLowerCase()) ||
-        log.visitPurpose.toLowerCase().includes(e.target.value.toLowerCase())
+        log.visitLogId.toLowerCase().includes(e.target.value.toLowerCase()) ||
+        log.purpose.toLowerCase().includes(e.target.value.toLowerCase())
     );
     setFilterVisitLogs(filtered);
   };
@@ -45,27 +60,27 @@ const VisitLogsTable = () => {
   };
 
   const filterOptions: {
-    value: keyof VisitLogsDataType;
+    value: keyof IVisitLogs;
     label: string;
   }[] = [
     {
-      value: "logID",
+      value: "visitLogId",
       label: "Log ID",
     },
     {
-      value: "visitDate",
+      value: "date",
       label: "Date Of Visit",
     },
     {
-      value: "visitTime",
+      value: "date",
       label: "Time of Visit",
     },
     {
-      value: "visitPurpose",
+      value: "purpose",
       label: "Purpose of Visit",
     },
     {
-      value: "attendingHO",
+      value: "official",
       label: "Attending H.O",
     },
     {
@@ -73,6 +88,22 @@ const VisitLogsTable = () => {
       label: "Notes",
     },
   ];
+
+  if (isLoading) {
+    return (
+      <RenderEmptyComponent>
+        <ClipLoader color="#2d4763" loading={isLoading} size={25} />
+      </RenderEmptyComponent>
+    );
+  }
+
+  if (!visitLogs) {
+    return (
+      <RenderEmptyComponent>
+        <p>No visit logs found. Please try again later.</p>
+      </RenderEmptyComponent>
+    );
+  }
 
   return (
     <div className="w-full flex flex-col gap-5 px-5 py-5">

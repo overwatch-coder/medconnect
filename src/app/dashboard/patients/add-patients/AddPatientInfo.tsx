@@ -81,6 +81,8 @@ const AddPatientInfo = ({ open, setOpen }: AddPatientInfoProps) => {
         onSuccess: (result) => {
           setOpen(false);
 
+          console.log({ result });
+
           toast.success("Patient Information added successfully");
 
           reset();
@@ -88,6 +90,11 @@ const AddPatientInfo = ({ open, setOpen }: AddPatientInfoProps) => {
           setStep(1);
 
           queryClient.invalidateQueries({ queryKey: ["patients"] });
+        },
+        onError: (error) => {
+          // toast.error(error?.message);
+          console.log({ error, in: "on error - add patient info" });
+          setOpen(true);
         },
       });
     }
@@ -170,12 +177,12 @@ const AddPatientInfo = ({ open, setOpen }: AddPatientInfoProps) => {
                           />
 
                           <CustomInputForm
-                            labelName="National ID"
-                            inputName="general.nationalId"
+                            labelName="Date of Birth"
+                            inputName="general.dateOfBirth"
                             register={register}
                             errors={errors}
-                            inputType="text"
-                            placeholderText="Enter national ID"
+                            inputType="date"
+                            placeholderText="Enter date of birth"
                           />
                         </div>
 
@@ -221,6 +228,15 @@ const AddPatientInfo = ({ open, setOpen }: AddPatientInfoProps) => {
 
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-5 w-full">
                           <CustomInputForm
+                            labelName="National ID"
+                            inputName="general.nationalId"
+                            register={register}
+                            errors={errors}
+                            inputType="text"
+                            placeholderText="Enter national ID"
+                          />
+
+                          <CustomInputForm
                             labelName="Marital Status"
                             inputName="general.maritalStatus"
                             register={register}
@@ -247,6 +263,15 @@ const AddPatientInfo = ({ open, setOpen }: AddPatientInfoProps) => {
 
                       <div className="flex flex-col gap-5 px-2 md:px-5">
                         <div className="grid grid-cols-1 gap-5 w-full">
+                          <CustomInputForm
+                            labelName="Bloog Group"
+                            inputName="additional.bloodGroup"
+                            register={register}
+                            errors={errors}
+                            inputType="text"
+                            placeholderText="eg. B+"
+                          />
+
                           <CustomInputForm
                             labelName="Allergies"
                             inputName="additional.allergies"
@@ -306,7 +331,7 @@ const AddPatientInfo = ({ open, setOpen }: AddPatientInfoProps) => {
                       <FormSectionHeader title="Emergency Contact Information" />
 
                       <div className="flex flex-col gap-5">
-                        <h2 className="text-black font-normal text-base -mb-3">
+                        <h2 className="text-black font-normal text-start text-base -mb-3">
                           Contact Person 1
                         </h2>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-5 w-full px-2 md:px-5">
@@ -349,7 +374,7 @@ const AddPatientInfo = ({ open, setOpen }: AddPatientInfoProps) => {
                           />
                         </div>
 
-                        <h2 className="text-black font-normal text-base -mb-3">
+                        <h2 className="text-black font-normal text-start text-base -mb-3">
                           Contact Person 2
                         </h2>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-5 w-full px-2 md:px-5">

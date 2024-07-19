@@ -18,28 +18,63 @@ import CustomInputForm from "@/components/CustomInputForm";
 import { toast } from "react-toastify";
 import { VisitLogsType } from "@/types/index";
 import { visitLogsSchema } from "@/schema/visit-logs.schema";
+import { Patient } from "@/types/backend";
+import { useQueryClient } from "@tanstack/react-query";
+import { useMutateData } from "@/hooks/useFetch";
+import { createOrEditVisitLog } from "@/actions/single-patient.action";
+import RenderCustomError from "@/components/RenderCustomError";
 
 type AddVisitLogFormProps = {
   open: boolean;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  patient: Patient;
+  refetchLogs?: () => void;
 };
 
-const AddVisitLogForm = ({ open, setOpen }: AddVisitLogFormProps) => {
+const AddVisitLogForm = ({
+  open,
+  setOpen,
+  patient,
+  refetchLogs,
+}: AddVisitLogFormProps) => {
+  const queryClient = useQueryClient();
   const {
     register,
     reset,
-    formState: { errors, isSubmitting: pending },
+    formState: { errors },
     handleSubmit,
   } = useForm<VisitLogsType>({
     resolver: zodResolver(visitLogsSchema),
     mode: "all",
   });
 
+  const {
+    mutateAsync,
+    isPending: pending,
+    isError,
+    error,
+  } = useMutateData({
+    mutationFn: async (data: VisitLogsType) =>
+      createOrEditVisitLog(data, patient._id, undefined),
+    config: {
+      queryKey: ["patients", "visit-logs", patient._id],
+    },
+  });
+
   const handleFormSubmit: SubmitHandler<VisitLogsType> = async (data) => {
-    console.log({ data });
-    setOpen(false);
-    toast.success("Visit Log added successfully");
-    reset();
+    await mutateAsync(data, {
+      onSuccess: () => {
+        setOpen(false);
+        toast.success("Added new visitor to the logs successfully!");
+        queryClient.invalidateQueries({
+          queryKey: ["patients", "visit-logs", patient._id],
+        });
+        if (refetchLogs) {
+          refetchLogs();
+        }
+        reset();
+      },
+    });
   };
 
   return (
@@ -67,6 +102,8 @@ const AddVisitLogForm = ({ open, setOpen }: AddVisitLogFormProps) => {
             </DialogTitle>
 
             <div className="flex flex-col gap-5 w-full">
+              <RenderCustomError isError={isError} error={error} />
+
               <form
                 onSubmit={handleSubmit(handleFormSubmit)}
                 className="flex flex-col gap-4 w-full"
@@ -80,35 +117,18 @@ const AddVisitLogForm = ({ open, setOpen }: AddVisitLogFormProps) => {
                     <div className="flex flex-col gap-5 px-2 md:px-5">
                       <div className="grid grid-cols-1 gap-5 w-full">
                         <CustomInputForm
-                          labelName="Log ID"
-                          inputName="logID"
+                          labelName="Date and Time of Visit"
+                          inputName="date"
                           register={register}
                           errors={errors}
-                          inputType="text"
-                          placeholderText="Enter log ID"
-                        />
-
-                        <CustomInputForm
-                          labelName="Date of Visit"
-                          inputName="visitDate"
-                          register={register}
-                          errors={errors}
-                          inputType="date"
+                          inputType="datetime-local"
                         />
                       </div>
 
                       <div className="grid grid-cols-1 gap-5 w-full">
                         <CustomInputForm
-                          labelName="Time of Visit"
-                          inputName="visitTime"
-                          register={register}
-                          errors={errors}
-                          inputType="time"
-                        />
-
-                        <CustomInputForm
                           labelName="Purpose of Visit"
-                          inputName="visitPurpose"
+                          inputName="purpose"
                           register={register}
                           errors={errors}
                           inputType="text"
@@ -119,7 +139,7 @@ const AddVisitLogForm = ({ open, setOpen }: AddVisitLogFormProps) => {
                       <div className="grid grid-cols-1 gap-5 w-full">
                         <CustomInputForm
                           labelName="Attending Health Officials"
-                          inputName="attendingHO"
+                          inputName="official"
                           register={register}
                           errors={errors}
                           inputType="text"

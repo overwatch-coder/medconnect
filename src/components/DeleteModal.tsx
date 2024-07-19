@@ -50,7 +50,9 @@ const DeleteModal = <T,>({
           </AlertDialogTitle>
 
           <AlertDialogDescription className="flex flex-col gap-5">
-            <p className="text-secondary-gray font-semibold">{description}</p>
+            <span className="text-secondary-gray font-semibold">
+              {description}
+            </span>
           </AlertDialogDescription>
 
           <form

@@ -1,11 +1,10 @@
 "use server";
 
-import { mutateData } from "@/actions/api-request.action";
 import { currentUser } from "@/actions/user.action";
 import { axiosInstance } from "@/lib/utils";
-import { handleApiError } from "@/lib/validations";
 import { Patient } from "@/types/backend";
 import { PatientType } from "@/types/index";
+import { isAxiosError } from "axios";
 
 // get all patients
 export const getPatients = async (): Promise<Patient[]> => {
@@ -31,19 +30,16 @@ export const getPatients = async (): Promise<Patient[]> => {
 };
 
 // get all patients from the chps compound
-export const getChpsPatients = async (): Promise<Patient[]> => {
+export const getChpsPatients = async (chpsId: string): Promise<Patient[]> => {
   try {
     const user = await currentUser();
 
-    const res = await axiosInstance.get(
-      `/patient/${user?.staff?.chpsCompoundId}`,
-      {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${user?.auth.token}`,
-        },
-      }
-    );
+    const res = await axiosInstance.get(`/patient/chps/${chpsId}`, {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${user?.auth.token}`,
+      },
+    });
 
     if (!res.data?.status) {
       throw new Error(res.data?.message || "Error fetching chps patients");
@@ -64,7 +60,13 @@ export const getPatient = async (
 ): Promise<Patient | undefined> => {
   try {
     const patients = (await getPatients()) as Patient[];
-    return patients.find((patient) => patient._id === patientId);
+    const patient = patients.find((patient) => patient._id === patientId);
+
+    if (!patient) {
+      throw new Error("Patient not found");
+    }
+
+    return patient;
   } catch (error: any) {
     console.log({ error, in: "getPatients" });
     return error;
@@ -80,8 +82,8 @@ export const createOrEditPatient = async (
     const user = await currentUser();
 
     const url = patientId
-      ? `/patient/${user?.staff?.chpsCompoundId}/${patientId}`
-      : `/patient/${user?.staff?.chpsCompoundId}`;
+      ? `/patient/chps/${user?.staff?.chpsCompoundId}/${patientId}`
+      : `/patient/chps/${user?.staff?.chpsCompoundId}`;
 
     const dataForBackend = {
       ...data.general,
@@ -118,14 +120,27 @@ export const createOrEditPatient = async (
     });
 
     const resData = res.data;
+    console.log({ resData, in: "Before error if" });
 
     if (!resData?.status) {
+      console.log({ error: resData, in: "Error if" });
       throw new Error(resData?.message || "Error updating patient");
     }
 
     return resData?.data as Patient;
   } catch (error: any) {
-    console.log({ error, in: "createOrEditPatient" });
+    console.log({
+      error,
+      data: error?.response?.data,
+      in: "createOrEditPatient catch",
+    });
+    if (
+      isAxiosError(error) &&
+      error?.response?.data?.message.includes('Duplicate key error {"email":')
+    ) {
+      throw new Error("Patient email already exists!");
+    }
+
     return error;
   }
 };
@@ -134,22 +149,27 @@ export const createOrEditPatient = async (
 export const deletePatient = async (patientId: string) => {
   try {
     const user = await currentUser();
+    if (!user || !user.staff) {
+      throw new Error("Not authorized");
+    }
 
-    const resData = await mutateData(
-      `/patient/${user?.staff?.chpsCompoundId}/${patientId}`,
-      {},
+    const res = await axiosInstance.delete(
+      `/patient/chps/${user.staff.chpsCompoundId}/${patientId}`,
       {
-        method: "DELETE",
-        token: user?.auth.token,
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${user?.auth.token}`,
+        },
       }
     );
 
-    if (!resData.status) {
-      return resData;
-    }
+    console.log({ res, in: "deletePatient res" });
+
+    const resData = { status: true };
 
     return resData;
   } catch (error: any) {
-    return handleApiError(error);
+    console.log({ error, in: "deletePatient" });
+    return error;
   }
 };

@@ -19,28 +19,63 @@ import CustomInputForm from "@/components/CustomInputForm";
 import { toast } from "react-toastify";
 import { PrescriptionType } from "@/types/index";
 import { prescriptionSchema } from "@/schema/prescription.schema";
+import { useQueryClient } from "@tanstack/react-query";
+import { useMutateData } from "@/hooks/useFetch";
+import RenderCustomError from "@/components/RenderCustomError";
+import { createOrEditPrescription } from "@/actions/single-patient.action";
 
 type AddPrescriptionProps = {
   open: boolean;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  refetchPrescriptions?: () => void;
+  patientId: string;
 };
 
-const AddPrescription = ({ open, setOpen }: AddPrescriptionProps) => {
+const AddPrescription = ({
+  open,
+  setOpen,
+  refetchPrescriptions,
+  patientId,
+}: AddPrescriptionProps) => {
+  const queryClient = useQueryClient();
+
   const {
     register,
     reset,
-    formState: { errors, isSubmitting: pending },
+    formState: { errors },
     handleSubmit,
   } = useForm<PrescriptionType>({
     resolver: zodResolver(prescriptionSchema),
     mode: "all",
   });
 
+  const {
+    mutateAsync,
+    isPending: pending,
+    isError,
+    error,
+  } = useMutateData({
+    mutationFn: async (data: PrescriptionType) =>
+      createOrEditPrescription(data, patientId, undefined),
+    config: {
+      queryKey: ["patients", "prescriptions", patientId],
+    },
+  });
+
   const handleFormSubmit: SubmitHandler<PrescriptionType> = async (data) => {
-    console.log({ data });
-    setOpen(false);
-    toast.success("Medical History added successfully");
-    reset();
+    await mutateAsync(data, {
+      onSuccess: () => {
+        setOpen(false);
+        toast.success("New prescription added successfully!");
+        queryClient.invalidateQueries({
+          queryKey: ["patients", "prescriptions", patientId],
+        });
+        if (refetchPrescriptions) {
+          refetchPrescriptions();
+        }
+        reset();
+      },
+    });
   };
 
   return (
@@ -73,6 +108,8 @@ const AddPrescription = ({ open, setOpen }: AddPrescriptionProps) => {
                 className="flex flex-col gap-4 w-full"
                 method="POST"
               >
+                <RenderCustomError isError={isError} error={error} />
+
                 <div className="flex flex-col gap-5 px-3 pt-5 pb-10 bg-white h-full">
                   {/* Medical History */}
                   <div className="flex flex-col gap-5 p-4 rounded-md border border-secondary-gray/50 w-full">
@@ -81,15 +118,6 @@ const AddPrescription = ({ open, setOpen }: AddPrescriptionProps) => {
                     <div className="flex flex-col gap-5">
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-5 w-full px-2 md:px-5">
                         <CustomInputForm
-                          labelName="Prescription ID"
-                          inputName="prescriptionID"
-                          register={register}
-                          errors={errors}
-                          inputType="text"
-                          placeholderText="eg. RX12345"
-                        />
-
-                        <CustomInputForm
                           labelName="Health Official Name"
                           inputName="healthOfficialName"
                           register={register}
@@ -97,30 +125,19 @@ const AddPrescription = ({ open, setOpen }: AddPrescriptionProps) => {
                           inputType="text"
                           placeholderText="eg. Dr. John Doe"
                         />
-                      </div>
 
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-5 w-full px-2 md:px-5">
                         <CustomInputForm
-                          labelName="Date"
+                          labelName="Date Issued"
                           inputName="date"
                           register={register}
                           errors={errors}
                           inputType="date"
                         />
-
-                        <CustomInputForm
-                          labelName="Prescription For"
-                          inputName="prescriptionFor"
-                          register={register}
-                          errors={errors}
-                          inputType="text"
-                          placeholderText="eg. Malaria"
-                        />
                       </div>
 
-                      <h2 className="text-primary-gray text-sm font-medium">
+                      <span className="text-primary-gray text-start text-sm font-medium">
                         Medication
-                      </h2>
+                      </span>
 
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-5 w-full px-2 md:px-5">
                         <CustomInputForm
@@ -144,12 +161,12 @@ const AddPrescription = ({ open, setOpen }: AddPrescriptionProps) => {
 
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-5 w-full px-2 md:px-5">
                         <CustomInputForm
-                          labelName="Frequency (Daily)"
+                          labelName="Frequency"
                           inputName="frequency"
                           register={register}
                           errors={errors}
                           inputType="text"
-                          placeholderText="eg. 3"
+                          placeholderText="eg. 3 times daily"
                         />
 
                         <CustomInputForm
@@ -168,7 +185,7 @@ const AddPrescription = ({ open, setOpen }: AddPrescriptionProps) => {
                           inputName="notes"
                           register={register}
                           errors={errors}
-                          inputType="text"
+                          inputType="textarea"
                           placeholderText="Enter notes here"
                         />
                       </div>

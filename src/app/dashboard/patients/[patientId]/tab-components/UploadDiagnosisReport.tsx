@@ -18,35 +18,63 @@ import { FormSectionHeader } from "@/app/dashboard/compounds/add-new/AddCompound
 import CustomInputForm from "@/components/CustomInputForm";
 import { toast } from "react-toastify";
 import { DiagnosisReportType } from "@/types/index";
-import CustomFileUpload from "@/components/CustomFileUpload";
 import { diagnosisReportSchema } from "@/schema/diagnosis-report.schema";
+import { useQueryClient } from "@tanstack/react-query";
+import { useMutateData } from "@/hooks/useFetch";
+import { createOrEditDiagnosisReport } from "@/actions/single-patient.action";
+import RenderCustomError from "@/components/RenderCustomError";
 
 type UploadDiagnosisReportProps = {
   open: boolean;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  patientId: string;
+  refetchDiagnosisReports?: () => void;
 };
 
 const UploadDiagnosisReport = ({
   open,
   setOpen,
+  patientId,
+  refetchDiagnosisReports,
 }: UploadDiagnosisReportProps) => {
+  const queryClient = useQueryClient();
   const {
     register,
     reset,
-    watch,
-    setValue,
-    formState: { errors, isSubmitting: pending },
+    formState: { errors },
     handleSubmit,
   } = useForm<DiagnosisReportType>({
     resolver: zodResolver(diagnosisReportSchema),
     mode: "all",
   });
 
+  const {
+    mutateAsync,
+    isPending: pending,
+    isError,
+    error,
+  } = useMutateData({
+    mutationFn: async (data: DiagnosisReportType) =>
+      createOrEditDiagnosisReport(data, patientId, undefined),
+    config: {
+      queryKey: ["patients", "diagnosis-reports", patientId],
+    },
+  });
+
   const handleFormSubmit: SubmitHandler<DiagnosisReportType> = async (data) => {
-    console.log({ data });
-    setOpen(false);
-    toast.success("Diagnosis Report added successfully");
-    reset();
+    await mutateAsync(data, {
+      onSuccess: () => {
+        setOpen(false);
+        toast.success("New report added successfully!");
+        queryClient.invalidateQueries({
+          queryKey: ["patients", "diagnosis-reports", patientId],
+        });
+        if (refetchDiagnosisReports) {
+          refetchDiagnosisReports();
+        }
+        reset();
+      },
+    });
   };
 
   return (
@@ -74,6 +102,8 @@ const UploadDiagnosisReport = ({
             </DialogTitle>
 
             <DialogDescription className="flex flex-col gap-5 w-full">
+              <RenderCustomError isError={isError} error={error} />
+
               <form
                 onSubmit={handleSubmit(handleFormSubmit)}
                 className="flex flex-col gap-4 w-full"
@@ -88,15 +118,6 @@ const UploadDiagnosisReport = ({
                     <div className="flex flex-col gap-5">
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-5 w-full px-2 md:px-5">
                         <CustomInputForm
-                          labelName="Report ID"
-                          inputName="reportID"
-                          register={register}
-                          errors={errors}
-                          inputType="text"
-                          placeholderText="eg. DR13456"
-                        />
-
-                        <CustomInputForm
                           labelName="Doctor Name"
                           inputName="doctorName"
                           register={register}
@@ -104,12 +125,21 @@ const UploadDiagnosisReport = ({
                           inputType="text"
                           placeholderText="eg. Dr. John Doe"
                         />
+
+                        <CustomInputForm
+                          labelName="Recommended Test"
+                          inputName="recommendedTest"
+                          register={register}
+                          errors={errors}
+                          inputType="text"
+                          placeholderText="eg. Blood Test"
+                        />
                       </div>
 
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-5 w-full px-2 md:px-5">
                         <CustomInputForm
                           labelName="Date of Diagnosis"
-                          inputName="diagnosisDate"
+                          inputName="date"
                           register={register}
                           errors={errors}
                           inputType="date"
@@ -124,7 +154,7 @@ const UploadDiagnosisReport = ({
                         />
                       </div>
 
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-5 w-full px-2 md:px-5">
+                      <div className="grid grid-cols-1 gap-5 w-full px-2 md:px-5">
                         <CustomInputForm
                           labelName="Symptoms"
                           inputName="symptoms"
@@ -135,36 +165,16 @@ const UploadDiagnosisReport = ({
                         />
 
                         <CustomInputForm
-                          labelName="Recommended Test"
-                          inputName="recommendedTests"
-                          register={register}
-                          errors={errors}
-                          inputType="text"
-                          placeholderText="eg. Blood Test"
-                        />
-                      </div>
-
-                      <div className="grid grid-cols-1 gap-5 w-full px-2 md:px-5">
-                        <CustomInputForm
                           labelName="Notes"
                           inputName="notes"
                           register={register}
                           errors={errors}
-                          inputType="text"
+                          inputType="textarea"
                           placeholderText="Enter notes here"
                         />
                       </div>
                     </div>
                   </div>
-
-                  {/* Upload Medical History Form */}
-                  <CustomFileUpload
-                    setValue={setValue}
-                    watch={watch}
-                    itemName="diagnoisReportAttachments"
-                    title="Upload Patient Diagnosis Report"
-                    allowMultiple={true}
-                  />
 
                   {/* Submit form button */}
                   <UploadDiagnosisReportButton

@@ -335,7 +335,7 @@ export default AddCompoundForm;
 export const FormSectionHeader = ({ title }: { title: string }) => {
   return (
     <div className="flex items-center justify-between gap-5">
-      <h2 className="text-secondary-gray text-lg font-semibold">{title}</h2>
+      <span className="text-secondary-gray text-lg font-semibold">{title}</span>
     </div>
   );
 };

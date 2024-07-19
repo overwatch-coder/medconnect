@@ -1,6 +1,6 @@
 "use client";
-import { getChpsPatients, getPatients } from "@/actions/patients.action";
-import { usePatients } from "@/hooks";
+import { getChpsPatients } from "@/actions/patients.action";
+import { useAuth, usePatients } from "@/hooks";
 import { useFetch } from "@/hooks/useFetch";
 import { Patient } from "@/types/backend";
 import React, { useEffect, useState } from "react";
@@ -8,9 +8,10 @@ import { IoIosArrowRoundDown, IoIosArrowRoundUp } from "react-icons/io";
 import { LiaFemaleSolid, LiaMaleSolid } from "react-icons/lia";
 
 const PatientDataOverview = () => {
+  const [user] = useAuth();
   const { data: patientData } = useFetch<Patient[]>({
-    queryKey: ["patients"],
-    queryFn: async () => await getPatients(),
+    queryKey: ["patients", user?.staff?.chpsCompoundId!],
+    queryFn: async () => await getChpsPatients(user?.staff?.chpsCompoundId!),
   });
 
   const [patients, setPatients] = useState<Patient[]>([]);
@@ -53,21 +54,21 @@ const PatientDataOverview = () => {
             <div className="flex items-center gap-2">
               <p className="flex flex-col gap-1 text-secondary-gray">
                 <span className="font-bold text-sm">
-                  {Math.floor(Math.random() * 500)}
+                  {Math.floor(Math.random() * patients.length)}
                 </span>
                 <span className="font-light text-xs">Homecare</span>
               </p>
 
               <p className="flex flex-col gap-1 text-secondary-gray">
                 <span className="font-bold text-sm">
-                  {Math.floor(Math.random() * 100)}
+                  {Math.floor(Math.random() * patients.length)}
                 </span>
                 <span className="font-light text-xs">Critical</span>
               </p>
 
               <p className="flex flex-col gap-1 text-secondary-gray">
                 <span className="font-bold text-sm">
-                  {Math.floor(Math.random() * 700)}
+                  {Math.floor(Math.random() * patients.length)}
                 </span>
                 <span className="font-light text-xs">Referrals</span>
               </p>
@@ -82,7 +83,17 @@ const PatientDataOverview = () => {
           </h2>
 
           <p className="font-bold text-2xl relative text-primary-green">
-            <span>{Math.floor(Math.random() * 300)}</span>
+            <span>
+              {
+                patients.filter(
+                  (patient) =>
+                    new Date(patient.createdAt).getMonth() ===
+                      new Date().getMonth() &&
+                    new Date(patient.createdAt).getFullYear() ===
+                      new Date().getFullYear()
+                ).length
+              }
+            </span>
           </p>
         </div>
 
@@ -93,7 +104,14 @@ const PatientDataOverview = () => {
           </h2>
 
           <p className="font-bold text-2xl relative text-primary-green">
-            <span>{patients.length}</span>
+            <span>
+              {
+                patients.filter(
+                  (patient) =>
+                    patient.gender === "Male" || patient.gender === "Female"
+                ).length
+              }
+            </span>
           </p>
 
           <div className="flex items-center gap-3">
@@ -132,25 +150,25 @@ const PatientDataOverview = () => {
           </h2>
 
           <p className="text-3xl text-primary-green font-bold">
-            {Math.floor(Math.random() * 250)}
+            {Math.floor(Math.random() * patients.length)}
           </p>
 
           <div className="flex items-center gap-4">
             <p className="flex flex-col gap-1 text-secondary-gray">
-              {Math.floor(Math.random() * 300)}
+              {Math.floor(Math.random() * patients.length)}
               <span className="font-light text-xs">Diabetes</span>
             </p>
 
             <p className="flex flex-col gap-1 text-secondary-gray">
               <span className="font-bold text-sm">
-                {Math.floor(Math.random() * 150)}
+                {Math.floor(Math.random() * patients.length)}
               </span>
               <span className="font-light text-xs">Chronic Pains</span>
             </p>
 
             <p className="flex flex-col gap-1 text-secondary-gray">
               <span className="font-bold text-sm">
-                {Math.floor(Math.random() * 80)}
+                {Math.floor(Math.random() * patients.length)}
               </span>
               <span className="font-light text-xs">Asthma</span>
             </p>

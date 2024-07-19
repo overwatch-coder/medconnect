@@ -1,16 +1,62 @@
 "use client";
 
+import { getTreatmentPlans } from "@/actions/single-patient.action";
+import { RenderEmptyComponent } from "@/app/dashboard/health-officials/HealthOfficialsTable";
 import ContentHeader from "@/app/dashboard/patients/[patientId]/ContentHeader";
 import EditTreatmentPlanForm from "@/app/dashboard/patients/[patientId]/tab-components/EditTreatmentPlan";
+import PastTreamentPlans from "@/app/dashboard/patients/[patientId]/tab-components/PastTreamentPlans";
 import UploadTreatmentPlan from "@/app/dashboard/patients/[patientId]/tab-components/UploadTreatmentPlan";
 import { Button } from "@/components/ui/button";
+import { useFetch } from "@/hooks/useFetch";
+import { ITreatmentPlan, Patient } from "@/types/backend";
 import { Edit, Maximize2, Plus } from "lucide-react";
 import Image from "next/image";
-import React, { useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
+import { ClipLoader } from "react-spinners";
+import generatePDF from "react-to-pdf";
 
-const TreatmentPlan = () => {
+const TreatmentPlan = ({ patient }: { patient: Patient }) => {
   const [openUploadTreatmentPlan, setOpenUploadTreatmentPlan] = useState(false);
   const [openEditTreatmentPlan, setOpenEditTreatmentPlan] = useState(false);
+  const [treatmentPlans, setTreatmentPlans] = useState<ITreatmentPlan[]>([]);
+  const [treatmentPlan, setTreatmentPlan] = useState<ITreatmentPlan | null>(
+    null
+  );
+  const targetPdfRef = useRef(null);
+
+  const {
+    data: treatmentPlanData,
+    isLoading,
+    refetch: refetchPrescriptions,
+  } = useFetch<ITreatmentPlan[]>({
+    queryFn: async () => getTreatmentPlans(patient._id),
+    queryKey: ["patients", "treatment-plans", patient._id],
+  });
+
+  useEffect(() => {
+    if (treatmentPlanData) {
+      setTreatmentPlans(treatmentPlanData);
+      setTreatmentPlan(null);
+    }
+  }, [treatmentPlanData]);
+
+  // useEffect(() => {
+  //   const generatePdf = async () => {
+  //     const pdf = await generatePDF(targetPdfRef, {
+  //       filename: `${treatmentPlans[treatmentPlans?.length - 1]?.treatmentPlanId}_treatment_plan.pdf`,
+  //     });
+  //   };
+
+  //   generatePdf();
+  // }, [treatmentPlans]);
+
+  if (isLoading) {
+    return (
+      <RenderEmptyComponent>
+        <ClipLoader color="#2d4763" loading={isLoading} size={25} />
+      </RenderEmptyComponent>
+    );
+  }
 
   return (
     <div className="grid grid-cols-1 gap-3 md:gap-5 md:grid-cols-2 h-full w-full">
@@ -33,89 +79,105 @@ const TreatmentPlan = () => {
 
       <section className="flex flex-col w-full">
         <h2 className="text-lg flex items-center gap-3 font-bold text-white bg-secondary-gray p-3">
-          Details
+          Latest Treatment Plan Details
         </h2>
 
-        <div className="w-full h-full bg-white flex flex-col gap-3 p-3">
-          <ContentHeader
-            handleClick={() => setOpenEditTreatmentPlan(true)}
-            title="Treatment Plan"
+        {treatmentPlans.length > 0 ? (
+          <div
+            ref={targetPdfRef}
+            className="w-full h-full bg-white flex flex-col gap-3 p-3"
           >
-            <span className="text-sm text-white">Modify</span>
-            <Edit className="text-white" size={20} />
-          </ContentHeader>
+            <ContentHeader
+              handleClick={() => {
+                setTreatmentPlan(treatmentPlans[treatmentPlans.length - 1]);
+                setOpenEditTreatmentPlan(true);
+              }}
+              title="Treatment Plan"
+            >
+              <span className="text-sm text-white">Modify</span>
+              <Edit className="text-white" size={20} />
+            </ContentHeader>
 
-          <div className="flex flex-col gap-2 mt-4">
-            <div className="grid grid-cols-2 place-content-start place-items-start text-sm">
-              <h3 className="text-primary-gray font-semibold">
-                Treatment Plan
-              </h3>
-              <p className="text-primary-gray/50 font-medium">
-                {`TP${Math.floor(Math.random() * 1000)}`}
-              </p>
+            <div className="flex flex-col gap-2 mt-4">
+              <div className="grid grid-cols-2 place-content-start place-items-start text-sm">
+                <h3 className="text-primary-gray font-semibold">
+                  Treatment Plan
+                </h3>
+                <p className="text-primary-gray/50 font-medium">
+                  {treatmentPlans[treatmentPlans.length - 1].treatmentPlanId}
+                </p>
+              </div>
+
+              <div className="grid grid-cols-2 place-content-start place-items-start text-sm">
+                <h3 className="text-primary-gray font-semibold">Plan Name</h3>
+                <p className="text-primary-gray/50 font-medium">
+                  {treatmentPlans[treatmentPlans.length - 1].name}
+                </p>
+              </div>
+
+              <div className="grid grid-cols-2 place-content-start place-items-start text-sm">
+                <h3 className="text-primary-gray font-semibold">Start Date</h3>
+                <p className="text-primary-gray/50 font-medium">
+                  {
+                    treatmentPlans[treatmentPlans.length - 1].startDate.split(
+                      "T"
+                    )[0]
+                  }
+                </p>
+              </div>
+
+              <div className="grid grid-cols-2 place-content-start place-items-start text-sm">
+                <h3 className="text-primary-gray font-semibold">End Date</h3>
+                <p className="text-primary-gray/50 font-medium">
+                  {
+                    treatmentPlans[treatmentPlans.length - 1].endDate.split(
+                      "T"
+                    )[0]
+                  }
+                </p>
+              </div>
+
+              <div className="grid grid-cols-2 place-content-start place-items-start text-sm">
+                <h3 className="text-primary-gray font-semibold">Objective</h3>
+                <p className="text-primary-gray/50 font-medium">
+                  {treatmentPlans[treatmentPlans.length - 1].objective}
+                </p>
+              </div>
+
+              <div className="grid grid-cols-2 place-content-start place-items-start text-sm">
+                <h3 className="text-primary-gray font-semibold">
+                  Medication Name
+                </h3>
+                <p className="text-primary-gray/50 font-medium">
+                  {treatmentPlans[treatmentPlans.length - 1].medicationName}
+                </p>
+              </div>
+
+              <div className="grid grid-cols-2 place-content-start place-items-start text-sm">
+                <h3 className="text-primary-gray font-semibold">
+                  Follow-up Schedule
+                </h3>
+                <p className="text-primary-gray/50 font-medium">
+                  {treatmentPlans[treatmentPlans.length - 1].followUpSchedule}
+                </p>
+              </div>
             </div>
 
-            <div className="grid grid-cols-2 place-content-start place-items-start text-sm">
-              <h3 className="text-primary-gray font-semibold">Plan Name</h3>
-              <p className="text-primary-gray/50 font-medium">{`TP${Math.floor(Math.random() * 100)}`}</p>
-            </div>
+            <div className="flex flex-col gap-2 mt-3">
+              <h2 className="text-primary-green font-medium">Notes</h2>
 
-            <div className="grid grid-cols-2 place-content-start place-items-start text-sm">
-              <h3 className="text-primary-gray font-semibold">Start Date</h3>
-              <p className="text-primary-gray/50 font-medium">
-                {`${Math.floor(Math.random() * 100 + 2024)}/${Math.floor(Math.random() * 12)}/${Math.floor(
-                  Math.random() * 30
-                )}
-                `}
-              </p>
-            </div>
-
-            <div className="grid grid-cols-2 place-content-start place-items-start text-sm">
-              <h3 className="text-primary-gray font-semibold">End Date</h3>
-              <p className="text-primary-gray/50 font-medium">
-                {`${Math.floor(Math.random() * 100 + 2025)}/${Math.floor(Math.random() * 12)}/${Math.floor(
-                  Math.random() * 30
-                )}
-                `}
-              </p>
-            </div>
-
-            <div className="grid grid-cols-2 place-content-start place-items-start text-sm">
-              <h3 className="text-primary-gray font-semibold">Objective</h3>
-              <p className="text-primary-gray/50 font-medium">
-                {"Regain full mobility in the knee"}
-              </p>
-            </div>
-
-            <div className="grid grid-cols-2 place-content-start place-items-start text-sm">
-              <h3 className="text-primary-gray font-semibold">
-                Medication Name
-              </h3>
-              <p className="text-primary-gray/50 font-medium">{"Ibuprofen"}</p>
-            </div>
-
-            <div className="grid grid-cols-2 place-content-start place-items-start text-sm">
-              <h3 className="text-primary-gray font-semibold">
-                Follow-up Schedule
-              </h3>
-              <p className="text-primary-gray/50 font-medium">
-                {"Follow-up: 2024-07-19 at 10:00 AM"}
-              </p>
+              <div className="flex flex-col w-full">
+                <p className="text-sm text-secondary-gray">
+                  {treatmentPlans[treatmentPlans.length - 1].notes}
+                </p>
+              </div>
             </div>
           </div>
-
-          <div className="flex flex-col gap-2 mt-3">
-            <h2 className="text-primary-green font-medium">Notes</h2>
-
-            <div className="flex flex-col w-full">
-              <p className="text-sm text-secondary-gray">
-                {
-                  "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas pharetra erat vel tellus tristique rutrum. Integer vulputate efficitur nibh. Morbi iaculis orci id eros fermentum vulputate. Curabitur cursus vel ante sed consectetur. Proin ut varius orci. Phasellus interdum ligula tempus, blandit risus sit amet, dapibus sem."
-                }
-              </p>
-            </div>
-          </div>
-        </div>
+        ) : (
+          <p className="text-center py-5 text-secondary-gray">
+            No treatment plans available for this patient yet!
+          </p>
+        )}
 
         <div className="flex items-center justify-end py-5 w-full">
           <div className="flex flex-col gap-2 w-full md:w-1/2">
@@ -127,20 +189,30 @@ const TreatmentPlan = () => {
               <span className="text-sm">Upload New Plan</span>
             </Button>
 
-            <Button className="w-full bg-primary-green hover:bg-primary-green text-white text-center rounded-none px-4 py-3 flex items-center justify-center gap-2">
-              <span className="text-sm">View Past Plan</span>
-            </Button>
+            {treatmentPlans.length > 1 && (
+              <PastTreamentPlans
+                treatmentPlans={treatmentPlans}
+                setTreatmentPlan={setTreatmentPlan}
+                setOpenEditTreatmentPlan={setOpenEditTreatmentPlan}
+              />
+            )}
           </div>
         </div>
 
         <UploadTreatmentPlan
           open={openUploadTreatmentPlan}
           setOpen={setOpenUploadTreatmentPlan}
+          patientId={patient._id}
+          refetchTreatmentPlans={refetchPrescriptions}
         />
 
         <EditTreatmentPlanForm
           open={openEditTreatmentPlan}
           setOpen={setOpenEditTreatmentPlan}
+          patientId={patient._id}
+          refetchTreatmentPlans={refetchPrescriptions}
+          treatmentPlan={treatmentPlan!}
+          setTreatmentPlan={setTreatmentPlan}
         />
       </section>
     </div>

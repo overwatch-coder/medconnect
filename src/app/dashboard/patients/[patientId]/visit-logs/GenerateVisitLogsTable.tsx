@@ -10,7 +10,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { VisitLogsDataType } from "@/app/dashboard/patients/[patientId]/visit-logs/VisitLogsTable";
+import { IVisitLogs } from "@/types/backend";
 
 const tableHeaderNames = [
   "Log ID",
@@ -24,7 +24,7 @@ const tableHeaderNames = [
 const GenerateVisitLogsTable = ({
   filteredVisitLogsData,
 }: {
-  filteredVisitLogsData: VisitLogsDataType[];
+  filteredVisitLogsData: IVisitLogs[];
 }) => {
   return (
     <div className="py-2 w-full">
@@ -61,21 +61,23 @@ const GenerateVisitLogsTable = ({
 
         <TableBody className="w-full">
           {filteredVisitLogsData.map((log) => (
-            <TableRow key={log.logID}>
+            <TableRow key={log.visitLogId}>
               <TableCell className="text-secondary-gray flex items-center gap-2">
-                {log.logID}
+                {log.visitLogId}
               </TableCell>
               <TableCell className="text-secondary-gray">
-                {log.visitDate}
+                {log.date.split("T")[0]}
               </TableCell>
               <TableCell className="text-secondary-gray">
-                {log.visitTime}
+                {new Date(log.date).toLocaleTimeString("en-US", {
+                  timeStyle: "short",
+                })}
               </TableCell>
               <TableCell className="text-secondary-gray">
-                {log.visitPurpose}
+                {log.purpose}
               </TableCell>
               <TableCell className="text-secondary-gray">
-                {log.attendingHO}
+                {log.official}
               </TableCell>
               <TableCell className="text-secondary-gray">{log.notes}</TableCell>
             </TableRow>

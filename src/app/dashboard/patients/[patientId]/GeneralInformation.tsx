@@ -89,6 +89,13 @@ const GeneralInformation = ({ patient }: GeneralInformationProps) => {
             </div>
 
             <div className="grid grid-cols-2 place-content-start place-items-start text-sm">
+              <h3 className="text-primary-gray font-semibold">Date of Birth</h3>
+              <p className="text-primary-gray/50 font-medium">
+                {patient.dateOfBirth}
+              </p>
+            </div>
+
+            <div className="grid grid-cols-2 place-content-start place-items-start text-sm">
               <h3 className="text-primary-gray font-semibold">Gender</h3>
               <p className="text-primary-gray/50 font-medium">
                 {patient.gender}
@@ -157,6 +164,13 @@ const GeneralInformation = ({ patient }: GeneralInformationProps) => {
             <span className="text-sm text-white">Modify</span>
             <Edit className="text-white" size={20} />
           </ContentHeader>
+
+          <div className="grid grid-cols-2 place-content-start place-items-start text-sm">
+            <h3 className="text-primary-gray font-semibold">Blood Group</h3>
+            <p className="text-primary-gray/50 font-medium">
+              {patient.additional?.bloodGroup}
+            </p>
+          </div>
 
           <div className="grid grid-cols-2 place-content-start place-items-start text-sm">
             <h3 className="text-primary-gray font-semibold">Allergies</h3>

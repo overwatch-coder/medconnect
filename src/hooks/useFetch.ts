@@ -65,10 +65,6 @@ export const useMutateData = <TData, TResponse = Record<string, unknown>>({
     },
     onError: (err) => {
       console.log({ err, in: "useMutateData error" });
-
-      if (config.reset) {
-        config.reset(config.resetValues || {});
-      }
     },
   });
 

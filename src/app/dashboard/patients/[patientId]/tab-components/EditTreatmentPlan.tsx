@@ -18,37 +18,78 @@ import { FormSectionHeader } from "@/app/dashboard/compounds/add-new/AddCompound
 import CustomInputForm from "@/components/CustomInputForm";
 import { toast } from "react-toastify";
 import { TreatmentPlanType } from "@/types/index";
-import CustomFileUpload from "@/components/CustomFileUpload";
 import { treatmentPlanSchema } from "@/schema/treatment-plan.schema";
+import RenderCustomError from "@/components/RenderCustomError";
+import { createOrEditTreatmentPlan } from "@/actions/single-patient.action";
+import { useMutateData } from "@/hooks/useFetch";
+import { useQueryClient } from "@tanstack/react-query";
+import { ITreatmentPlan } from "@/types/backend";
 
 type EditTreatmentPlanFormProps = {
   open: boolean;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  patientId: string;
+  refetchTreatmentPlans?: () => void;
+  treatmentPlan: ITreatmentPlan;
+  setTreatmentPlan: React.Dispatch<React.SetStateAction<ITreatmentPlan | null>>;
 };
 
 const EditTreatmentPlanForm = ({
   open,
   setOpen,
+  patientId,
+  refetchTreatmentPlans,
+  treatmentPlan,
+  setTreatmentPlan,
 }: EditTreatmentPlanFormProps) => {
+  const queryClient = useQueryClient();
   const {
     register,
     reset,
-    watch,
-    setValue,
-    formState: { errors, isSubmitting: pending },
+    formState: { errors },
     handleSubmit,
-  } = useForm<Partial<TreatmentPlanType>>({
-    resolver: zodResolver(treatmentPlanSchema.partial()),
+  } = useForm<TreatmentPlanType>({
+    resolver: zodResolver(treatmentPlanSchema),
+    defaultValues: {
+      name: treatmentPlan?.name,
+      startDate: treatmentPlan?.startDate.split("T")[0],
+      endDate: treatmentPlan?.endDate.split("T")[0],
+      objective: treatmentPlan?.objective,
+      medicationName: treatmentPlan?.medicationName,
+      followUpSchedule: treatmentPlan?.followUpSchedule,
+      notes: treatmentPlan?.notes,
+    },
     mode: "all",
   });
 
-  const handleFormSubmit: SubmitHandler<Partial<TreatmentPlanType>> = async (
-    data
-  ) => {
-    console.log({ data });
-    setOpen(false);
-    toast.success("Treatment Plan modified successfully");
-    reset();
+  const {
+    mutateAsync,
+    isPending: pending,
+    isError,
+    error,
+  } = useMutateData({
+    mutationFn: async (data: TreatmentPlanType) =>
+      createOrEditTreatmentPlan(data, patientId, treatmentPlan?._id),
+    config: {
+      queryKey: ["patients", "treatment-plans", patientId],
+    },
+  });
+
+  const handleFormSubmit: SubmitHandler<TreatmentPlanType> = async (data) => {
+    await mutateAsync(data, {
+      onSuccess: () => {
+        setOpen(false);
+        toast.success("Treatment plan updated successfully!");
+        queryClient.invalidateQueries({
+          queryKey: ["patients", "treatment-plans", patientId],
+        });
+        if (refetchTreatmentPlans) {
+          refetchTreatmentPlans();
+        }
+        reset();
+        setTreatmentPlan(null);
+      },
+    });
   };
 
   return (
@@ -61,11 +102,12 @@ const EditTreatmentPlanForm = ({
           <DialogHeader className="overflow-y-scroll scrollbar-hide">
             <DialogTitle className="flex items-center justify-between">
               <span className="text-xl md:text-2xl text-secondary-gray font-bold">
-                Modify Treatment Plan
+                Edit Patient Treatment Plan
               </span>
               <DialogClose
                 onClick={() => {
                   reset();
+                  setTreatmentPlan(null);
                 }}
               >
                 <X
@@ -76,6 +118,8 @@ const EditTreatmentPlanForm = ({
             </DialogTitle>
 
             <DialogDescription className="flex flex-col gap-5 w-full">
+              <RenderCustomError isError={isError} error={error} />
+
               <form
                 onSubmit={handleSubmit(handleFormSubmit)}
                 className="flex flex-col gap-4 w-full"
@@ -90,23 +134,23 @@ const EditTreatmentPlanForm = ({
                     <div className="flex flex-col gap-5">
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-5 w-full px-2 md:px-5">
                         <CustomInputForm
-                          labelName="Treatment Plan Number"
-                          inputName="treatmentPlanNumber"
+                          labelName="Plan Name"
+                          inputName="name"
                           register={register}
                           errors={errors}
                           inputType="text"
-                          placeholderText="eg. TP1345"
-                          value={`TP${Math.floor(Math.random() * 1000)}`}
+                          placeholderText="eg. Injection Phase 1"
+                          value={treatmentPlan?.name}
                         />
 
                         <CustomInputForm
-                          labelName="Plan Name"
-                          inputName="planName"
+                          labelName="Medication Name"
+                          inputName="medicationName"
                           register={register}
                           errors={errors}
                           inputType="text"
-                          placeholderText="eg. TP1"
-                          value={`TP${Math.floor(Math.random() * 100)}`}
+                          placeholderText="eg. Ibuprofen"
+                          value={treatmentPlan?.medicationName}
                         />
                       </div>
 
@@ -117,7 +161,7 @@ const EditTreatmentPlanForm = ({
                           register={register}
                           errors={errors}
                           inputType="date"
-                          value={new Date().toISOString().split("T")[0]}
+                          value={treatmentPlan?.startDate.split("T")[0]}
                         />
 
                         <CustomInputForm
@@ -126,43 +170,29 @@ const EditTreatmentPlanForm = ({
                           register={register}
                           errors={errors}
                           inputType="date"
-                          value={new Date().toISOString().split("T")[0]}
+                          value={treatmentPlan?.endDate.split("T")[0]}
                         />
                       </div>
 
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-5 w-full px-2 md:px-5">
                         <CustomInputForm
-                          labelName="Objectives"
-                          inputName="objectives"
+                          labelName="Objective"
+                          inputName="objective"
                           register={register}
                           errors={errors}
                           inputType="text"
                           placeholderText="eg. Regain full mobility in the knee"
-                          value={"Regain full mobility in the knee"}
+                          value={treatmentPlan?.objective}
                         />
 
-                        <CustomInputForm
-                          labelName="Medication Name"
-                          inputName="medicationName"
-                          register={register}
-                          errors={errors}
-                          inputType="text"
-                          placeholderText="eg. Ibuprofen"
-                          value={"Ibuprofen"}
-                        />
-                      </div>
-
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-5 w-full px-2 md:px-5">
                         <CustomInputForm
                           labelName="Follow Up Schedule"
                           inputName="followUpSchedule"
                           register={register}
                           errors={errors}
                           inputType="text"
-                          placeholderText="eg. 2024-07-19 at 10:00 AM"
-                          value={`${Math.floor(Math.random() * 100 + 2024)}-${Math.floor(Math.random() * 12)}-${Math.floor(
-                            Math.random() * 30
-                          )} at ${Math.floor(Math.random() * 11)}:${Math.floor(Math.random() * 60)} AM `}
+                          placeholderText="eg. Next week at 2:30pm"
+                          value={treatmentPlan?.followUpSchedule}
                         />
                       </div>
 
@@ -172,24 +202,13 @@ const EditTreatmentPlanForm = ({
                           inputName="notes"
                           register={register}
                           errors={errors}
-                          inputType="text"
+                          inputType="textarea"
                           placeholderText="Enter notes here"
-                          value={
-                            "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas pharetra erat vel tellus tristique rutrum. Integer vulputate efficitur nibh. Morbi iaculis orci id eros fermentum vulputate. Curabitur cursus vel ante sed consectetur. Proin ut varius orci. Phasellus interdum ligula tempus, blandit risus sit amet, dapibus sem."
-                          }
+                          value={treatmentPlan?.notes}
                         />
                       </div>
                     </div>
                   </div>
-
-                  {/* Upload Medical History Form */}
-                  <CustomFileUpload
-                    setValue={setValue}
-                    watch={watch}
-                    itemName="treatmentPlanAttachment"
-                    title="Upload Patient Treatment Form"
-                    allowMultiple={true}
-                  />
 
                   {/* Submit form button */}
                   <EditTreatmentPlanFormButton

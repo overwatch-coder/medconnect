@@ -6,16 +6,18 @@ import GeneratePatientsTable from "@/app/dashboard/patients/GeneratePatientsTabl
 import CustomFilterDropdown from "@/components/CustomFilterDropdown";
 import { Patient } from "@/types/backend";
 import { useFetch } from "@/hooks/useFetch";
-import { getPatients } from "@/actions/patients.action";
+import { getChpsPatients } from "@/actions/patients.action";
 import { RenderEmptyComponent } from "@/app/dashboard/health-officials/HealthOfficialsTable";
 import { ClipLoader } from "react-spinners";
+import { useAuth } from "@/hooks";
 
 export type PatientsDataType = (typeof patientsData)[number];
 
 const PatientsTable = () => {
+  const [user] = useAuth();
   const { data: patientData, ...query } = useFetch<Patient[]>({
-    queryKey: ["patients"],
-    queryFn: async () => await getPatients(),
+    queryKey: ["patients", user?.staff?.chpsCompoundId!],
+    queryFn: async () => await getChpsPatients(user?.staff?.chpsCompoundId!),
   });
 
   const [filteredPatients, setFilteredPatients] = useState<Patient[]>([]);
@@ -74,6 +76,19 @@ const PatientsTable = () => {
     return (
       <RenderEmptyComponent>
         <ClipLoader size={100} color="#2d4763" loading={query.isLoading} />
+      </RenderEmptyComponent>
+    );
+  }
+
+  if (!patientData) {
+    return (
+      <RenderEmptyComponent>
+        <div className="flex flex-col items-center justify-center mx-auto py-5">
+          <p className="text-base text-secondary-gray text-center">
+            Sorry, could not retrieve patients at the time. Please try again
+            later!
+          </p>
+        </div>
       </RenderEmptyComponent>
     );
   }

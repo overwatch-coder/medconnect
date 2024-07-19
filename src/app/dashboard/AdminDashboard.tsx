@@ -8,7 +8,7 @@ import {
 } from "@/constants";
 import { useAuth } from "@/hooks";
 import { Trash2 } from "lucide-react";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { BsChatText } from "react-icons/bs";
 import { GrPowerCycle } from "react-icons/gr";
 import { IoIosArrowRoundUp } from "react-icons/io";
@@ -17,14 +17,36 @@ import { LiaFemaleSolid, LiaMaleSolid } from "react-icons/lia";
 import { TableCell, TableRow } from "@/components/ui/table";
 import GenerateTable from "@/app/dashboard/GenerateTable";
 import { IStaff, Patient } from "@/types/backend";
+import { useFetch } from "@/hooks/useFetch";
+import { getChpsPatients } from "@/actions/patients.action";
+import { getStaffByCompoundId } from "@/actions/staff.action";
 
-type AdminDashboardProps = {
-  patients: Patient[];
-  healthOfficials: IStaff[];
-};
-const AdminDashboard = ({ patients, healthOfficials }: AdminDashboardProps) => {
+const AdminDashboard = () => {
   const [user] = useAuth();
   const isUserAdmin = user?.isSuperAdmin;
+
+  const { data: patientData } = useFetch<Patient[]>({
+    queryKey: ["patients", user?.staff?.chpsCompoundId!],
+    queryFn: async () => await getChpsPatients(user?.staff?.chpsCompoundId!),
+  });
+  const { data: healthOfficialsData } = useFetch<IStaff[]>({
+    queryKey: ["staff", user?.staff?.chpsCompoundId!],
+    queryFn: async () =>
+      await getStaffByCompoundId(user?.staff?.chpsCompoundId!),
+  });
+
+  const [patients, setPatients] = useState<Patient[]>([]);
+  const [healthOfficials, setHealthOfficials] = useState<IStaff[]>([]);
+
+  useEffect(() => {
+    if (patientData) {
+      setPatients(patientData);
+    }
+
+    if (healthOfficialsData) {
+      setHealthOfficials(healthOfficialsData);
+    }
+  }, [healthOfficialsData, patientData]);
 
   const [currentTablePage, setCurrentTablePage] = useState(1);
   const tableDataPerPage = 5;
@@ -58,7 +80,7 @@ const AdminDashboard = ({ patients, healthOfficials }: AdminDashboardProps) => {
                     <span>{patients.length}</span>
                     <span className="text-red-500 text-xs absolute bottom-0 left-10 flex items-center">
                       <IoIosArrowRoundUp size={10} className="text-red-500" />{" "}
-                      <span>10%</span>
+                      <span>{Math.floor(Math.random() * 100)}%</span>
                     </span>
                   </p>
 
@@ -109,17 +131,23 @@ const AdminDashboard = ({ patients, healthOfficials }: AdminDashboardProps) => {
 
                   <div className="flex items-center gap-2">
                     <p className="flex flex-col gap-1 text-secondary-gray">
-                      <span className="font-bold text-sm">145</span>
+                      <span className="font-bold text-sm">
+                        {Math.floor(Math.random() * patients.length)}
+                      </span>
                       <span className="font-light text-xs">Homecare</span>
                     </p>
 
                     <p className="flex flex-col gap-1 text-secondary-gray">
-                      <span className="font-bold text-sm">25</span>
+                      <span className="font-bold text-sm">
+                        {Math.floor(Math.random() * patients.length)}
+                      </span>
                       <span className="font-light text-xs">Critical</span>
                     </p>
 
                     <p className="flex flex-col gap-1 text-secondary-gray">
-                      <span className="font-bold text-sm">50</span>
+                      <span className="font-bold text-sm">
+                        {Math.floor(Math.random() * patients.length)}
+                      </span>
                       <span className="font-light text-xs">Referrals</span>
                     </p>
                   </div>

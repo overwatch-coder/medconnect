@@ -8,6 +8,7 @@ export const patientGeneralInformationSchema = z.object({
     .trim()
     .min(1, "Gender is required")
     .transform((value) => value.charAt(0).toUpperCase() + value.slice(1)),
+  dateOfBirth: z.string().trim().min(1, "Date of Birth is required"),
   nationalId: z
     .string()
     .trim()
@@ -34,6 +35,7 @@ export const patientGeneralInformationSchema = z.object({
 });
 
 export const patientAdditionalInformationSchema = z.object({
+  bloodGroup: z.string().trim().min(1, "Blood Group is required"),
   allergies: z.string().trim().optional(),
   knownCondition: z.string().trim().optional(),
   primaryPhysician: z.string().trim().optional(),

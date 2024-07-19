@@ -18,6 +18,7 @@ export const defaultPatientGeneralInformation = {
 };
 
 export const defaultPatientAdditionalInformation = {
+  bloodGroup: "",
   allergies: "",
   knownConditions: "",
   primaryCarePhysician: "",
@@ -45,6 +46,7 @@ export const defaultEmergencyContact = {
 
 export const defaultPatient: Patient = {
   _id: "",
+  dateOfBirth: "",
   firstName: "",
   lastName: "",
   gender: "",
@@ -76,8 +78,10 @@ export const formatPatientInfo = (patient: Patient) => {
       location: patient.location,
       district: patient.district,
       maritalStatus: patient.maritalStatus,
+      dateOfBirth: patient.dateOfBirth,
     },
     additional: {
+      bloodGroup: patient.additional?.bloodGroup!,
       allergies: patient.additional
         ? patient.additional.allergies.length > 0
           ? patient.additional.allergies.join(",")

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React from "react";
 import { X } from "lucide-react";
 import {
   Dialog,
@@ -19,12 +19,13 @@ import { patientSchema } from "@/schema/patient.schema";
 import CustomInputForm from "@/components/CustomInputForm";
 import { toast } from "react-toastify";
 import { PatientType } from "@/types/index";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useQueryClient } from "@tanstack/react-query";
 import { createOrEditPatient } from "@/actions/patients.action";
-import CustomErrorElement from "@/components/CustomErrorElement";
 import { Patient } from "@/types/backend";
 import { formatPatientInfo } from "@/constants/form-data";
 import { useRouter } from "next/navigation";
+import { useMutateData } from "@/hooks/useFetch";
+import RenderCustomError from "@/components/RenderCustomError";
 
 type EditPatientInfoProps = {
   open: boolean;
@@ -41,7 +42,6 @@ const EditPatientInfo = ({
   setStep,
   patient,
 }: EditPatientInfoProps) => {
-  const [submittedFormErrors, setSubmittedFormErrors] = useState<string[]>([]);
   const patientInfo = formatPatientInfo(patient);
   const queryClient = useQueryClient();
   const router = useRouter();
@@ -58,32 +58,26 @@ const EditPatientInfo = ({
       ...patientInfo,
       general: {
         ...patientInfo.general,
-        maritalStatus: patientInfo.general.maritalStatus.toLowerCase(),
-        gender: patientInfo.general.gender.toLowerCase(),
+        maritalStatus: patientInfo.general.maritalStatus,
+        gender: patientInfo.general.gender,
+        dateOfBirth: patientInfo.general.dateOfBirth
+          ? new Date(patientInfo.general.dateOfBirth).toISOString()
+          : new Date().toISOString(),
       },
     },
     mode: "all",
   });
 
-  const { mutateAsync, isPending: pending } = useMutation({
-    mutationFn: async (data: PatientType) =>
-      createOrEditPatient(data, patient._id),
-    mutationKey: ["patient", patient._id],
-    onSettled: (result, error) => {
-      if (!result?.status) {
-        setSubmittedFormErrors(result?.errors!);
-        return;
-      }
-
-      setOpen(false);
-
-      setStep(1);
-      toast.success("Patient Information updated successfully");
-      reset();
-
-      router.refresh();
-
-      queryClient.invalidateQueries({ queryKey: ["patients", patient._id] });
+  const {
+    mutateAsync,
+    isPending: pending,
+    error,
+    isError,
+  } = useMutateData<PatientType, Patient>({
+    mutationFn: async (data) => createOrEditPatient(data, patient._id),
+    config: {
+      queryKey: ["patients", patient._id],
+      reset: reset,
     },
   });
 
@@ -106,8 +100,24 @@ const EditPatientInfo = ({
     if (step !== 3) {
       setStep((prev) => prev + 1);
     } else {
-      setSubmittedFormErrors([]);
-      await mutateAsync(data);
+      await mutateAsync(data, {
+        onSuccess: (result) => {
+          setOpen(false);
+
+          console.log({ result });
+
+          toast.success("Patient Information updated successfully");
+          reset();
+
+          setStep(1);
+
+          router.refresh();
+
+          queryClient.invalidateQueries({
+            queryKey: ["patients", patient._id],
+          });
+        },
+      });
     }
   };
 
@@ -137,7 +147,7 @@ const EditPatientInfo = ({
             </DialogTitle>
 
             <DialogDescription className="flex flex-col gap-5 w-full">
-              <CustomErrorElement errors={submittedFormErrors} />
+              <RenderCustomError isError={isError} error={error} />
 
               <form
                 onSubmit={handleSubmit(handleFormSubmit)}
@@ -152,7 +162,7 @@ const EditPatientInfo = ({
                       <FormSectionHeader title="General Information" />
 
                       <div className="flex flex-col gap-5 px-2 md:px-5">
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-5 w-full">
+                        <div className="grid text-start grid-cols-1 md:grid-cols-2 gap-5 w-full">
                           <CustomInputForm
                             labelName="First Name"
                             inputName="general.firstName"
@@ -188,12 +198,12 @@ const EditPatientInfo = ({
                           />
 
                           <CustomInputForm
-                            labelName="National ID"
-                            inputName="general.nationalId"
+                            labelName="Date of Birth"
+                            inputName="general.dateOfBirth"
                             register={register}
                             errors={errors}
-                            inputType="text"
-                            placeholderText="Enter national ID"
+                            inputType="date"
+                            placeholderText="Enter date of birth"
                           />
                         </div>
 
@@ -239,6 +249,15 @@ const EditPatientInfo = ({
 
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-5 w-full">
                           <CustomInputForm
+                            labelName="National ID"
+                            inputName="general.nationalId"
+                            register={register}
+                            errors={errors}
+                            inputType="text"
+                            placeholderText="Enter national ID"
+                          />
+
+                          <CustomInputForm
                             labelName="Marital Status"
                             inputName="general.maritalStatus"
                             register={register}
@@ -265,6 +284,15 @@ const EditPatientInfo = ({
 
                       <div className="flex flex-col gap-5 px-2 md:px-5">
                         <div className="grid grid-cols-1 gap-5 w-full">
+                          <CustomInputForm
+                            labelName="Bloog Group"
+                            inputName="additional.bloodGroup"
+                            register={register}
+                            errors={errors}
+                            inputType="text"
+                            placeholderText="eg. B+"
+                          />
+
                           <CustomInputForm
                             labelName="Allergies"
                             inputName="additional.allergies"

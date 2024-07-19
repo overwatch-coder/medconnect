@@ -12,9 +12,9 @@ import {
 import { useAuth } from "@/hooks";
 import LogoutModal from "@/app/dashboard/LogoutModal";
 import { useQuery } from "@tanstack/react-query";
-import { getPatients } from "@/actions/patients.action";
 import { toast } from "react-toastify";
 import { removeUserFromCookies } from "@/actions/user-cookie.action";
+import { axiosInstance } from "@/lib/utils";
 
 const DashboardSidebar = () => {
   const [user, setUser] = useAuth();
@@ -24,15 +24,11 @@ const DashboardSidebar = () => {
   const { data } = useQuery({
     queryKey: ["user"],
     queryFn: async () => {
-      const result = await getPatients();
+      const res = await axiosInstance.get("/patient");
+      const result = await res.data;
 
       if (!result.status) {
-        if (
-          result.message.includes("Invalid or Expired token") ||
-          result.errors.some((error) =>
-            error.includes("Invalid or Expired token")
-          )
-        ) {
+        if (result?.message.includes("Invalid or Expired token")) {
           toast.info("Session expired. Please log in again to continue");
 
           setUser(null);
@@ -43,7 +39,7 @@ const DashboardSidebar = () => {
         }
       }
 
-      return result;
+      return result?.data;
     },
     refetchInterval: 1 * (60 * 60 * 1000),
   });

@@ -2,12 +2,14 @@ import {
   appointmentSchema,
   rescheduleAppointmentSchema,
 } from "@/schema/appointment.schema";
+import { compoundSchema } from "@/schema/compound.schema";
 import { contactFormSchema } from "@/schema/contact.schema";
 import { diagnosisReportSchema } from "@/schema/diagnosis-report.schema";
 import {
   healthOfficialAdditionalInformationSchema,
   healthOfficialEmergencyContactSchema,
   healthOfficialSchema,
+  HealthStaffSchema,
 } from "@/schema/health-officials.schema";
 import { inventorySchema } from "@/schema/inventory.schema";
 import { medicalHistorySchema } from "@/schema/medical-history.schema";
@@ -134,6 +136,10 @@ export type HealthOfficialAdditionalInformationType = z.infer<
 export type HealthOfficialEmergencyContactType = z.infer<
   typeof healthOfficialEmergencyContactSchema
 >;
+export type HealthStaffType = z.infer<typeof HealthStaffSchema>;
 
 // Outreach Programs Schema
 export type OutreachProgramType = z.infer<typeof outreachProgramSchema>;
+
+// Compound Schema
+export type CompoundType = z.infer<typeof compoundSchema>;

@@ -4,8 +4,15 @@ import React, { useState } from "react";
 import { Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import AddVisitLogForm from "@/app/dashboard/patients/[patientId]/visit-logs/AddVisitLogForm";
+import { Patient } from "@/types/backend";
 
-const AddVisitLog = () => {
+const AddVisitLog = ({
+  patient,
+  refetchLogs,
+}: {
+  patient: Patient;
+  refetchLogs?: () => void;
+}) => {
   const [openAddVisitLogForm, setOpenAddVisitLogForm] = useState(false);
 
   return (
@@ -21,6 +28,8 @@ const AddVisitLog = () => {
       <AddVisitLogForm
         open={openAddVisitLogForm}
         setOpen={setOpenAddVisitLogForm}
+        patient={patient}
+        refetchLogs={refetchLogs}
       />
     </>
   );

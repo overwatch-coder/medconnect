@@ -19,12 +19,14 @@ import GenerateTablePagination from "@/components/GenerateTablePagination";
 import { Patient } from "@/types/backend";
 import { deletePatient } from "@/actions/patients.action";
 import { useRouter } from "next/navigation";
+import dobToAge from "dob-to-age";
+import { useMutateData } from "@/hooks/useFetch";
 
 const tableHeaderNames = [
   "Patient Name",
-  "Patient ID",
+  "Age",
   "Gender",
-  "Location",
+  "Blood Group",
   "Phone Number",
   "Date Added",
 ];
@@ -62,9 +64,18 @@ const GeneratePatientsTable = ({
     setCurrentTablePage(pageNumber);
   };
 
+  // delete patient mutation
+
+  const { mutateAsync, isPending: pending } = useMutateData({
+    mutationFn: async (patientId: string) => deletePatient(patientId),
+    config: {
+      queryKey: ["patients"],
+    },
+  });
+
   // Handle delete
   const handleDelete = async (patient: Patient) => {
-    await deletePatient(patient._id);
+    const res = await mutateAsync(patient._id);
 
     toast.success("Patient deleted successfully");
     setFilteredPatientsData(
@@ -72,8 +83,7 @@ const GeneratePatientsTable = ({
     );
     setPatientToDelete(undefined);
     setOpenDeleteModal(false);
-
-    router.refresh()
+    router.refresh();
   };
 
   return (
@@ -111,50 +121,56 @@ const GeneratePatientsTable = ({
         </TableHeader>
 
         <TableBody className="w-full">
-          {currentData.map((patient) => (
-            <TableRow key={patient._id}>
-              <TableCell className="text-secondary-gray flex items-center gap-2">
-                <div className="flex items-center justify-center gap-2 h-10 w-10 rounded-full p-2 bg-primary-gray/10">
-                  <p className="text-primary-green font-bold text-center">
-                    {patient.firstName.charAt(0)} {patient.lastName.charAt(0)}
-                  </p>
-                </div>
-                <Link
-                  href={`/dashboard/patients/${patient._id}`}
-                  className="hover:underline"
-                >
-                  {patient.firstName} {patient.lastName}
-                </Link>
-              </TableCell>
-              <TableCell className="text-secondary-gray">
-                {patient.patientId}
-              </TableCell>
-              <TableCell className="text-secondary-gray">
-                {patient.gender}
-              </TableCell>
-              <TableCell className="text-secondary-gray">
-                {patient.location}
-              </TableCell>
-              <TableCell className="text-secondary-gray">
-                {patient.contact}
-              </TableCell>
-              <TableCell className="text-secondary-gray">
-                {patient.createdAt.split("T")[0]}
-              </TableCell>
-              <TableCell className="flex items-center gap-3">
-                <EditPatient patient={patient} />
+          {currentData
+            .sort(
+              (a, b) =>
+                new Date(b.createdAt).getTime() -
+                new Date(a.createdAt).getTime()
+            )
+            .map((patient) => (
+              <TableRow key={patient._id}>
+                <TableCell className="text-secondary-gray flex items-center gap-2">
+                  <div className="flex items-center justify-center gap-2 h-10 w-10 rounded-full p-2 bg-primary-gray/10">
+                    <p className="text-primary-green font-bold text-center">
+                      {patient.firstName.charAt(0)} {patient.lastName.charAt(0)}
+                    </p>
+                  </div>
+                  <Link
+                    href={`/dashboard/patients/${patient._id}`}
+                    className="hover:underline capitalize"
+                  >
+                    {patient.firstName} {patient.lastName}
+                  </Link>
+                </TableCell>
+                <TableCell className="text-secondary-gray">
+                  {dobToAge(patient.dateOfBirth)}
+                </TableCell>
+                <TableCell className="text-secondary-gray">
+                  {patient.gender}
+                </TableCell>
+                <TableCell className="text-secondary-gray">
+                  {patient.additional?.bloodGroup}
+                </TableCell>
+                <TableCell className="text-secondary-gray">
+                  {patient.contact}
+                </TableCell>
+                <TableCell className="text-secondary-gray">
+                  {patient.createdAt.split("T")[0]}
+                </TableCell>
+                <TableCell className="flex items-center gap-3">
+                  <EditPatient patient={patient} />
 
-                <Trash2
-                  size={20}
-                  className="text-primary-green cursor-pointer"
-                  onClick={() => {
-                    setPatientToDelete(patient);
-                    setOpenDeleteModal(true);
-                  }}
-                />
-              </TableCell>
-            </TableRow>
-          ))}
+                  <Trash2
+                    size={20}
+                    className="text-primary-green cursor-pointer"
+                    onClick={() => {
+                      setPatientToDelete(patient);
+                      setOpenDeleteModal(true);
+                    }}
+                  />
+                </TableCell>
+              </TableRow>
+            ))}
         </TableBody>
       </Table>
 
@@ -164,6 +180,7 @@ const GeneratePatientsTable = ({
         title="Delete Patient"
         description="Are you sure you want to delete this patient from the system?"
         deleteFn={() => handleDelete(patientToDelete!)}
+        pending={pending}
       />
 
       {/* Pagination */}

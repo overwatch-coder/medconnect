@@ -30,3 +30,21 @@ export const healthOfficialEmergencyContactSchema = z.object({
     .min(1, "Email is required")
     .email("Enter a valid email address"),
 });
+
+export const HealthStaffSchema = z.object({
+  fullName: z.string().min(1, "Full Name is required"),
+  dateOfBirth: z.string().min(1, "Date of Birth is required"),
+  dateOfHire: z.string().min(1, "Date of Hire is required"),
+  position: z.string().min(1, "Position is required"),
+  email: z
+    .string()
+    .min(1, "Email is required")
+    .email("Enter a valid email address"),
+  gender: z
+    .string()
+    .min(1, "Gender is required")
+    .transform((val) => val.charAt(0).toUpperCase().concat(val.slice(1))),
+  workSchedule: z.string().min(1, "Work Schedule is required"),
+  chpsCompoundId: z.string().min(1, "Chps Compound ID is required"),
+  contact: z.string().min(1, "Contact is required"),
+});

@@ -3,7 +3,6 @@
 import CustomInputForm from "@/components/CustomInputForm";
 import ImagePreview from "@/components/ImagePreview";
 import { Button } from "@/components/ui/button";
-import { settingsSchema } from "@/schema/setting.schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { FileDrop } from "@instructure/ui-file-drop";
 import { Upload } from "lucide-react";
@@ -12,13 +11,21 @@ import React from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import ClipLoader from "react-spinners/ClipLoader";
 import { toast } from "react-toastify";
-import { SettingsType } from "@/types/index";
+import { CompoundType } from "@/types/index";
 import { useAuth } from "@/hooks";
-import { useMutation } from "@tanstack/react-query";
+import { useQueryClient } from "@tanstack/react-query";
+import { compoundSchema } from "@/schema/compound.schema";
+import { z } from "zod";
+import { fileToBase64 } from "file64";
+import axios from "axios";
+import { useMutateData } from "@/hooks/useFetch";
+import { createChpsCompound } from "@/actions/chps-compound.action";
+import { ChpsCompound } from "@/types/backend";
 
 const AddCompoundForm = () => {
   const router = useRouter();
   const [user] = useAuth();
+  const queryClient = useQueryClient();
 
   const {
     register,
@@ -26,50 +33,64 @@ const AddCompoundForm = () => {
     handleSubmit,
     watch,
     setValue,
-  } = useForm<SettingsType>({
-    resolver: zodResolver(settingsSchema),
+  } = useForm<CompoundType & { profilePicture: any }>({
+    resolver: zodResolver(
+      compoundSchema.extend({
+        profilePicture: z.any().optional(),
+      })
+    ),
     defaultValues: {
-      compoundName: user?.isSuperAdmin
-        ? user.admin?.name
-        : user?.staff?.fullName,
-      email: user?.auth.email,
-      location: "",
-      region: "",
-      district: "",
-      contactInformation: user?.isSuperAdmin
-        ? user.admin?.contact
-        : user?.staff?.contact,
-      availableServices: "",
-      operatingHours: "",
-      staffInformation: "",
-      facilityDetails: "",
-      historicalInformation: "",
-      communityOutreachContact: "",
-      emergencyContact: "",
-      notifications: false,
-      profilePicture: null,
-      userId: user?.auth.id,
+      createdById: user?.admin?._id!,
+      authUserId: user?.auth.id!,
+      isSuperAdmin: user?.isSuperAdmin!,
     },
     mode: "all",
   });
 
   const profilePicture = watch("profilePicture");
 
-  const { mutateAsync, isPending: pending } = useMutation({
-    mutationKey: ["compound"],
-    mutationFn: async (data: SettingsType) => {
-      return data;
-    },
-    onSettled: (result) => {
-      toast.success("Compound added successfully");
-      const compoundId = "mck001";
-      router.replace(`/dashboard/compounds/${compoundId}`);
+  const { mutateAsync, isPending: pending } = useMutateData<
+    CompoundType,
+    ChpsCompound
+  >({
+    mutationFn: async (data: CompoundType) => createChpsCompound(data),
+    config: {
+      queryKey: ["compounds"],
     },
   });
 
-  const submitAddCompound: SubmitHandler<SettingsType> = async (data) => {
-    console.log({ data });
-    await mutateAsync(data);
+  const submitAddCompound: SubmitHandler<
+    CompoundType & { profilePicture: any }
+  > = async (data) => {
+    const baseUrl =
+      "https://freeimage.host/api/1/upload?key=6d207e02198a847aa98d0a2a901485a5";
+
+    const profilePicbase64 = data.profilePicture
+      ? await fileToBase64(data.profilePicture)
+      : "";
+    console.log({ profilePicbase64, data });
+
+    const res = await axios.post(`${baseUrl}&source=${profilePicbase64}`);
+    const profilePictureUrl = res.data?.image?.url as string;
+
+    const { profilePicture, ...rest } = data;
+
+    console.log({ profilePictureUrl, rest });
+
+    await mutateAsync(
+      { ...rest, profilePictureUrl: profilePictureUrl },
+      {
+        onSuccess: (data) => {
+          toast.success("Compound added successfully");
+          const compoundId = data?._id!;
+          queryClient.invalidateQueries({ queryKey: ["compounds"] });
+          router.replace(`/dashboard/compounds/${compoundId}`);
+        },
+        onError: (err) => {
+          toast.error("Something went wrong");
+        },
+      }
+    );
   };
 
   return (
@@ -96,7 +117,7 @@ const AddCompoundForm = () => {
             <div className="grid grid-cols-1 md:grid-cols-3 w-full gap-5">
               <CustomInputForm
                 labelName="Compound Name"
-                inputName="compoundName"
+                inputName="name"
                 errors={errors}
                 inputType="text"
                 placeholderText="Enter your compound name"
@@ -134,7 +155,7 @@ const AddCompoundForm = () => {
 
               <CustomInputForm
                 labelName="Contact Information"
-                inputName="contactInformation"
+                inputName="contact"
                 errors={errors}
                 inputType="text"
                 placeholderText="Enter your contact information"
@@ -142,7 +163,7 @@ const AddCompoundForm = () => {
               />
 
               <CustomInputForm
-                labelName="Available Services"
+                labelName="Available Services (comma separated)"
                 inputName="availableServices"
                 errors={errors}
                 inputType="text"
@@ -162,11 +183,36 @@ const AddCompoundForm = () => {
               />
 
               <CustomInputForm
-                labelName="User ID"
-                inputName="userId"
+                labelName="Auth User ID"
+                inputName="authUserId"
                 errors={errors}
                 inputType="hidden"
                 register={register}
+              />
+
+              <CustomInputForm
+                labelName="Created By ID"
+                inputName="createdById"
+                errors={errors}
+                inputType="hidden"
+                register={register}
+              />
+
+              <CustomInputForm
+                labelName="Is Super Admin?"
+                inputName="isSuperAdmin"
+                errors={errors}
+                inputType="hidden"
+                register={register}
+              />
+
+              <CustomInputForm
+                labelName="Do you accept the terms and conditions?"
+                inputName="hasAcceptedTC"
+                errors={errors}
+                inputType="hidden"
+                register={register}
+                value={["true", "false"][Math.floor(Math.random() * 2)]}
               />
             </div>
           </div>
@@ -188,44 +234,6 @@ const AddCompoundForm = () => {
               />
 
               <CustomInputForm
-                labelName="Staff Information"
-                inputName="staffInformation"
-                errors={errors}
-                inputType="text"
-                placeholderText="Enter staff information"
-                register={register}
-              />
-
-              <CustomInputForm
-                labelName="Facility Details"
-                inputName="facilityDetails"
-                errors={errors}
-                inputType="text"
-                placeholderText="Enter facility details"
-                register={register}
-              />
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-3 w-full gap-5">
-              <CustomInputForm
-                labelName="Historical Information"
-                inputName="historicalInformation"
-                errors={errors}
-                inputType="text"
-                placeholderText="Enter historical information"
-                register={register}
-              />
-
-              <CustomInputForm
-                labelName="Community Outreach Programs"
-                inputName="communityOutreachContact"
-                errors={errors}
-                inputType="text"
-                placeholderText="Enter community outreach programs"
-                register={register}
-              />
-
-              <CustomInputForm
                 labelName="Emergency Contact"
                 inputName="emergencyContact"
                 errors={errors}
@@ -233,6 +241,44 @@ const AddCompoundForm = () => {
                 placeholderText="Enter emergency contact"
                 register={register}
               />
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 w-full gap-5">
+              {/* <CustomInputForm
+                labelName="Historical Information"
+                inputName="historicalInformation"
+                errors={errors}
+                inputType="text"
+                placeholderText="Enter historical information"
+                register={register}
+              /> */}
+
+              {/* <CustomInputForm
+                labelName="Community Outreach Programs"
+                inputName="communityOutreachContact"
+                errors={errors}
+                inputType="text"
+                placeholderText="Enter community outreach programs"
+                register={register}
+              /> */}
+
+              {/* <CustomInputForm
+                labelName="Staff Information"
+                inputName="staffInformation"
+                errors={errors}
+                inputType="text"
+                placeholderText="Enter staff information"
+                register={register}
+              /> */}
+
+              {/* <CustomInputForm
+                labelName="Facility Details"
+                inputName="facilityDetails"
+                errors={errors}
+                inputType="text"
+                placeholderText="Enter facility details"
+                register={register}
+              /> */}
             </div>
           </div>
         </div>
@@ -289,7 +335,7 @@ export default AddCompoundForm;
 export const FormSectionHeader = ({ title }: { title: string }) => {
   return (
     <div className="flex items-center justify-between gap-5">
-      <h2 className="text-secondary-gray text-lg font-semibold">{title}</h2>
+      <span className="text-secondary-gray text-lg font-semibold">{title}</span>
     </div>
   );
 };
@@ -319,7 +365,7 @@ const AddCompoundFormButton = ({ pending }: { pending: boolean }) => {
           {pending ? (
             <ClipLoader size={28} loading={pending} color="white" />
           ) : (
-            "Add"
+            "Add Compound"
           )}
         </Button>
       </div>

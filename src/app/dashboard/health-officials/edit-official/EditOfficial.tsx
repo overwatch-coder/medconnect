@@ -3,12 +3,12 @@
 import React, { useState } from "react";
 import { TbEdit } from "react-icons/tb";
 import { cn } from "@/lib/utils";
-import EditOfficialGeneralInfo from "@/app/dashboard/health-officials/edit-official/EditOfficialGeneralInfo";
-import { HealthOfficialType } from "@/types/index";
+import { IStaff } from "@/types/backend";
+import EditHealthOfficialInfo from "@/app/dashboard/health-officials/edit-official/EditHealthOfficialInfo";
 
 type EditOfficialProps = {
   className?: string;
-  healthOfficial: HealthOfficialType;
+  healthOfficial: IStaff;
 };
 
 const EditOfficial = ({ className, healthOfficial }: EditOfficialProps) => {
@@ -22,7 +22,7 @@ const EditOfficial = ({ className, healthOfficial }: EditOfficialProps) => {
         className={cn("text-red-500 cursor-pointer", className)}
       />
 
-      <EditOfficialGeneralInfo
+      <EditHealthOfficialInfo
         open={openEditOfficial}
         setOpen={setOpenEditOfficial}
         healthOfficial={healthOfficial}

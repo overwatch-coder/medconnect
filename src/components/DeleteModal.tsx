@@ -3,16 +3,16 @@
 import React from "react";
 import {
   AlertDialog,
-  AlertDialogAction,
   AlertDialogCancel,
   AlertDialogContent,
   AlertDialogDescription,
-  AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 
 import { X } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { ClipLoader } from "react-spinners";
 
 type DeleteModalProps<T> = {
   openModal: boolean;
@@ -22,6 +22,7 @@ type DeleteModalProps<T> = {
   deleteFn: (
     data?: T | React.MouseEvent<HTMLButtonElement, MouseEvent>
   ) => Promise<void>;
+  pending?: boolean;
 };
 
 const DeleteModal = <T,>({
@@ -30,6 +31,7 @@ const DeleteModal = <T,>({
   title,
   description,
   deleteFn,
+  pending,
 }: DeleteModalProps<T>) => {
   return (
     <AlertDialog open={openModal} onOpenChange={setOpenModal}>
@@ -48,20 +50,34 @@ const DeleteModal = <T,>({
           </AlertDialogTitle>
 
           <AlertDialogDescription className="flex flex-col gap-5">
-            <p className="text-secondary-gray font-semibold">{description}</p>
+            <span className="text-secondary-gray font-semibold">
+              {description}
+            </span>
           </AlertDialogDescription>
 
-          <AlertDialogFooter className="flex items-center justify-end ms-auto w-full md:w-1/2">
+          <form
+            method="post"
+            className="flex items-center justify-end gap-5 ms-auto w-full md:w-1/2"
+          >
             <AlertDialogCancel className="rounded-none w-full bg-transparent hover:bg-transparent border border-secondary-gray/50 text-secondary-gray">
               Cancel
             </AlertDialogCancel>
-            <AlertDialogAction
-              onClick={deleteFn}
+
+            <Button
+              onClick={(e) => {
+                e.preventDefault();
+                deleteFn();
+              }}
+              disabled={pending}
               className="text-white bg-primary-green py-3 w-full rounded-none"
             >
-              Confirm
-            </AlertDialogAction>
-          </AlertDialogFooter>
+              {pending ? (
+                <ClipLoader size={28} loading={pending} color="white" />
+              ) : (
+                "Confirm"
+              )}
+            </Button>
+          </form>
         </AlertDialogHeader>
       </AlertDialogContent>
     </AlertDialog>

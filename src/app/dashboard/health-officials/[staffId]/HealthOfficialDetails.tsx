@@ -1,12 +1,12 @@
 "use client";
 import GeneralInformation from "@/app/dashboard/health-officials/[staffId]/GeneralInformation";
-import { HealthOfficialType } from "@/types/index";
+import { IStaff } from "@/types/backend";
 import { ArrowLeft } from "lucide-react";
 import { useRouter } from "next/navigation";
 import React from "react";
 
 type HealthOfficialDetailsProps = {
-  healthOfficial: HealthOfficialType;
+  healthOfficial: IStaff;
 };
 
 const HealthOfficialDetails = ({
@@ -27,8 +27,7 @@ const HealthOfficialDetails = ({
           />
 
           <p className="text-white text-center font-medium">
-            {healthOfficial.firstName} {healthOfficial.lastName} (
-            {healthOfficial.staffID.toUpperCase()})
+            {healthOfficial.fullName} ({healthOfficial.staffId.toUpperCase()})
           </p>
         </div>
       </section>

@@ -14,13 +14,22 @@ import { IoIosArrowRoundUp } from "react-icons/io";
 import { IoCheckboxOutline } from "react-icons/io5";
 import GenerateTable from "@/app/dashboard/GenerateTable";
 import { TableCell, TableRow } from "@/components/ui/table";
+import { ChpsCompound, IStaff } from "@/types/backend";
 
-const SuperAdminDashboard = () => {
+type SuperAdminDashboardProps = {
+  totalChpsCompounds: ChpsCompound[];
+  totalHealthOfficials: IStaff[];
+};
+
+const SuperAdminDashboard = ({
+  totalChpsCompounds,
+  totalHealthOfficials,
+}: SuperAdminDashboardProps) => {
   const [user] = useAuth();
   const isUserAdmin = user?.isSuperAdmin;
   const [currentTablePage, setCurrentTablePage] = useState(1);
   const tableDataPerPage = 5;
-  const tableData = MEDCONNECT_SUPER_ADMIN_DASHBOARD_COMPOUNDS;
+  const tableData = totalChpsCompounds;
 
   // Get current appointments for the page
   const indexOfLastData = currentTablePage * tableDataPerPage;
@@ -42,7 +51,7 @@ const SuperAdminDashboard = () => {
               <div className="flex flex-col gap-4">
                 <div className="flex flex-col gap-4 relative">
                   <p className="font-bold text-2xl relative text-primary-green">
-                    <span>240</span>
+                    <span>{totalChpsCompounds.length}</span>
                     <span className="text-red-500 text-xs absolute bottom-0 left-10 flex items-center">
                       <IoIosArrowRoundUp size={10} className="text-red-500" />{" "}
                       <span>10%</span>
@@ -51,12 +60,16 @@ const SuperAdminDashboard = () => {
 
                   <div className="flex items-center gap-2 md:gap-5">
                     <p className="flex flex-col gap-1 text-secondary-gray">
-                      <span className="font-bold text-sm">150</span>
+                      <span className="font-bold text-sm">
+                        {Math.floor(Math.random() * totalChpsCompounds.length)}
+                      </span>
                       <span className="font-light text-xs">Rural</span>
                     </p>
 
                     <p className="flex flex-col gap-1 text-secondary-gray">
-                      <span className="font-bold text-sm">90</span>
+                      <span className="font-bold text-sm">
+                        {Math.floor(Math.random() * totalChpsCompounds.length)}
+                      </span>
                       <span className="font-light text-xs">Sub-Town</span>
                     </p>
                   </div>
@@ -70,23 +83,43 @@ const SuperAdminDashboard = () => {
                 Total Health Officials
               </h2>
 
-              <p className="text-3xl text-primary-green font-bold">100</p>
+              <p className="text-3xl text-primary-green font-bold">
+                {totalHealthOfficials.length}
+              </p>
 
               <div className="flex items-center gap-2 justify-between">
                 <p className="flex flex-col gap-1 text-secondary-gray">
-                  <span className="font-bold text-sm">57</span>
+                  <span className="font-bold text-sm">
+                    {
+                      totalHealthOfficials.filter(
+                        (staff) => staff.position === "Nurse"
+                      ).length
+                    }
+                  </span>
                   <span className="font-light text-xs">Nurses</span>
                 </p>
 
                 <p className="flex flex-col gap-1 text-secondary-gray">
-                  <span className="font-bold text-sm">33</span>
+                  <span className="font-bold text-sm">
+                    {
+                      totalHealthOfficials.filter(
+                        (staff) => staff.position === "Physician Assistant"
+                      ).length
+                    }
+                  </span>
                   <span className="font-light text-xs">
                     Physician Assistant
                   </span>
                 </p>
 
                 <p className="flex flex-col gap-1 text-secondary-gray">
-                  <span className="font-bold text-sm">10</span>
+                  <span className="font-bold text-sm">
+                    {
+                      totalHealthOfficials.filter(
+                        (staff) => staff.position === "Doctor"
+                      ).length
+                    }
+                  </span>
                   <span className="font-light text-xs">Doctors</span>
                 </p>
               </div>
@@ -106,10 +139,10 @@ const SuperAdminDashboard = () => {
               <GenerateTable
                 tableHeaderNames={[
                   "Compound Name",
-                  "Last Logged In",
-                  "Address",
+                  "Location",
                   "District",
                   "Region",
+                  "Last Logged In",
                 ]}
                 data={tableData}
                 currentPage={currentTablePage}
@@ -119,19 +152,27 @@ const SuperAdminDashboard = () => {
                 {currentData.map((data, idx) => (
                   <TableRow key={idx}>
                     <TableCell className="text-secondary-gray font-semibold">
-                      {data.compoundName}
+                      {data.name}
                     </TableCell>
+
                     <TableCell className="text-secondary-gray font-semibold">
-                      {data.lastLoggedIn}
-                    </TableCell>
-                    <TableCell className="text-secondary-gray font-semibold">
-                      {data.address}
+                      {data.location}
                     </TableCell>
                     <TableCell className="text-secondary-gray font-semibold">
                       {data.district}
                     </TableCell>
                     <TableCell className="text-secondary-gray font-semibold">
                       {data.region}
+                    </TableCell>
+                    <TableCell className="text-secondary-gray font-semibold">
+                      {
+                        [
+                          "2024/01/01",
+                          "2023/12/31",
+                          "2024/07/10",
+                          "2015/10/20",
+                        ][Math.floor(Math.random() * 4)]
+                      }
                     </TableCell>
                   </TableRow>
                 ))}

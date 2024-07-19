@@ -1,9 +1,7 @@
 import { z } from "zod";
 
 export const prescriptionSchema = z.object({
-  prescriptionFor: z.string().trim().min(1, "Prescription For is required"),
   date: z.string().trim().min(1, "Date is required"),
-  prescriptionID: z.string().trim().min(1, "Prescription ID is required"),
   healthOfficialName: z
     .string()
     .trim()
@@ -12,5 +10,5 @@ export const prescriptionSchema = z.object({
   dosage: z.string().trim().min(1, "Dosage is required"),
   frequency: z.string().trim().min(1, "Frequency is required"),
   duration: z.string().trim().min(1, "Duration is required"),
-  notes: z.string().trim().min(1, "Notes is required").optional(),
+  notes: z.string().trim().min(1, "Notes is required"),
 });

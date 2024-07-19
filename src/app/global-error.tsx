@@ -18,8 +18,8 @@ export default function GlobalError({
           <title>Oops! Something went wrong!</title>
         </Head>
 
-        <section className="flex min-h-screen relative w-full">
-          <header className="w-full py-3 px-3 md:px-4 bg-white shadow-md z-50">
+        <section className="flex flex-col gap-5 min-h-screen relative w-full">
+          <header className="w-full py-3 px-3 md:px-4 bg-white shadow-sm z-50">
             <div className="flex items-center justify-between relative w-full">
               <Link href={"/"} className="flex items-center gap-2">
                 <Image
@@ -36,14 +36,14 @@ export default function GlobalError({
               <ul className="items-center gap-6 md:flex">
                 <Link
                   href={"/"}
-                  className="hover:scale-105 transition p-4 rounded-full bg-primary-gray/10 flex flex-col items-center"
+                  className="text-white text-center bg-primary-green hover:bg-primary-green rounded-none w-full px-5 py-3"
                 >
                   Home
                 </Link>
 
                 <Link
                   href={"/dashboard"}
-                  className="hover:scale-105 transition p-4 rounded-full bg-primary-gray/10 flex flex-col items-center"
+                  className="text-white text-center bg-primary-green hover:bg-primary-green rounded-none w-full px-5 py-3"
                 >
                   Dashboard
                 </Link>
@@ -77,7 +77,7 @@ export default function GlobalError({
           </div>
 
           {/* Footer */}
-          <div className="py-2 px-3">
+          <div className="py-2 px-3 flex flex-col items-center w-full">
             <p className="text-secondary-gray text-sm font-semibold">
               &copy; Copyright medconnect {new Date().getFullYear()} . All
               rights reserved

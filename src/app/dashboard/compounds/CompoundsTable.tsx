@@ -1,7 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
-import { MEDCONNECT_SUPER_ADMIN_DASHBOARD_COMPOUNDS_WITH_ACTIONS as compoundsData } from "@/constants";
+import React, { useEffect, useState } from "react";
 import { Edit, Search } from "lucide-react";
 import {
   Table,
@@ -17,27 +16,54 @@ import DeleteCompound from "@/app/dashboard/compounds/DeleteCompound";
 import EditCompoundModal from "@/app/dashboard/compounds/EditCompound";
 import { useRouter } from "next/navigation";
 import CustomFilterDropdown from "@/components/CustomFilterDropdown";
-
-export type CompoundsDataType = {
-  compoundName: string;
-  compoundId: string;
-  location: string;
-  region: string;
-};
+import { useFetch } from "@/hooks/useFetch";
+import { getAllChpsCompounds } from "@/actions/chps-compound.action";
+import { ChpsCompound } from "@/types/backend";
+import { RenderEmptyComponent } from "@/app/dashboard/health-officials/HealthOfficialsTable";
+import { ClipLoader } from "react-spinners";
 
 const CompoundsTable = () => {
+  const { data: compoundsData, isLoading } = useFetch<ChpsCompound[]>({
+    queryFn: async () => await getAllChpsCompounds(),
+    queryKey: ["compounds"],
+    enabled: true,
+  });
+
   const [filterBy, setFilterBy] = useState("Region");
   const [searchTerm, setSearchTerm] = useState("");
-  const [filteredCompoundsData, setFilteredCompoundsData] =
-    useState<CompoundsDataType[]>(compoundsData);
+  const [filteredCompoundsData, setFilteredCompoundsData] = useState<
+    ChpsCompound[]
+  >([]);
+
+  useEffect(() => {
+    if (compoundsData) {
+      setFilteredCompoundsData(compoundsData);
+    }
+  }, [compoundsData]);
+
+  if (isLoading) {
+    return (
+      <RenderEmptyComponent>
+        <ClipLoader size={100} color="#2d4763" loading={isLoading} />
+      </RenderEmptyComponent>
+    );
+  }
+
+  if (!compoundsData) {
+    return (
+      <RenderEmptyComponent>
+        <p className="text-secondary-gray text-lg font-bold text-center">
+          No compounds found
+        </p>
+      </RenderEmptyComponent>
+    );
+  }
 
   // Handle search
   const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(event.target.value);
     const filtered = compoundsData.filter((compounds) =>
-      compounds.compoundName
-        .toLowerCase()
-        .includes(event.target.value.toLowerCase())
+      compounds.name.toLowerCase().includes(event.target.value.toLowerCase())
     );
     setFilteredCompoundsData(filtered);
   };
@@ -63,15 +89,15 @@ const CompoundsTable = () => {
   };
 
   const filterOptions: {
-    value: keyof CompoundsDataType;
+    value: keyof ChpsCompound;
     label: string;
   }[] = [
     {
-      value: "compoundName",
+      value: "name",
       label: "Compound Name",
     },
     {
-      value: "compoundId",
+      value: "_id",
       label: "Compound ID",
     },
     {
@@ -133,9 +159,9 @@ export default CompoundsTable;
 
 // Compounds Table
 type CompoundsTableProps = {
-  filteredCompoundsData: CompoundsDataType[];
+  filteredCompoundsData: ChpsCompound[];
   setFilteredCompoundsData: React.Dispatch<
-    React.SetStateAction<CompoundsDataType[]>
+    React.SetStateAction<ChpsCompound[]>
   >;
 };
 
@@ -162,9 +188,7 @@ const GetCompoundsTable = ({
     if (markedCompoundIds.length === filteredCompoundsData.length) {
       setMarkedCompoundIds([]);
     } else {
-      setMarkedCompoundIds(
-        filteredCompoundsData.map((data) => data.compoundId)
-      );
+      setMarkedCompoundIds(filteredCompoundsData.map((data) => data._id));
     }
   };
 
@@ -180,7 +204,7 @@ const GetCompoundsTable = ({
     }
 
     setFilteredCompoundsData(
-      filteredCompoundsData.filter((data) => data.compoundId !== compoundId)
+      filteredCompoundsData.filter((data) => data._id !== compoundId)
     );
     setMarkedCompoundIds([]);
   };
@@ -215,10 +239,10 @@ const GetCompoundsTable = ({
           <TableRow key={idx}>
             <TableCell className="text-secondary-gray font-semibold flex items-center gap-2">
               <span
-                onClick={() => handleMarkCompound(data.compoundId)}
+                onClick={() => handleMarkCompound(data._id)}
                 className="cursor-pointer"
               >
-                {markedCompoundIds.includes(data.compoundId) ? (
+                {markedCompoundIds.includes(data._id) ? (
                   <GrCheckboxSelected
                     size={15}
                     className="text-secondary-gray cursor-pointer flex items-center gap-2"
@@ -231,16 +255,14 @@ const GetCompoundsTable = ({
                 )}
               </span>
               <span
-                onClick={() =>
-                  router.push(`/dashboard/compounds/${data.compoundId}`)
-                }
+                onClick={() => router.push(`/dashboard/compounds/${data._id}`)}
                 className="hover:underline cursor-pointer"
               >
-                {data.compoundName}
+                {data.name}
               </span>
             </TableCell>
-            <TableCell className="text-secondary-gray font-semibold">
-              {data.compoundId}
+            <TableCell className="text-secondary-gray uppercase font-semibold">
+              {data._id.slice(18)}
             </TableCell>
             <TableCell className="text-secondary-gray font-semibold">
               {data.location}
@@ -251,14 +273,14 @@ const GetCompoundsTable = ({
             <TableCell className="flex items-center gap-4">
               <Edit
                 onClick={() => {
-                  setEditCompoundId(data.compoundId);
+                  setEditCompoundId(data._id);
                   setEditCompoundModal(true);
                 }}
                 size={15}
                 className="text-secondary-gray cursor-pointer"
               />
               <DeleteCompound
-                compoundId={data.compoundId}
+                compoundId={data._id}
                 handleDelete={handleDelete}
                 markedCompoundIds={markedCompoundIds}
               />

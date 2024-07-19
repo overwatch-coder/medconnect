@@ -20,37 +20,79 @@ import { toast } from "react-toastify";
 import { DiagnosisReportType } from "@/types/index";
 import CustomFileUpload from "@/components/CustomFileUpload";
 import { diagnosisReportSchema } from "@/schema/diagnosis-report.schema";
+import { IDiagnosisReport } from "@/types/backend";
+import { useQueryClient } from "@tanstack/react-query";
+import { useMutateData } from "@/hooks/useFetch";
+import { createOrEditDiagnosisReport } from "@/actions/single-patient.action";
+import RenderCustomError from "@/components/RenderCustomError";
 
 type EditDiagnosisReportProps = {
   open: boolean;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  patientId: string;
+  refetchDiagnosisReports?: () => void;
+  diagnosisReport: IDiagnosisReport;
+  setDiagnosisReport: React.Dispatch<
+    React.SetStateAction<IDiagnosisReport | null>
+  >;
 };
 
 const EditDiagnosisReportForm = ({
   open,
   setOpen,
+  refetchDiagnosisReports,
+  diagnosisReport,
+  patientId,
+  setDiagnosisReport,
 }: EditDiagnosisReportProps) => {
+  const queryClient = useQueryClient();
   const {
     register,
     reset,
-    watch,
-    setValue,
-    formState: { errors, isSubmitting: pending },
+    formState: { errors },
     handleSubmit,
-  } = useForm<Partial<DiagnosisReportType>>({
-    resolver: zodResolver(diagnosisReportSchema.partial()),
+  } = useForm<DiagnosisReportType>({
+    resolver: zodResolver(diagnosisReportSchema),
+    defaultValues: {
+      date: diagnosisReport?.date.split("T")[0],
+      notes: diagnosisReport?.notes,
+      doctorName: diagnosisReport?.doctorName,
+      followUpDate: diagnosisReport?.followUpDate.split("T")[0],
+      symptoms: diagnosisReport?.symptoms,
+      recommendedTest: diagnosisReport?.recommendedTest,
+    },
     mode: "all",
   });
 
-  const handleFormSubmit: SubmitHandler<Partial<DiagnosisReportType>> = async (
-    data
-  ) => {
-    console.log({ data });
-    setOpen(false);
-    toast.success("Diagnosis Report modified successfully");
-    reset();
-  };
+  const {
+    mutateAsync,
+    isPending: pending,
+    isError,
+    error,
+  } = useMutateData({
+    mutationFn: async (data: DiagnosisReportType) =>
+      createOrEditDiagnosisReport(data, patientId, diagnosisReport?._id),
+    config: {
+      queryKey: ["patients", "diagnosis-reports", patientId],
+    },
+  });
 
+  const handleFormSubmit: SubmitHandler<DiagnosisReportType> = async (data) => {
+    await mutateAsync(data, {
+      onSuccess: () => {
+        setOpen(false);
+        toast.success("New report added successfully!");
+        queryClient.invalidateQueries({
+          queryKey: ["patients", "diagnosis-reports", patientId],
+        });
+        if (refetchDiagnosisReports) {
+          refetchDiagnosisReports();
+        }
+        reset();
+        setDiagnosisReport(null);
+      },
+    });
+  };
   return (
     <>
       <Dialog open={open} onOpenChange={setOpen}>
@@ -66,6 +108,7 @@ const EditDiagnosisReportForm = ({
               <DialogClose
                 onClick={() => {
                   reset();
+                  setDiagnosisReport(null);
                 }}
               >
                 <X
@@ -76,6 +119,8 @@ const EditDiagnosisReportForm = ({
             </DialogTitle>
 
             <DialogDescription className="flex flex-col gap-5 w-full">
+              <RenderCustomError isError={isError} error={error} />
+
               <form
                 onSubmit={handleSubmit(handleFormSubmit)}
                 className="flex flex-col gap-4 w-full"
@@ -83,45 +128,41 @@ const EditDiagnosisReportForm = ({
                 encType="multipart/form-data"
               >
                 <div className="flex flex-col gap-5 px-3 pt-5 pb-10 bg-white h-full">
-                  {/* Treatment Plan */}
+                  {/* Diagnosis Report */}
                   <div className="flex flex-col gap-5 p-4 rounded-md border border-secondary-gray/50 w-full">
-                    <FormSectionHeader title="Treatment Plan" />
+                    <FormSectionHeader title="Diagnosis Report" />
 
                     <div className="flex flex-col gap-5">
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-5 w-full px-2 md:px-5">
-                        <CustomInputForm
-                          labelName="Report ID"
-                          inputName="reportID"
-                          register={register}
-                          errors={errors}
-                          inputType="text"
-                          placeholderText="eg. DR13456"
-                          value={`DR${Math.floor(Math.random() * 1000)}`}
-                        />
-
                         <CustomInputForm
                           labelName="Doctor Name"
                           inputName="doctorName"
                           register={register}
                           errors={errors}
                           inputType="text"
-                          placeholderText="eg. TP1"
-                          value={
-                            ["Dr. John Doe", "Dr. Jane Doe", "Dr. Bob Doe"][
-                              Math.floor(Math.random() * 2)
-                            ]
-                          }
+                          placeholderText="eg. Dr. John Doe"
+                          value={diagnosisReport?.doctorName}
+                        />
+
+                        <CustomInputForm
+                          labelName="Recommended Test"
+                          inputName="recommendedTest"
+                          register={register}
+                          errors={errors}
+                          inputType="text"
+                          placeholderText="eg. Blood Test"
+                          value={diagnosisReport?.recommendedTest}
                         />
                       </div>
 
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-5 w-full px-2 md:px-5">
                         <CustomInputForm
                           labelName="Date of Diagnosis"
-                          inputName="diagnosisDate"
+                          inputName="date"
                           register={register}
                           errors={errors}
                           inputType="date"
-                          value={new Date().toISOString().split("T")[0]}
+                          value={diagnosisReport?.date.split("T")[0]}
                         />
 
                         <CustomInputForm
@@ -130,11 +171,11 @@ const EditDiagnosisReportForm = ({
                           register={register}
                           errors={errors}
                           inputType="date"
-                          value={new Date().toISOString().split("T")[0]}
+                          value={diagnosisReport?.followUpDate.split("T")[0]}
                         />
                       </div>
 
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-5 w-full px-2 md:px-5">
+                      <div className="grid grid-cols-1 gap-5 w-full px-2 md:px-5">
                         <CustomInputForm
                           labelName="Symptoms"
                           inputName="symptoms"
@@ -142,44 +183,21 @@ const EditDiagnosisReportForm = ({
                           errors={errors}
                           inputType="text"
                           placeholderText="eg. Fever, Cough, Headache"
-                          value={"Fever, Cough, Headache"}
+                          value={diagnosisReport?.symptoms}
                         />
 
-                        <CustomInputForm
-                          labelName="Recommended Test"
-                          inputName="recommendedTests"
-                          register={register}
-                          errors={errors}
-                          inputType="text"
-                          placeholderText="eg. Blood Test"
-                          value={"None"}
-                        />
-                      </div>
-
-                      <div className="grid grid-cols-1 gap-5 w-full px-2 md:px-5">
                         <CustomInputForm
                           labelName="Notes"
                           inputName="notes"
                           register={register}
                           errors={errors}
-                          inputType="text"
+                          inputType="textarea"
                           placeholderText="Enter notes here"
-                          value={
-                            "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas pharetra erat vel tellus tristique rutrum. Integer vulputate efficitur nibh. Morbi iaculis orci id eros fermentum vulputate. Curabitur cursus vel ante sed consectetur. Proin ut varius orci. Phasellus interdum ligula tempus, blandit risus sit amet, dapibus sem."
-                          }
+                          value={diagnosisReport?.notes}
                         />
                       </div>
                     </div>
                   </div>
-
-                  {/* Upload Medical History Form */}
-                  <CustomFileUpload
-                    setValue={setValue}
-                    watch={watch}
-                    itemName="diagnoisReportAttachments"
-                    title="Upload Patient Diagnosis Report"
-                    allowMultiple={true}
-                  />
 
                   {/* Submit form button */}
                   <EditDiagnosisReportButton pending={pending} reset={reset} />

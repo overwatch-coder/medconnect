@@ -17,6 +17,7 @@ import axios from "axios";
 import { baseChatUrl } from "@/hooks/useConvos";
 import { ClipLoader } from "react-spinners";
 import { useRouter } from "next/navigation";
+import dobToAge from "dob-to-age";
 
 export const StartChatModal = () => {
   const {
@@ -29,17 +30,13 @@ export const StartChatModal = () => {
   const router = useRouter();
 
   const getPatient = (id: string) => {
-    const {
-      firstName,
-      lastName,
-      location,
-      age = 20,
-      gender,
-    } = patients?.find((patient) => patient?._id === id) ?? {};
+    const { firstName, lastName, location, dateOfBirth, gender } =
+      patients?.find((patient) => patient?._id === id) ?? {};
+
     return {
       name: `${firstName} ${lastName}`,
       location,
-      age,
+      age: dobToAge(dateOfBirth) as string,
       gender,
     };
   };

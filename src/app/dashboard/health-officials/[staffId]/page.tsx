@@ -1,8 +1,8 @@
-import { Metadata } from "next";
 import React from "react";
-import { MEDCONNECT_DASHBOARD_PATIENTS_HEALTH_OFFICIALS as healthOfficials } from "@/constants";
 import { redirect } from "next/navigation";
 import HealthOfficialDetails from "@/app/dashboard/health-officials/[staffId]/HealthOfficialDetails";
+import { getStaffByCompoundId } from "@/actions/staff.action";
+import { currentUser } from "@/actions/user.action";
 
 type PatientInfoProps = {
   params: {
@@ -10,12 +10,19 @@ type PatientInfoProps = {
   };
 };
 
-export const generateMetadata = ({
+const getStaff = async (staffId: string, chpsId: string) => {
+  const healthOfficials = await getStaffByCompoundId(chpsId);
+  const healthOfficial = healthOfficials.find((data) => data._id === staffId);
+
+  return healthOfficial;
+};
+
+export const generateMetadata = async ({
   params: { staffId },
-}: PatientInfoProps): Metadata => {
-  const healthOfficial = healthOfficials.find(
-    (data) => data.staffID.toLowerCase() === staffId.toLowerCase()
-  );
+}: PatientInfoProps) => {
+  const user = await currentUser();
+
+  const healthOfficial = await getStaff(staffId, user?.staff?.chpsCompoundId!);
 
   if (!healthOfficial) {
     return {
@@ -28,22 +35,22 @@ export const generateMetadata = ({
     };
   }
 
-  const fullName = `${healthOfficial.firstName} ${healthOfficial.lastName}`;
-
   return {
-    title: `${fullName} | Health Officials`,
-    description: `${fullName} | Health Officials`,
+    title: `${healthOfficial.fullName} | Health Officials`,
+    description: `${healthOfficial.fullName} | Health Officials`,
     openGraph: {
-      title: `${fullName} | Health Officials`,
-      description: `${fullName} | Health Officials`,
+      title: `${healthOfficial.fullName} | Health Officials`,
+      description: `${healthOfficial.fullName} | Health Officials`,
     },
   };
 };
 
-const HealthOfficialInfo = ({ params: { staffId } }: PatientInfoProps) => {
-  const healthOfficial = healthOfficials.find(
-    (data) => data.staffID.toLowerCase() === staffId.toLowerCase()
-  );
+const HealthOfficialInfo = async ({
+  params: { staffId },
+}: PatientInfoProps) => {
+  const user = await currentUser();
+
+  const healthOfficial = await getStaff(staffId, user?.staff?.chpsCompoundId!);
 
   if (!healthOfficial) {
     return redirect("/dashboard/health-officials");

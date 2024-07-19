@@ -18,32 +18,63 @@ import { FormSectionHeader } from "@/app/dashboard/compounds/add-new/AddCompound
 import CustomInputForm from "@/components/CustomInputForm";
 import { toast } from "react-toastify";
 import { TreatmentPlanType } from "@/types/index";
-import CustomFileUpload from "@/components/CustomFileUpload";
 import { treatmentPlanSchema } from "@/schema/treatment-plan.schema";
+import { useQueryClient } from "@tanstack/react-query";
+import { useMutateData } from "@/hooks/useFetch";
+import { createOrEditTreatmentPlan } from "@/actions/single-patient.action";
+import RenderCustomError from "@/components/RenderCustomError";
 
 type UploadTreatmentPlanProps = {
   open: boolean;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  patientId: string;
+  refetchTreatmentPlans?: () => void;
 };
 
-const UploadTreatmentPlan = ({ open, setOpen }: UploadTreatmentPlanProps) => {
+const UploadTreatmentPlan = ({
+  open,
+  setOpen,
+  patientId,
+  refetchTreatmentPlans,
+}: UploadTreatmentPlanProps) => {
+  const queryClient = useQueryClient();
   const {
     register,
     reset,
-    watch,
-    setValue,
-    formState: { errors, isSubmitting: pending },
+    formState: { errors },
     handleSubmit,
   } = useForm<TreatmentPlanType>({
     resolver: zodResolver(treatmentPlanSchema),
     mode: "all",
   });
 
+  const {
+    mutateAsync,
+    isPending: pending,
+    isError,
+    error,
+  } = useMutateData({
+    mutationFn: async (data: TreatmentPlanType) =>
+      createOrEditTreatmentPlan(data, patientId, undefined),
+    config: {
+      queryKey: ["patients", "treatment-plans", patientId],
+    },
+  });
+
   const handleFormSubmit: SubmitHandler<TreatmentPlanType> = async (data) => {
-    console.log({ data });
-    setOpen(false);
-    toast.success("Treatment Plan added successfully");
-    reset();
+    await mutateAsync(data, {
+      onSuccess: () => {
+        setOpen(false);
+        toast.success("New treatment plan added successfully!");
+        queryClient.invalidateQueries({
+          queryKey: ["patients", "treatment-plans", patientId],
+        });
+        if (refetchTreatmentPlans) {
+          refetchTreatmentPlans();
+        }
+        reset();
+      },
+    });
   };
 
   return (
@@ -71,6 +102,8 @@ const UploadTreatmentPlan = ({ open, setOpen }: UploadTreatmentPlanProps) => {
             </DialogTitle>
 
             <DialogDescription className="flex flex-col gap-5 w-full">
+              <RenderCustomError isError={isError} error={error} />
+
               <form
                 onSubmit={handleSubmit(handleFormSubmit)}
                 className="flex flex-col gap-4 w-full"
@@ -85,21 +118,21 @@ const UploadTreatmentPlan = ({ open, setOpen }: UploadTreatmentPlanProps) => {
                     <div className="flex flex-col gap-5">
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-5 w-full px-2 md:px-5">
                         <CustomInputForm
-                          labelName="Treatment Plan Number"
-                          inputName="treatmentPlanNumber"
+                          labelName="Plan Name"
+                          inputName="name"
                           register={register}
                           errors={errors}
                           inputType="text"
-                          placeholderText="eg. TP1345"
+                          placeholderText="eg. Injection Phase 1"
                         />
 
                         <CustomInputForm
-                          labelName="Plan Name"
-                          inputName="planName"
+                          labelName="Medication Name"
+                          inputName="medicationName"
                           register={register}
                           errors={errors}
                           inputType="text"
-                          placeholderText="eg. TP1"
+                          placeholderText="eg. Ibuprofen"
                         />
                       </div>
 
@@ -123,8 +156,8 @@ const UploadTreatmentPlan = ({ open, setOpen }: UploadTreatmentPlanProps) => {
 
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-5 w-full px-2 md:px-5">
                         <CustomInputForm
-                          labelName="Objectives"
-                          inputName="objectives"
+                          labelName="Objective"
+                          inputName="objective"
                           register={register}
                           errors={errors}
                           inputType="text"
@@ -132,23 +165,12 @@ const UploadTreatmentPlan = ({ open, setOpen }: UploadTreatmentPlanProps) => {
                         />
 
                         <CustomInputForm
-                          labelName="Medication Name"
-                          inputName="medicationName"
-                          register={register}
-                          errors={errors}
-                          inputType="text"
-                          placeholderText="eg. Ibuprofen"
-                        />
-                      </div>
-
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-5 w-full px-2 md:px-5">
-                        <CustomInputForm
                           labelName="Follow Up Schedule"
                           inputName="followUpSchedule"
                           register={register}
                           errors={errors}
                           inputType="text"
-                          placeholderText="eg. 2024-07-19 at 10:00 AM"
+                          placeholderText="eg. Next week at 2:30pm"
                         />
                       </div>
 
@@ -158,21 +180,12 @@ const UploadTreatmentPlan = ({ open, setOpen }: UploadTreatmentPlanProps) => {
                           inputName="notes"
                           register={register}
                           errors={errors}
-                          inputType="text"
+                          inputType="textarea"
                           placeholderText="Enter notes here"
                         />
                       </div>
                     </div>
                   </div>
-
-                  {/* Upload Medical History Form */}
-                  <CustomFileUpload
-                    setValue={setValue}
-                    watch={watch}
-                    itemName="treatmentPlanAttachment"
-                    title="Upload Patient Treatment Form"
-                    allowMultiple={true}
-                  />
 
                   {/* Submit form button */}
                   <UploadTreatmentPlanButton pending={pending} reset={reset} />

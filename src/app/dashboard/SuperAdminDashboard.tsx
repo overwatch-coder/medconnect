@@ -24,12 +24,12 @@ const SuperAdminDashboard = () => {
   const [user] = useAuth();
   const { data: chpsCompounds, isLoading: isLoadingChpsCompounds } = useFetch({
     queryKey: ["chps-compound"],
-    queryFn: getAllChpsCompounds,
+    queryFn: async () => await getAllChpsCompounds(),
   });
 
   const { data: healthStaff, isLoading: isLoadingHealthStaff } = useFetch({
     queryKey: ["staff"],
-    queryFn: getAllStaff,
+    queryFn: async () => await getAllStaff(),
   });
 
   const [totalChpsCompounds, setTotalChpsCompounds] = useState<ChpsCompound[]>(

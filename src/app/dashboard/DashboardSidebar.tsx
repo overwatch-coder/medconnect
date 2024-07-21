@@ -1,4 +1,5 @@
 "use client";
+
 import React from "react";
 import Image from "next/image";
 import Link from "next/link";
@@ -20,11 +21,14 @@ const DashboardSidebar = () => {
   const [user, setUser] = useAuth();
   const router = useRouter();
   const pathname = usePathname();
+  const api_url = user?.isSuperAdmin
+    ? "/patient"
+    : `/patient/chps/${user?.staff?.chpsCompoundId}`;
 
   const { data } = useQuery({
-    queryKey: ["user"],
+    queryKey: ["user", api_url],
     queryFn: async () => {
-      const res = await axiosInstance.get("/patient");
+      const res = await axiosInstance.get(api_url);
       const result = await res.data;
 
       if (!result.status) {

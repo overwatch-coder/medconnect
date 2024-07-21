@@ -30,11 +30,12 @@ export const getPatients = async (): Promise<Patient[]> => {
 };
 
 // get all patients from the chps compound
-export const getChpsPatients = async (chpsId: string): Promise<Patient[]> => {
+export const getChpsPatients = async (chpsId?: string): Promise<Patient[]> => {
   try {
     const user = await currentUser();
+    const compoundId = user?.staff?.chpsCompoundId;
 
-    const res = await axiosInstance.get(`/patient/chps/${chpsId}`, {
+    const res = await axiosInstance.get(`/patient/chps/${compoundId}`, {
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${user?.auth.token}`,
@@ -49,7 +50,7 @@ export const getChpsPatients = async (chpsId: string): Promise<Patient[]> => {
 
     return data;
   } catch (error: any) {
-    console.log({ error, in: "getChpsPatients" });
+    console.log({ error, data: error?.response?.data, in: "getChpsPatients error" });
     return error;
   }
 };
@@ -59,7 +60,15 @@ export const getPatient = async (
   patientId: string
 ): Promise<Patient | undefined> => {
   try {
-    const patients = (await getPatients()) as Patient[];
+    const user = await currentUser();
+
+    if (!user || !user.staff) {
+      throw new Error("Not authorized");
+    }
+
+    const patients = (await getChpsPatients(
+      user?.staff?.chpsCompoundId
+    )) as Patient[];
     const patient = patients.find((patient) => patient._id === patientId);
 
     if (!patient) {
@@ -68,7 +77,7 @@ export const getPatient = async (
 
     return patient;
   } catch (error: any) {
-    console.log({ error, in: "getPatients" });
+    console.log({ error, in: "getPatients error" });
     return error;
   }
 };

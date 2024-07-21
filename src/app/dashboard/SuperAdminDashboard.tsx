@@ -28,7 +28,7 @@ const SuperAdminDashboard = () => {
   });
 
   const { data: healthStaff, isLoading: isLoadingHealthStaff } = useFetch({
-    queryKey: ["chps-compound"],
+    queryKey: ["staff"],
     queryFn: getAllStaff,
   });
 

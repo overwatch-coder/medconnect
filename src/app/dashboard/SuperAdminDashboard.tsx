@@ -4,28 +4,50 @@ import LineChart from "@/app/dashboard/graphs/LineChart";
 import {
   MEDCONNECT_DASHBOARD_RECENT_ACTIVITIES,
   MEDCONNECT_DASHBOARD_REPORTS,
-  MEDCONNECT_SUPER_ADMIN_DASHBOARD_COMPOUNDS,
 } from "@/constants";
 import { useAuth } from "@/hooks";
 import { Trash2 } from "lucide-react";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { GrPowerCycle } from "react-icons/gr";
 import { IoIosArrowRoundUp } from "react-icons/io";
 import { IoCheckboxOutline } from "react-icons/io5";
 import GenerateTable from "@/app/dashboard/GenerateTable";
 import { TableCell, TableRow } from "@/components/ui/table";
 import { ChpsCompound, IStaff } from "@/types/backend";
+import { getAllStaff } from "@/actions/staff.action";
+import { getAllChpsCompounds } from "@/actions/chps-compound.action";
+import { useFetch } from "@/hooks/useFetch";
+import { RenderEmptyComponent } from "@/app/dashboard/health-officials/HealthOfficialsTable";
+import { ClipLoader } from "react-spinners";
 
-type SuperAdminDashboardProps = {
-  totalChpsCompounds: ChpsCompound[];
-  totalHealthOfficials: IStaff[];
-};
-
-const SuperAdminDashboard = ({
-  totalChpsCompounds,
-  totalHealthOfficials,
-}: SuperAdminDashboardProps) => {
+const SuperAdminDashboard = () => {
   const [user] = useAuth();
+  const { data: chpsCompounds, isLoading: isLoadingChpsCompounds } = useFetch({
+    queryKey: ["chps-compound"],
+    queryFn: async () => await getAllChpsCompounds(),
+  });
+
+  const { data: healthStaff, isLoading: isLoadingHealthStaff } = useFetch({
+    queryKey: ["staff"],
+    queryFn: async () => await getAllStaff(),
+  });
+
+  const [totalChpsCompounds, setTotalChpsCompounds] = useState<ChpsCompound[]>(
+    []
+  );
+  const [totalHealthOfficials, setTotalHealthOfficials] = useState<IStaff[]>(
+    []
+  );
+
+  useEffect(() => {
+    if (chpsCompounds) {
+      setTotalChpsCompounds(chpsCompounds);
+    }
+    if (healthStaff) {
+      setTotalHealthOfficials(healthStaff);
+    }
+  }, [chpsCompounds, healthStaff]);
+
   const isUserAdmin = user?.isSuperAdmin;
   const [currentTablePage, setCurrentTablePage] = useState(1);
   const tableDataPerPage = 5;
@@ -35,6 +57,14 @@ const SuperAdminDashboard = ({
   const indexOfLastData = currentTablePage * tableDataPerPage;
   const indexOfFirstData = indexOfLastData - tableDataPerPage;
   const currentData = tableData.slice(indexOfFirstData, indexOfLastData);
+
+  if (isLoadingChpsCompounds || isLoadingHealthStaff) {
+    return (
+      <RenderEmptyComponent>
+        <ClipLoader size={30} loading={true} color="#2D4763" />
+      </RenderEmptyComponent>
+    );
+  }
 
   return (
     <div className={`${isUserAdmin ? "" : "hidden"}`}>

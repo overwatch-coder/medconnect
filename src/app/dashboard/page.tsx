@@ -2,24 +2,19 @@ import React from "react";
 import DashboardContentHeader from "@/app/dashboard/DashboardContentHeader";
 import AdminDashboard from "@/app/dashboard/AdminDashboard";
 import SuperAdminDashboard from "@/app/dashboard/SuperAdminDashboard";
-import { getAllStaff } from "@/actions/staff.action";
-import { getAllChpsCompounds } from "@/actions/chps-compound.action";
+import { currentUser } from "@/actions/user.action";
 
 const Dashboard = async () => {
-  const totalChpsCompounds = await getAllChpsCompounds();
-  const totalHealthOfficials = await getAllStaff();
-
+  const user = await currentUser();
+  const isSuperAdmin = user?.isSuperAdmin;
   return (
     <div className="flex flex-col gap-5 w-full">
       {/* Header */}
       <DashboardContentHeader headerTitle="Dashboard" showDate={true} />
 
-      <AdminDashboard />
+      {!isSuperAdmin && <AdminDashboard />}
 
-      <SuperAdminDashboard
-        totalChpsCompounds={totalChpsCompounds}
-        totalHealthOfficials={totalHealthOfficials}
-      />
+      {isSuperAdmin && <SuperAdminDashboard />}
     </div>
   );
 };

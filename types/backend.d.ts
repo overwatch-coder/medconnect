@@ -17,6 +17,13 @@ declare interface AdminData {
   profilePictureUrl?: string;
 }
 
+declare interface UserType {
+  auth: AuthData;
+  admin: AdminData | null;
+  staff: StaffData | null;
+  isSuperAdmin: boolean;
+}
+
 declare interface StaffData {
   _id: string;
   staffId: string;
@@ -27,18 +34,11 @@ declare interface StaffData {
   position: string;
   email: string;
   gender: string;
-  workSchedule: Record<string, any>;
+  workSchedule: any[];
   chpsCompoundId: string;
   createdAt: string;
   updatedAt: string;
   __v: number;
-}
-
-declare interface UserType {
-  auth: AuthData;
-  admin: AdminData | null;
-  staff: StaffData | null;
-  isSuperAdmin: boolean;
 }
 
 // === PATIENT ===
@@ -84,6 +84,11 @@ export type Patient = PatientBasicInfo & {
 };
 
 // === CHPS COMPOUND ===
+declare interface IChpsCompound {
+  chpsCompound: ChpsCompound;
+  staff: StaffData;
+}
+
 declare interface ChpsCompound {
   _id: string;
   name: string;

@@ -4,7 +4,6 @@ import DoughnutChart from "@/app/dashboard/graphs/DoughnutChart";
 import {
   MEDCONNECT_DASHBOARD_RECENT_ACTIVITIES,
   MEDCONNECT_DASHBOARD_REPORTS,
-  MEDCONNECT_DASHBOARD_UPCOMING_APPOINTMENTS,
 } from "@/constants";
 import { useAuth } from "@/hooks";
 import { Trash2 } from "lucide-react";
@@ -16,27 +15,50 @@ import { IoCheckboxOutline } from "react-icons/io5";
 import { LiaFemaleSolid, LiaMaleSolid } from "react-icons/lia";
 import { TableCell, TableRow } from "@/components/ui/table";
 import GenerateTable from "@/app/dashboard/GenerateTable";
-import { IStaff, Patient } from "@/types/backend";
+import { IAppointment, IPrescription, IStaff, Patient } from "@/types/backend";
 import { useFetch } from "@/hooks/useFetch";
 import { getChpsPatients } from "@/actions/patients.action";
 import { getStaffByCompoundId } from "@/actions/staff.action";
+import {
+  getAllAppointments,
+  getAllPrescriptions,
+} from "@/actions/single-patient.action";
 
 const AdminDashboard = () => {
   const [user] = useAuth();
   const isUserAdmin = user?.isSuperAdmin;
 
+  // patients data
   const { data: patientData } = useFetch<Patient[]>({
     queryKey: ["patients", user?.staff?.chpsCompoundId!],
     queryFn: async () => await getChpsPatients(user?.staff?.chpsCompoundId!),
   });
+
+  // health officials data
   const { data: healthOfficialsData } = useFetch<IStaff[]>({
     queryKey: ["staff", user?.staff?.chpsCompoundId!],
     queryFn: async () =>
       await getStaffByCompoundId(user?.staff?.chpsCompoundId!),
   });
 
+  // appointments data
+  const { data: appointmentsData } = useFetch<IAppointment[]>({
+    queryKey: ["appointments"],
+    queryFn: async () => await getAllAppointments(),
+    enabled: true,
+  });
+
+  // prescriptions data
+  const { data: prescriptionsData } = useFetch<IPrescription[]>({
+    queryKey: ["prescriptions"],
+    queryFn: async () => await getAllPrescriptions(),
+    enabled: true,
+  });
+
   const [patients, setPatients] = useState<Patient[]>([]);
   const [healthOfficials, setHealthOfficials] = useState<IStaff[]>([]);
+  const [appointments, setAppointments] = useState<IAppointment[]>([]);
+  const [prescriptions, setPrescriptions] = useState<IPrescription[]>([]);
 
   useEffect(() => {
     if (patientData) {
@@ -46,11 +68,21 @@ const AdminDashboard = () => {
     if (healthOfficialsData) {
       setHealthOfficials(healthOfficialsData);
     }
-  }, [healthOfficialsData, patientData]);
+
+    if (appointmentsData) {
+      setAppointments(
+        appointmentsData.filter((item) => item.isClosed === false)
+      );
+    }
+
+    if (prescriptionsData) {
+      setPrescriptions(prescriptionsData);
+    }
+  }, [appointmentsData, healthOfficialsData, patientData, prescriptionsData]);
 
   const [currentTablePage, setCurrentTablePage] = useState(1);
   const tableDataPerPage = 5;
-  const tableData = MEDCONNECT_DASHBOARD_UPCOMING_APPOINTMENTS;
+  const tableData = appointments;
 
   // Get current appointments for the page
   const indexOfLastData = currentTablePage * tableDataPerPage;
@@ -198,16 +230,30 @@ const AdminDashboard = () => {
                 Prescriptions
               </h2>
 
-              <p className="text-3xl text-primary-green font-bold">300</p>
+              <p className="text-3xl text-primary-green font-bold">
+                {prescriptions.length}
+              </p>
 
               <div className="flex items-center gap-2">
                 <p className="flex flex-col gap-1 text-secondary-gray">
-                  <span className="font-bold text-sm">20</span>
+                  <span className="font-bold text-sm">
+                    {
+                      prescriptions.filter(
+                        (item) => new Date(item.date) === new Date()
+                      ).length
+                    }
+                  </span>
                   <span className="font-light text-xs">Issued Today</span>
                 </p>
 
                 <p className="flex flex-col gap-1 text-secondary-gray">
-                  <span className="font-bold text-sm">9</span>
+                  <span className="font-bold text-sm">
+                    {
+                      prescriptions.filter(
+                        (item) => new Date(item.date) > new Date()
+                      ).length
+                    }
+                  </span>
                   <span className="font-light text-xs">Pending</span>
                 </p>
               </div>
@@ -240,21 +286,23 @@ const AdminDashboard = () => {
                 dataPerPage={tableDataPerPage}
               >
                 {currentData.map((data) => (
-                  <TableRow key={data.patientID}>
+                  <TableRow key={data._id}>
                     <TableCell className="text-secondary-gray font-semibold">
-                      {data.patientName}
+                      {`${data.patient.firstName} ${data.patient.lastName}`}
                     </TableCell>
                     <TableCell className="text-secondary-gray font-semibold">
-                      {data.patientID}
+                      {data.patient.patientId}
                     </TableCell>
                     <TableCell className="text-secondary-gray font-semibold">
-                      {data.assignedHO}
+                      {data.official}
                     </TableCell>
                     <TableCell className="text-secondary-gray font-semibold">
-                      {data.appointmentDate}
+                      {new Date(data.date).toISOString().split("T")[0]}
                     </TableCell>
                     <TableCell className="text-secondary-gray font-semibold">
-                      {data.appointmentTime}
+                      {new Date(data.date).toLocaleTimeString("en-US", {
+                        timeStyle: "short",
+                      })}
                     </TableCell>
                   </TableRow>
                 ))}
@@ -279,7 +327,9 @@ const AdminDashboard = () => {
             <div className="flex flex-col items-center pt-5">
               <DoughnutChart
                 labels={["Excellent", "Good", "Average", "Poor"]}
-                data={[40, 20, 80, 10]}
+                data={Array.from({ length: 4 }, (_, i) =>
+                  Math.floor(Math.random() * 300)
+                )}
                 bgColors={["#FF000080", "#FFFF0080", "#40E0D080", "#2D476380"]}
               />
             </div>
@@ -337,7 +387,9 @@ const AdminDashboard = () => {
                   "Respiratory Infections",
                   "Gastrointestinal Diseases",
                 ]}
-                data={[145, 10, 50]}
+                data={Array.from({ length: 3 }, (_, i) =>
+                  Math.floor(Math.random() * 300)
+                )}
                 bgColors={["#FF0000", "#FFFF00", "#40E0D0"]}
               />
             </div>

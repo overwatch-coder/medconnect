@@ -6,6 +6,7 @@ import { currentUser } from "@/actions/user.action";
 
 const Dashboard = async () => {
   const user = await currentUser();
+
   const isSuperAdmin = user?.isSuperAdmin;
   return (
     <div className="flex flex-col gap-5 w-full">

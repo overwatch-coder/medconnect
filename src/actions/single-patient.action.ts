@@ -19,7 +19,39 @@ import {
 } from "@/types/index";
 
 // === PRESCRIPTIONS ===
-// Get All Prescriptions
+// Get All Prescriptions for all patients
+export const getAllPrescriptions = async (): Promise<IPrescription[]> => {
+  try {
+    const patients = await getChpsPatients();
+    if (!patients) {
+      throw new Error("No patients found");
+    }
+
+    const prescriptions: IPrescription[] = [];
+
+    for (const patient of patients) {
+      const prescriptionsForPatient = await getPrescriptions(patient._id);
+
+      if (!prescriptionsForPatient) {
+        throw new Error("No prescriptions found");
+      }
+
+      prescriptions.push(...prescriptionsForPatient);
+    }
+
+    return prescriptions;
+  } catch (error: any) {
+    console.log({
+      error,
+      data: error?.response?.data,
+      message: error?.respnse?.data?.message,
+      in: "getAllPrescriptions catch",
+    });
+    return error;
+  }
+};
+
+// Get All Prescriptions for a patient
 export const getPrescriptions = async (
   patientId: string
 ): Promise<IPrescription[]> => {

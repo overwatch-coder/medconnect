@@ -1,7 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
-import { MEDCONNECT_SUPER_ADMIN_DASHBOARD_COMPOUNDS_WITH_ACTIONS as compoundsData } from "@/constants";
+import React, { useEffect, useState } from "react";
 import { X } from "lucide-react";
 import {
   Dialog,
@@ -13,7 +12,6 @@ import {
 } from "@/components/ui/dialog";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { settingsSchema } from "@/schema/setting.schema";
 import { FileDrop } from "@instructure/ui-file-drop";
 import { Upload } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -23,8 +21,19 @@ import { FormSectionHeader } from "@/app/dashboard/compounds/add-new/AddCompound
 import { useRouter } from "next/navigation";
 import NotificationModal from "@/components/NotificationModal";
 import CustomInputForm from "@/components/CustomInputForm";
-import { SettingsType } from "@/types/index";
-import { useAuth } from "@/hooks";
+import { CompoundType } from "@/types/index";
+import { useFetch, useMutateData } from "@/hooks/useFetch";
+import {
+  getChpsById,
+  updateChpsCompound,
+} from "@/actions/chps-compound.action";
+import { ChpsCompound } from "@/types/backend";
+import RenderCustomError from "@/components/RenderCustomError";
+import { compoundSchema } from "@/schema/compound.schema";
+import { z } from "zod";
+import { useQueryClient } from "@tanstack/react-query";
+import { toast } from "react-toastify";
+import { Checkbox } from "@/components/ui/checkbox";
 
 type EditCompoundModalProps = {
   openModal: boolean;
@@ -33,72 +42,106 @@ type EditCompoundModalProps = {
   setEditCompoundId: React.Dispatch<React.SetStateAction<string>>;
 };
 
+export type EditCompoundType = Omit<CompoundType, "createdById" | "email"> & {
+  profilePicture: any;
+};
+
+const editCompoundSchema = compoundSchema
+  .omit({
+    createdById: true,
+    email: true,
+  })
+  .extend({
+    profilePicture: z.any().optional(),
+  });
+
 const EditCompoundModal = ({
   openModal,
   setShowEditCompoundModal,
   compoundId,
   setEditCompoundId,
 }: EditCompoundModalProps) => {
+  const { data: compound, refetch: fetchCompound } = useFetch<ChpsCompound>({
+    queryFn: async () => await getChpsById(compoundId),
+    queryKey: ["compounds", compoundId],
+    enabled: true,
+  });
+  const queryClient = useQueryClient();
+
   const router = useRouter();
-  const [user] = useAuth();
 
   const [showEditNotificationModal, setShowEditNotificationModal] =
     useState(false);
 
-  // get selected compound data to be edited
-  const compoundData = compoundsData.find(
-    (compound) => compound.compoundId.toLowerCase() === compoundId.toLowerCase()
-  );
-
   const {
     register,
-    reset,
+    formState: { errors },
+    handleSubmit,
     watch,
     setValue,
-    formState: { errors, isSubmitting: pending },
-    handleSubmit,
-  } = useForm<Partial<SettingsType>>({
-    resolver: zodResolver(settingsSchema.partial()),
+  } = useForm<EditCompoundType>({
+    resolver: zodResolver(editCompoundSchema),
     defaultValues: {
-      compoundName: compoundData?.compoundName,
-      email: user?.auth.email,
-      location: compoundData?.location,
-      region: compoundData?.region,
-      district: compoundData?.location,
-      contactInformation: "",
-      availableServices: "",
-      operatingHours: "",
-      staffInformation: "",
-      facilityDetails: "",
-      historicalInformation: "",
-      communityOutreachContact: "",
-      emergencyContact: "",
-      notifications: false,
-      profilePicture: null,
-      userId: user?.auth.id,
-      compoundId: compoundData?.compoundId,
+      name: compound?.name!,
+      contact: compound?.contact!,
+      emergencyContact: compound?.emergencyContact!,
+      location: compound?.location!,
+      district: compound?.district!,
+      region: compound?.region!,
+      operatingHours: compound?.operatingHours!,
+      hasAcceptedTC: compound?.hasAcceptedTC!,
+      availableServices:
+        compound?.availableServices && compound?.availableServices.length > 0
+          ? compound?.availableServices.join(",")
+          : "",
     },
     mode: "all",
   });
 
   const profilePicture = watch("profilePicture");
 
-  const submitEditCompound: SubmitHandler<Partial<SettingsType>> = async (
-    data
-  ) => {
-    console.log({ data });
-    setShowEditNotificationModal(true);
-    setTimeout(() => {
-      setShowEditNotificationModal(false);
-    }, 4000);
-    setShowEditCompoundModal(false);
+  const {
+    mutateAsync,
+    isPending: pending,
+    error,
+    reset,
+    isError,
+  } = useMutateData<EditCompoundType, ChpsCompound>({
+    mutationFn: async (data: EditCompoundType) =>
+      updateChpsCompound(data, compoundId),
+    config: {
+      queryKey: ["compounds"],
+    },
+  });
+
+  const submitForm: SubmitHandler<EditCompoundType> = async (data) => {
+    await mutateAsync(data, {
+      onSuccess: (data) => {
+        queryClient.invalidateQueries({ queryKey: ["compounds"] });
+
+        fetchCompound();
+
+        toast.success("Compound updated successfully");
+
+        setShowEditNotificationModal(true);
+        setTimeout(() => {
+          setShowEditNotificationModal(false);
+        }, 3000);
+        setShowEditCompoundModal(false);
+        setEditCompoundId("");
+
+        router.replace(`/dashboard/compounds/${compoundId}`);
+      },
+      onError: (err) => {
+        toast.error("Something went wrong while adding compound");
+      },
+    });
   };
 
-  // no compound found
-  if (!compoundData) {
-    router.push("/dashboard/compounds");
-    return;
-  }
+  // if (!compound) {
+  //   router.replace("/dashboard/compounds");
+  //   return null;
+  // }
 
   return (
     <Dialog open={openModal}>
@@ -115,7 +158,6 @@ const EditCompoundModal = ({
               onClick={() => {
                 setEditCompoundId("");
                 setShowEditCompoundModal(false);
-                reset();
               }}
             >
               <X
@@ -127,251 +169,188 @@ const EditCompoundModal = ({
 
           <DialogDescription className="flex flex-col gap-5 max-w-screen w-full overflow-x-hidden scrollbar-hide">
             <form
-              onSubmit={handleSubmit(submitEditCompound)}
-              className="flex flex-col gap-4 w-full"
+              onSubmit={handleSubmit(submitForm)}
               method="POST"
-              encType="multipart/form-data"
+              className="flex flex-col gap-5 px-3 pt-5 pb-10 bg-white h-full"
             >
-              <div className="flex flex-col gap-5 px-3 pt-5 pb-10 bg-white h-full">
-                {/* Upload Profile Picture */}
-                <div className="flex flex-col gap-5 p-4 rounded-md border border-secondary-gray/50 w-full">
-                  <FormSectionHeader title="Upload Profile Picture" />
+              <RenderCustomError error={error} isError={isError} />
+              {/* General Information */}
+              <div className="flex flex-col gap-5 p-4 rounded-md border border-secondary-gray/50 w-full">
+                <FormSectionHeader title="General Information" />
 
-                  {/* Attachment */}
-                  <div className="flex flex-col gap-4 p-2 w-full rounded-md border border-secondary-gray bg-transparent">
-                    <FileDrop
-                      id="profilePicture"
-                      name="profilePicture"
-                      onDropAccepted={(file) => {
-                        setValue("profilePicture", file);
-                      }}
-                      shouldEnablePreview={true}
-                      shouldAllowMultiple={false}
-                      renderLabel={() => (
-                        <div className="flex gap-3 p-2 items-center justify-center">
-                          <div className="flex items-center justify-center w-10 h-10 rounded-full border border-secondary-gray">
-                            <Upload
-                              size={30}
-                              className="text-secondary-gray/50"
-                            />
-                          </div>
-                          <p className="text-sm text-black font-semibold flex items-center gap-1">
-                            Drag and drop files here or{" "}
-                            <span className="text-red-500">Browse File</span>
-                          </p>
-                        </div>
-                      )}
+                <div className="flex flex-col gap-5 px-2 md:px-5">
+                  <div className="grid grid-cols-1 md:grid-cols-3 w-full gap-5">
+                    <CustomInputForm
+                      labelName="Compound Name"
+                      inputName="name"
+                      errors={errors}
+                      inputType="text"
+                      placeholderText="Enter your compound name"
+                      register={register}
+                      value={compound?.name}
                     />
 
-                    {profilePicture && profilePicture.length > 0 && (
-                      <div className="flex items-center gap-3 flex-wrap overflow-x-scroll scrollbar-hide">
-                        {Array.from(profilePicture).map(
-                          (image, idx: number) => (
-                            <ImagePreview
-                              image={URL.createObjectURL(image as File)}
-                              key={idx}
-                            />
-                          )
-                        )}
+                    <CustomInputForm
+                      labelName="Location"
+                      inputName="location"
+                      errors={errors}
+                      inputType="text"
+                      placeholderText="Enter your location"
+                      register={register}
+                      value={compound?.location}
+                    />
+
+                    <CustomInputForm
+                      labelName="Region"
+                      inputName="region"
+                      errors={errors}
+                      inputType="text"
+                      placeholderText="Enter your region"
+                      register={register}
+                      value={compound?.region}
+                    />
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-3 w-full gap-5">
+                    <CustomInputForm
+                      labelName="District"
+                      inputName="district"
+                      errors={errors}
+                      inputType="text"
+                      placeholderText="Enter your district"
+                      register={register}
+                      value={compound?.district}
+                    />
+
+                    <CustomInputForm
+                      labelName="Contact Information"
+                      inputName="contact"
+                      errors={errors}
+                      inputType="text"
+                      placeholderText="Enter your contact information"
+                      register={register}
+                      value={compound?.contact}
+                    />
+
+                    <CustomInputForm
+                      labelName="Available Services (comma separated)"
+                      inputName="availableServices"
+                      errors={errors}
+                      inputType="text"
+                      placeholderText="Enter available services"
+                      register={register}
+                      value={
+                        compound?.availableServices &&
+                        compound?.availableServices.length > 0
+                          ? compound?.availableServices.join(",")
+                          : ""
+                      }
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Additional Information */}
+              <div className="flex flex-col gap-5 p-4 rounded-md border border-secondary-gray/50 w-full">
+                <FormSectionHeader title="Additional Information" />
+
+                <div className="flex flex-col gap-5 px-2 md:px-5">
+                  <div className="grid grid-cols-1 md:grid-cols-3 w-full gap-5">
+                    <CustomInputForm
+                      labelName="Operating Hours"
+                      inputName="operatingHours"
+                      errors={errors}
+                      inputType="text"
+                      placeholderText="Enter operating hours"
+                      register={register}
+                      value={compound?.operatingHours}
+                    />
+
+                    <CustomInputForm
+                      labelName="Emergency Contact"
+                      inputName="emergencyContact"
+                      errors={errors}
+                      inputType="text"
+                      placeholderText="Enter emergency contact"
+                      register={register}
+                      value={compound?.emergencyContact}
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Upload Profile Picture */}
+              <div className="flex flex-col gap-5 p-4 rounded-md border border-secondary-gray/50 w-full">
+                <FormSectionHeader title="Upload Profile Picture" />
+
+                {/* Attachment */}
+                <div className="flex flex-col gap-4 p-2 w-full rounded-md border border-secondary-gray bg-transparent">
+                  <FileDrop
+                    id="profilePicture"
+                    name="profilePicture"
+                    onDropAccepted={(file) => {
+                      setValue("profilePicture", file);
+                    }}
+                    shouldEnablePreview={true}
+                    shouldAllowMultiple={false}
+                    renderLabel={() => (
+                      <div className="flex gap-3 p-2 items-center justify-center">
+                        <div className="flex items-center justify-center w-10 h-10 rounded-full border border-secondary-gray">
+                          <Upload
+                            size={30}
+                            className="text-secondary-gray/50"
+                          />
+                        </div>
+                        <p className="text-sm text-black font-semibold flex items-center gap-1">
+                          Drag and drop files here or{" "}
+                          <span className="text-red-500">Browse File</span>
+                        </p>
                       </div>
                     )}
-                  </div>
+                  />
+
+                  {profilePicture && profilePicture.length > 0 && (
+                    <div className="flex items-center gap-3 flex-wrap overflow-x-scroll scrollbar-hide">
+                      {Array.from(profilePicture).map((image, idx: number) => (
+                        <ImagePreview
+                          image={URL.createObjectURL(image as File)}
+                          key={idx}
+                        />
+                      ))}
+                    </div>
+                  )}
                 </div>
-
-                {/* General Information */}
-                <div className="flex flex-col gap-5 p-4 rounded-md border border-secondary-gray/50 w-full">
-                  <FormSectionHeader title="General Information" />
-
-                  <div className="flex flex-col gap-5 px-2 md:px-5">
-                    <div className="grid grid-cols-1 md:grid-cols-3 w-full gap-5">
-                      <CustomInputForm
-                        labelName="Compound Name"
-                        inputName="compoundName"
-                        errors={errors}
-                        inputType="text"
-                        placeholderText="Enter your compound name"
-                        register={register}
-                        value={compoundData.compoundName}
-                      />
-
-                      <CustomInputForm
-                        labelName="Location"
-                        inputName="location"
-                        errors={errors}
-                        inputType="text"
-                        placeholderText="Enter your location"
-                        register={register}
-                        value={compoundData.location}
-                      />
-
-                      <CustomInputForm
-                        labelName="Region"
-                        inputName="region"
-                        errors={errors}
-                        inputType="text"
-                        placeholderText="Enter your region"
-                        register={register}
-                        value={compoundData.region}
-                      />
-                    </div>
-
-                    <div className="grid grid-cols-1 md:grid-cols-3 w-full gap-5">
-                      <CustomInputForm
-                        labelName="District"
-                        inputName="district"
-                        errors={errors}
-                        inputType="text"
-                        placeholderText="Enter your district"
-                        register={register}
-                      />
-
-                      <CustomInputForm
-                        labelName="Contact Information"
-                        inputName="contactInformation"
-                        errors={errors}
-                        inputType="text"
-                        placeholderText="Enter your contact information"
-                        register={register}
-                      />
-
-                      <CustomInputForm
-                        labelName="Available Services"
-                        inputName="availableServices"
-                        errors={errors}
-                        inputType="text"
-                        placeholderText="Enter available services"
-                        register={register}
-                      />
-                    </div>
-
-                    <div className="grid grid-cols-1 md:grid-cols-3 w-full gap-5">
-                      <CustomInputForm
-                        labelName="Email Address"
-                        inputName="email"
-                        errors={errors}
-                        inputType="text"
-                        placeholderText="Enter compound email"
-                        register={register}
-                      />
-
-                      <CustomInputForm
-                        labelName="User ID"
-                        inputName="userId"
-                        errors={errors}
-                        inputType="hidden"
-                        register={register}
-                      />
-
-                      <CustomInputForm
-                        labelName="Compound ID"
-                        inputName="compoundId"
-                        errors={errors}
-                        inputType="hidden"
-                        register={register}
-                      />
-                    </div>
-                  </div>
-                </div>
-
-                {/* Additional Information */}
-                <div className="flex flex-col gap-5 p-4 rounded-md border border-secondary-gray/50 w-full">
-                  <FormSectionHeader title="Additional Information" />
-
-                  <div className="flex flex-col gap-5 px-2 md:px-5">
-                    <div className="grid grid-cols-1 md:grid-cols-3 w-full gap-5">
-                      <CustomInputForm
-                        labelName="Operating Hours"
-                        inputName="operatingHours"
-                        errors={errors}
-                        inputType="text"
-                        placeholderText="Enter operating hours"
-                        register={register}
-                      />
-
-                      <CustomInputForm
-                        labelName="Staff Information"
-                        inputName="staffInformation"
-                        errors={errors}
-                        inputType="text"
-                        placeholderText="Enter staff information"
-                        register={register}
-                      />
-
-                      <CustomInputForm
-                        labelName="Facility Details"
-                        inputName="facilityDetails"
-                        errors={errors}
-                        inputType="text"
-                        placeholderText="Enter facility details"
-                        register={register}
-                      />
-                    </div>
-
-                    <div className="grid grid-cols-1 md:grid-cols-3 w-full gap-5">
-                      <CustomInputForm
-                        labelName="Historical Information"
-                        inputName="historicalInformation"
-                        errors={errors}
-                        inputType="text"
-                        placeholderText="Enter historical information"
-                        register={register}
-                      />
-
-                      <CustomInputForm
-                        labelName="Community Outreach Programs"
-                        inputName="communityOutreachContact"
-                        errors={errors}
-                        inputType="text"
-                        placeholderText="Enter community outreach programs"
-                        register={register}
-                      />
-
-                      <CustomInputForm
-                        labelName="Emergency Contact"
-                        inputName="emergencyContact"
-                        errors={errors}
-                        inputType="text"
-                        placeholderText="Enter emergency contact"
-                        register={register}
-                      />
-                    </div>
-                  </div>
-                </div>
-
-                {/* Notification Preferences */}
-                <div className="flex flex-col gap-5 p-4 rounded-md border border-secondary-gray/50 w-full">
-                  <FormSectionHeader title="Preferences" />
-
-                  <h3 className="text-primary-gray/50 ps-2 md:ps-5">
-                    Notification Preferences
-                  </h3>
-                  <div className="flex flex-col gap-5 px-2 md:px-5">
-                    <div className="items-top flex space-x-2">
-                      <input
-                        type="checkbox"
-                        {...register("notifications")}
-                        className="border-secondary-gray border-2"
-                      />
-                      <div className="grid gap-1.5 leading-none">
-                        <label
-                          htmlFor="notifications"
-                          className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                        >
-                          Email Notifications
-                        </label>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Submit form button */}
-                <EditCompoundButton
-                  pending={pending}
-                  reset={reset}
-                  setShowEditCompoundModal={setShowEditCompoundModal}
-                  setEditCompoundId={setEditCompoundId}
-                />
               </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-3 w-full gap-5">
+                <div className="flex items-center gap-3">
+                  <Checkbox
+                    id="hasAcceptedTC"
+                    className="border-secondary-gray border-2"
+                    {...register("hasAcceptedTC")}
+                    onCheckedChange={(value) =>
+                      setValue("hasAcceptedTC", value as boolean)
+                    }
+                    defaultChecked={compound?.hasAcceptedTC}
+                  />
+
+                  <div className="grid gap-1.5 leading-none">
+                    <label
+                      htmlFor="hasAcceptedTC"
+                      className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                    >
+                      Do you accept the terms and conditions?
+                    </label>
+                  </div>
+                </div>
+              </div>
+
+              <EditCompoundButton
+                pending={pending}
+                reset={reset}
+                setShowEditCompoundModal={setShowEditCompoundModal}
+                setEditCompoundId={setEditCompoundId}
+              />
             </form>
           </DialogDescription>
         </DialogHeader>
@@ -430,3 +409,49 @@ const EditCompoundButton = ({
     </div>
   );
 };
+
+// <div className="grid grid-cols-1 md:grid-cols-3 w-full gap-5">
+{
+  /* <CustomInputForm
+                labelName="Historical Information"
+                inputName="historicalInformation"
+                errors={errors}
+                inputType="text"
+                placeholderText="Enter historical information"
+                register={register}
+              /> */
+}
+
+{
+  /* <CustomInputForm
+                labelName="Community Outreach Programs"
+                inputName="communityOutreachContact"
+                errors={errors}
+                inputType="text"
+                placeholderText="Enter community outreach programs"
+                register={register}
+              /> */
+}
+
+{
+  /* <CustomInputForm
+                labelName="Staff Information"
+                inputName="staffInformation"
+                errors={errors}
+                inputType="text"
+                placeholderText="Enter staff information"
+                register={register}
+              /> */
+}
+
+{
+  /* <CustomInputForm
+                labelName="Facility Details"
+                inputName="facilityDetails"
+                errors={errors}
+                inputType="text"
+                placeholderText="Enter facility details"
+                register={register}
+              /> */
+}
+// </div>;

@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { Edit, Search } from "lucide-react";
+import { Edit, Search, Trash2 } from "lucide-react";
 import {
   Table,
   TableBody,
@@ -14,13 +14,18 @@ import {
 import { GrCheckbox, GrCheckboxSelected } from "react-icons/gr";
 import DeleteCompound from "@/app/dashboard/compounds/DeleteCompound";
 import EditCompoundModal from "@/app/dashboard/compounds/EditCompound";
-import { useRouter } from "next/navigation";
 import CustomFilterDropdown from "@/components/CustomFilterDropdown";
 import { useFetch } from "@/hooks/useFetch";
-import { getAllChpsCompounds } from "@/actions/chps-compound.action";
+import {
+  deleteChpsCompound,
+  getAllChpsCompounds,
+} from "@/actions/chps-compound.action";
 import { ChpsCompound } from "@/types/backend";
 import { RenderEmptyComponent } from "@/app/dashboard/health-officials/HealthOfficialsTable";
 import { ClipLoader } from "react-spinners";
+import Link from "next/link";
+import DeleteModal from "@/components/DeleteModal";
+import { toast } from "react-toastify";
 
 const CompoundsTable = () => {
   const { data: compoundsData, isLoading } = useFetch<ChpsCompound[]>({
@@ -169,10 +174,12 @@ const GetCompoundsTable = ({
   filteredCompoundsData,
   setFilteredCompoundsData,
 }: CompoundsTableProps) => {
-  const router = useRouter();
   const [markedCompoundIds, setMarkedCompoundIds] = useState<string[]>([]);
   const [editCompoundModal, setEditCompoundModal] = useState(false);
   const [editCompoundId, setEditCompoundId] = useState("");
+  const [pending, setPending] = useState(false);
+  const [deleteModal, setDeleteModal] = useState(false);
+  const [deleteCompoundId, setDeleteCompoundId] = useState("");
 
   // handle mark compound
   const handleMarkCompound = (id: string) => {
@@ -193,20 +200,52 @@ const GetCompoundsTable = ({
   };
 
   // handle delete compounds
-  const handleDelete = (compoundId: string) => {
-    if (filteredCompoundsData.length === 0) {
-      return;
-    }
+  const handleDelete = async () => {
+    try {
+      setPending(true);
 
-    if (filteredCompoundsData.length === markedCompoundIds.length) {
-      setFilteredCompoundsData([]);
-      return;
-    }
+      if (filteredCompoundsData.length === 0) {
+        setPending(false);
+        setDeleteModal(false);
+        return;
+      }
 
-    setFilteredCompoundsData(
-      filteredCompoundsData.filter((data) => data._id !== compoundId)
-    );
-    setMarkedCompoundIds([]);
+      if (filteredCompoundsData.length === markedCompoundIds.length) {
+        for (const chpsId of markedCompoundIds) {
+          await deleteChpsCompound(chpsId);
+
+          setFilteredCompoundsData(
+            filteredCompoundsData.filter((data) => data._id !== chpsId)
+          );
+        }
+
+        setMarkedCompoundIds([]);
+
+        setPending(false);
+        setDeleteModal(false);
+
+        toast.success("All compounds deleted successfully");
+
+        return;
+      }
+
+      await deleteChpsCompound(deleteCompoundId);
+
+      setFilteredCompoundsData(
+        filteredCompoundsData.filter((data) => data._id !== deleteCompoundId)
+      );
+
+      setMarkedCompoundIds([]);
+
+      toast.success("Compound deleted successfully");
+
+      setPending(false);
+      setDeleteModal(false);
+    } catch (error: any) {
+      setPending(false);
+      setDeleteModal(false);
+      console.log(error);
+    }
   };
 
   return (
@@ -254,12 +293,12 @@ const GetCompoundsTable = ({
                   />
                 )}
               </span>
-              <span
-                onClick={() => router.push(`/dashboard/compounds/${data._id}`)}
+              <Link
+                href={`/dashboard/compounds/${data._id}`}
                 className="hover:underline cursor-pointer"
               >
                 {data.name}
-              </span>
+              </Link>
             </TableCell>
             <TableCell className="text-secondary-gray uppercase font-semibold">
               {data._id.slice(18)}
@@ -279,15 +318,38 @@ const GetCompoundsTable = ({
                 size={15}
                 className="text-secondary-gray cursor-pointer"
               />
-              <DeleteCompound
-                compoundId={data._id}
-                handleDelete={handleDelete}
-                markedCompoundIds={markedCompoundIds}
-              />
+
+              <button>
+                {markedCompoundIds.length === 0 ||
+                !markedCompoundIds.includes(data._id) ? (
+                  <Trash2
+                    size={15}
+                    className="text-red-300 cursor-not-allowed"
+                  />
+                ) : (
+                  <Trash2
+                    onClick={() => {
+                      setDeleteCompoundId(data._id);
+                      setDeleteModal(true);
+                    }}
+                    size={15}
+                    className="text-red-500 cursor-pointer"
+                  />
+                )}
+              </button>
             </TableCell>
           </TableRow>
         ))}
       </TableBody>
+
+      <DeleteModal
+        openModal={deleteModal}
+        setOpenModal={setDeleteModal}
+        deleteFn={() => handleDelete()}
+        title="Delete Compound"
+        description="Are you sure you want to delete this compound from the system?"
+        pending={pending}
+      />
 
       <EditCompoundModal
         setShowEditCompoundModal={setEditCompoundModal}

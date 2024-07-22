@@ -17,12 +17,14 @@ type DeleteCompoundProps = {
   handleDelete: (compoundId: string) => void;
   compoundId: string;
   markedCompoundIds: string[];
+  pending: boolean;
 };
 
 const DeleteCompound = ({
   handleDelete,
   compoundId,
   markedCompoundIds,
+  pending,
 }: DeleteCompoundProps) => {
   const disabledButton =
     markedCompoundIds.length === 0 || !markedCompoundIds.includes(compoundId);

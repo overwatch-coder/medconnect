@@ -233,7 +233,7 @@ const SuperAdminDashboard = () => {
                   "Appointments Scheduled",
                   "Services Utilized",
                 ]}
-                data={[315, 125, 200, 50, 200]}
+                data={Array(5).fill(Math.floor(Math.random() * 100))}
                 bgColors={[
                   "#FF0000",
                   "#FFFF00",

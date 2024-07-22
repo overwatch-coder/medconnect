@@ -23,8 +23,6 @@ export const compoundSchema = z.object({
   operatingHours: z.string().min(1, "Operating hours is required"),
   availableServices: z.string().optional(),
   hasAcceptedTC: z.coerce.boolean().default(false),
-  profilePictureUrl: z.string().min(1, "Profile picture url is required"),
+  profilePictureUrl: z.string().optional(),
   createdById: z.string().min(1, "Created by id is required"),
-  authUserId: z.string().min(1, "Auth user id is required"),
-  isSuperAdmin: z.boolean().default(false),
 });

@@ -297,3 +297,14 @@ declare interface Inventory {
   manufacturer: string;
   __v: number;
 }
+
+// === APPOINTMENT ===
+declare interface IAppointment {
+  patientId: string;
+  date: string;
+  official: string;
+  isClosed: boolean;
+  _id: string;
+  __v: number;
+  patient: Patient;
+}

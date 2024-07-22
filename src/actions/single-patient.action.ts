@@ -1,14 +1,17 @@
 "use server";
 
+import { getChpsPatients, getPatient } from "@/actions/patients.action";
 import { currentUser } from "@/actions/user.action";
 import { axiosInstance } from "@/lib/utils";
 import {
+  IAppointment,
   IDiagnosisReport,
   IPrescription,
   ITreatmentPlan,
   IVisitLogs,
 } from "@/types/backend";
 import {
+  AppointmentType,
   DiagnosisReportType,
   PrescriptionType,
   TreatmentPlanType,
@@ -454,6 +457,171 @@ export const deleteVisitLog = async (patientId: string, visitLogId: string) => {
     return resData;
   } catch (error: any) {
     console.log({ error, in: "deleteVisitLog catch" });
+    return error;
+  }
+};
+
+// === APPOINTMENTS ===
+// get all appointments for all patients
+export const getAllAppointments = async (): Promise<IAppointment[]> => {
+  try {
+    const patients = await getChpsPatients();
+    if (!patients) {
+      throw new Error("No patients found");
+    }
+
+    const appointments: IAppointment[] = [];
+
+    for (const patient of patients) {
+      const appointmentsForPatient = await getPatientAppointments(patient._id);
+
+      if (!appointmentsForPatient) {
+        throw new Error("No appointments found");
+      }
+
+      appointments.push(...appointmentsForPatient);
+    }
+
+    return appointments;
+  } catch (error: any) {
+    console.log({ error, in: "getAllAppointments catch" });
+    return error;
+  }
+};
+
+// Get All Appointments
+export const getPatientAppointments = async (
+  patientId: string
+): Promise<IAppointment[]> => {
+  try {
+    const user = await currentUser();
+    if (!user) {
+      throw new Error("Unauthorized!");
+    }
+
+    const res = await axiosInstance.get(`/patient/${patientId}/appointments`, {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${user.auth.token}`,
+      },
+    });
+
+    const resData = await res.data;
+
+    if (!resData?.status) {
+      throw new Error(resData?.message);
+    }
+
+    const patient = await getPatient(patientId);
+
+    if (!patient) {
+      throw new Error("Patient not found");
+    }
+
+    const appointments = resData?.data as IAppointment[];
+
+    return appointments.map((appointment) => {
+      return {
+        ...appointment,
+        patient: patient,
+      };
+    });
+  } catch (error: any) {
+    console.log({ error, in: "getPatientAppointments catch" });
+    return error;
+  }
+};
+
+// Create or Edit a appointment
+export const createOrEditAppointment = async (
+  data: AppointmentType,
+  patientId: string,
+  appointmentId?: string
+): Promise<IAppointment> => {
+  try {
+    const user = await currentUser();
+
+    if (!user) {
+      throw new Error("Unauthorized!");
+    }
+
+    const url = appointmentId
+      ? `/patient/${patientId}/appointments/${appointmentId}`
+      : `/patient/${patientId}/appointments`;
+
+    const backendData = appointmentId
+      ? {
+          date: data.date,
+          official: data.official,
+          isClosed: data.isClosed === "true" ? true : false,
+        }
+      : {
+          date: data.date,
+          official: data.official,
+          isClosed: false,
+        };
+
+    const res = await axiosInstance({
+      url: url,
+      method: appointmentId ? "PATCH" : "POST",
+      data: backendData,
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${user?.auth.token}`,
+      },
+    });
+
+    const resData = res.data;
+
+    if (!resData?.status) {
+      console.log({ error: resData, in: "Error if" });
+      throw new Error(
+        resData?.message ||
+          `Error while ${appointmentId ? "updating" : "creating"} appointment`
+      );
+    }
+
+    return resData?.data as IAppointment;
+  } catch (error: any) {
+    console.log({
+      error,
+      data: error?.response?.data,
+      messageInData: error?.response?.data?.message,
+      in: "createOrEditAppointment catch",
+    });
+    return error;
+  }
+};
+
+// delete a appointment
+export const deleteAppointment = async (
+  patientId: string,
+  appointmentId: string
+) => {
+  try {
+    const user = await currentUser();
+
+    if (!user) {
+      throw new Error("Not authorized");
+    }
+
+    const res = await axiosInstance.delete(
+      `/patient/${patientId}/appointments/${appointmentId}`,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${user?.auth.token}`,
+        },
+      }
+    );
+
+    console.log({ res, in: "deleteAppointment res" });
+
+    const resData = { status: true };
+
+    return resData;
+  } catch (error: any) {
+    console.log({ error, in: "deleteAppointment catch" });
     return error;
   }
 };

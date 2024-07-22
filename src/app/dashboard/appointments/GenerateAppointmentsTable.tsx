@@ -1,4 +1,5 @@
 "use client";
+
 import { Trash2 } from "lucide-react";
 import React, { useState } from "react";
 import { IoMdArrowDropup, IoMdArrowDropdown } from "react-icons/io";
@@ -10,35 +11,43 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { MEDCONNECT_DASHBOARD_APPOINTEMENTS as appointmentsData } from "@/constants";
-import { AppointmentsDataType } from "@/app/dashboard/appointments/AppointmentsTable";
 import EditAppointment from "@/app/dashboard/appointments/EditAppointment";
 import RescheduleAppointment from "@/app/dashboard/appointments/RescheduleAppointment";
 import DeleteModal from "@/components/DeleteModal";
 import { toast } from "react-toastify";
 import GenerateTablePagination from "@/components/GenerateTablePagination";
+import { IAppointment } from "@/types/backend";
+import { deleteAppointment } from "@/actions/single-patient.action";
 
 const tableHeaderNames = [
   "Time",
   "Date",
   "Patient Name",
-  "Age",
+  "Patient ID",
   "Phone Number",
   "Assigned HO",
 ];
 
+type AppointmentsCommonTableProps = {
+  filteredAppointmentsData: IAppointment[];
+  setFilteredAppointmentsData: React.Dispatch<
+    React.SetStateAction<IAppointment[]>
+  >;
+  refetchAppointments: () => void;
+};
+
 const GenerateAppointmentsTable = ({
   filteredAppointmentsData,
   setFilteredAppointmentsData,
-}: {
-  filteredAppointmentsData: AppointmentsDataType[];
-  setFilteredAppointmentsData: React.Dispatch<
-    React.SetStateAction<AppointmentsDataType[]>
-  >;
-}) => {
+  refetchAppointments,
+}: AppointmentsCommonTableProps) => {
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
+  const [openEditModal, setOpenEditModal] = useState(false);
+  const [openRescheduleModal, setOpenRescheduleModal] = useState(false);
+
   const [appointmentToDelete, setAppointmentToDelete] =
-    useState<AppointmentsDataType>();
+    useState<IAppointment>();
+  const [pending, setPending] = useState(false);
 
   const [currentTablePage, setCurrentTablePage] = useState(1);
   const dataPerPage = 7;
@@ -62,22 +71,23 @@ const GenerateAppointmentsTable = ({
   };
 
   // Handle delete
-  const handleDelete = async (appointment: AppointmentsDataType) => {
-    const data = filteredAppointmentsData.filter(
-      (p) => p.patientID !== appointment.patientID
+  const handleDelete = async (appointment: IAppointment) => {
+    setPending(true);
+    await deleteAppointment(appointment.patientId, appointment._id);
+
+    setFilteredAppointmentsData(
+      filteredAppointmentsData.filter((item) => item._id !== appointment._id)
     );
 
-    const dataByStatus = appointmentsData.filter(
-      (p) => p.status !== appointment.status
-    );
-
-    setFilteredAppointmentsData([...data, ...dataByStatus]);
+    refetchAppointments();
 
     setAppointmentToDelete(undefined);
 
     setOpenDeleteModal(false);
 
-    toast.success("Patient deleted successfully");
+    setPending(false);
+
+    toast.success("Appointment deleted successfully");
   };
 
   return (
@@ -118,25 +128,34 @@ const GenerateAppointmentsTable = ({
           {currentData.map((appointment, index) => (
             <TableRow key={index}>
               <TableCell className="text-secondary-gray flex items-center gap-2">
-                {appointment.time}
+                {new Date(appointment.date).toLocaleTimeString("en-US", {
+                  hour: "numeric",
+                  minute: "numeric",
+                  hour12: true,
+                })}
               </TableCell>
               <TableCell className="text-secondary-gray">
-                {appointment.date}
+                {new Date(appointment.date).toISOString().split("T")[0]}
               </TableCell>
               <TableCell className="text-secondary-gray">
-                {appointment.patientName}
+                {`${appointment.patient.firstName} ${appointment.patient.lastName}`}
               </TableCell>
               <TableCell className="text-secondary-gray">
-                {appointment.age}
+                {appointment.patient.patientId}
               </TableCell>
               <TableCell className="text-secondary-gray">
-                {appointment.phoneNumber}
+                {appointment.patient.contact}
               </TableCell>
               <TableCell className="text-secondary-gray">
-                {appointment.assignedHO}
+                {appointment.official}
               </TableCell>
               <TableCell className="flex items-center gap-3">
-                <EditAppointment appointment={appointment} />
+                <EditAppointment
+                  appointment={appointment}
+                  refetchAppointments={refetchAppointments}
+                  open={openEditModal}
+                  setOpen={setOpenEditModal}
+                />
 
                 <Trash2
                   size={20}
@@ -147,7 +166,12 @@ const GenerateAppointmentsTable = ({
                   }}
                 />
 
-                <RescheduleAppointment appointment={appointment} />
+                <RescheduleAppointment
+                  appointment={appointment}
+                  refetchAppointments={refetchAppointments}
+                  open={openRescheduleModal}
+                  setOpen={setOpenRescheduleModal}
+                />
               </TableCell>
             </TableRow>
           ))}
@@ -160,6 +184,7 @@ const GenerateAppointmentsTable = ({
         title="Delete Appointment"
         description="Are you sure you want to delete this appointment?"
         deleteFn={() => handleDelete(appointmentToDelete!)}
+        pending={pending}
       />
 
       {/* Pagination */}

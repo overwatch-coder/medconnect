@@ -21,7 +21,9 @@ export const useFetch = <TData>({
     queryFn: queryFn,
     enabled: enabled,
     refetchOnWindowFocus: "always",
-    refetchInterval: 1000 * 60 * 1, // 1 minute
+    refetchInterval: 1000, // 1 seconds
+    staleTime: 1000, // 1 seconds
+    gcTime: 10000, // 10 seconds
   });
 
   return query;

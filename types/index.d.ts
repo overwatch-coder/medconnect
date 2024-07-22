@@ -121,9 +121,6 @@ export type VisitLogsType = z.infer<typeof visitLogsSchema>;
 
 // Appointment Schema
 export type AppointmentType = z.infer<typeof appointmentSchema>;
-export type RescheduleAppointmentType = z.infer<
-  typeof rescheduleAppointmentSchema
->;
 
 // Inventory Schema
 export type InventoryType = z.infer<typeof inventorySchema>;

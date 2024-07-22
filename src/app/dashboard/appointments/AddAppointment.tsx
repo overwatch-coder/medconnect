@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Plus, X } from "lucide-react";
 import {
   Dialog,
@@ -18,12 +18,44 @@ import CustomInputForm from "@/components/CustomInputForm";
 import { toast } from "react-toastify";
 import { AppointmentType } from "@/types/index";
 import { appointmentSchema } from "@/schema/appointment.schema";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useFetch, useMutateData } from "@/hooks/useFetch";
+import { IAppointment, Patient } from "@/types/backend";
+import {
+  createOrEditAppointment,
+  getAllAppointments,
+} from "@/actions/single-patient.action";
+import { getChpsPatients } from "@/actions/patients.action";
+import RenderCustomError from "@/components/RenderCustomError";
 
 const AddAppointment = () => {
+  const { refetch: refetchAppointments } = useFetch<IAppointment[]>({
+    queryFn: async () => getAllAppointments(),
+    queryKey: ["appointments"],
+    enabled: true,
+  });
+  const [open, setOpen] = useState(false);
+
+  const { data: patientsData } = useFetch<Patient[]>({
+    queryFn: async () => getChpsPatients(),
+    queryKey: ["patients"],
+    enabled: true,
+  });
+
+  const [patients, setPatients] = useState<Patient[]>([]);
+
+  useEffect(() => {
+    if (patientsData) {
+      setPatients(patientsData);
+    }
+  }, [patientsData]);
+
+  const queryClient = useQueryClient();
+
   const {
     register,
     reset,
+    watch,
     formState: { errors },
     handleSubmit,
   } = useForm<AppointmentType>({
@@ -31,27 +63,39 @@ const AddAppointment = () => {
     mode: "all",
   });
 
-  const { mutateAsync, isPending: pending } = useMutation({
-    mutationFn: async (data: AppointmentType) => {
-      console.log({ data });
-      return data;
-    },
+  const patientId = watch("patientId");
 
-    onSuccess: () => {
-      toast.success("Appointment added successfully");
-      reset();
+  const {
+    mutateAsync,
+    isPending: pending,
+    isError,
+    error,
+  } = useMutateData({
+    mutationFn: async (data: AppointmentType) =>
+      createOrEditAppointment(data, patientId, undefined),
+    config: {
+      queryKey: ["appointments"],
     },
   });
 
   const handleFormSubmit: SubmitHandler<AppointmentType> = async (data) => {
-    console.log({ data });
-    await mutateAsync(data);
+    await mutateAsync(data, {
+      onSuccess: () => {
+        toast.success("Appointment added successfully");
+        queryClient.invalidateQueries({
+          queryKey: ["appointments"],
+        });
+        refetchAppointments();
+        reset();
+        setOpen(false);
+      },
+    });
   };
 
   return (
     <>
-      <Dialog>
-        <DialogTrigger asChild>
+      <Dialog open={open} onOpenChange={setOpen}>
+        <DialogTrigger asChild onClick={() => setOpen(true)}>
           <Button className="bg-primary-green hover:bg-primary-green hover:scale-105 transition py-2 px-5 flex items-center gap-3 rounded-md text-white">
             <Plus className="text-white" size={20} />
             <span className="font-semibold">Add Appointment</span>
@@ -60,7 +104,7 @@ const AddAppointment = () => {
 
         <DialogContent
           id="hide"
-          className="flex flex-col gap-4 w-full max-w-[90vw] md:max-w-[40vw] max-h-[95vh] h-full overflow-hidden"
+          className="flex flex-col gap-4 w-full max-w-[90vw] md:max-w-[40vw] overflow-hidden"
         >
           <DialogHeader className="overflow-y-scroll scrollbar-hide">
             <DialogTitle className="flex items-center justify-between">
@@ -70,6 +114,7 @@ const AddAppointment = () => {
               <DialogClose
                 onClick={() => {
                   reset();
+                  setOpen(false);
                 }}
               >
                 <X
@@ -80,6 +125,8 @@ const AddAppointment = () => {
             </DialogTitle>
 
             <div className="flex flex-col gap-5 w-full">
+              <RenderCustomError isError={isError} error={error} />
+
               <form
                 onSubmit={handleSubmit(handleFormSubmit)}
                 className="flex flex-col gap-4 w-full"
@@ -90,53 +137,28 @@ const AddAppointment = () => {
                   <div className="flex flex-col gap-5 rounded-none w-full">
                     <div className="grid grid-cols-1 gap-5 w-full">
                       <CustomInputForm
-                        labelName="Patient Name"
-                        inputName="patientName"
+                        labelName="Select a Patient"
+                        inputName="patientId"
                         register={register}
                         errors={errors}
-                        inputType="text"
-                        placeholderText="Enter patient name"
+                        inputType="select"
+                        selectOptions={patients.map((patient) => ({
+                          value: patient._id,
+                          label: `${patient.firstName} ${patient.lastName}`,
+                        }))}
                       />
 
                       <CustomInputForm
-                        labelName="Patient ID"
-                        inputName="patientID"
-                        register={register}
-                        errors={errors}
-                        inputType="text"
-                        placeholderText="Enter patient ID"
-                      />
-
-                      <CustomInputForm
-                        labelName="Age"
-                        inputName="age"
-                        register={register}
-                        errors={errors}
-                        inputType="text"
-                        placeholderText="Enter age"
-                      />
-
-                      <CustomInputForm
-                        labelName="Date"
+                        labelName="Date & Time"
                         inputName="date"
                         register={register}
                         errors={errors}
-                        inputType="date"
-                      />
-                    </div>
-
-                    <div className="grid grid-cols-1 gap-5 w-full">
-                      <CustomInputForm
-                        labelName="Time"
-                        inputName="time"
-                        register={register}
-                        errors={errors}
-                        inputType="time"
+                        inputType="datetime-local"
                       />
 
                       <CustomInputForm
                         labelName="Assigned Health official"
-                        inputName="assignedHO"
+                        inputName="official"
                         register={register}
                         errors={errors}
                         inputType="text"
@@ -144,12 +166,12 @@ const AddAppointment = () => {
                       />
 
                       <CustomInputForm
-                        labelName="Phone Number"
-                        inputName="phoneNumber"
+                        labelName="Mark as Completed"
+                        inputName="isClosed"
                         register={register}
                         errors={errors}
-                        inputType="text"
-                        placeholderText="Enter phone Number"
+                        inputType="hidden"
+                        value={"false"}
                       />
                     </div>
                   </div>

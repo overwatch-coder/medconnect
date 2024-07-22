@@ -2,12 +2,13 @@
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Search } from "lucide-react";
-import React, { useState } from "react";
-import { MEDCONNECT_DASHBOARD_APPOINTEMENTS as appointmentsData } from "@/constants";
+import React, { useEffect, useState } from "react";
 import GenerateAppointmentsTable from "@/app/dashboard/appointments/GenerateAppointmentsTable";
 import CustomFilterDropdown from "@/components/CustomFilterDropdown";
-
-export type AppointmentsDataType = (typeof appointmentsData)[number];
+import { useFetch } from "@/hooks/useFetch";
+import { getAllAppointments } from "@/actions/single-patient.action";
+import { IAppointment } from "@/types/backend";
+import { RenderEmptyComponent } from "@/app/dashboard/health-officials/HealthOfficialsTable";
 
 const tabMenu = [
   {
@@ -21,21 +22,46 @@ const tabMenu = [
 ];
 
 const AppointmentsTable = () => {
+  const {
+    data: appointmentsData,
+    isLoading,
+    refetch: refetchAppointments,
+  } = useFetch<IAppointment[]>({
+    queryFn: async () => getAllAppointments(),
+    queryKey: ["appointments"],
+    enabled: true,
+  });
+
   const [searchTerm, setSearchTerm] = useState("");
 
-  const [filteredAppointments, setFilteredAppointments] =
-    useState<AppointmentsDataType[]>(appointmentsData);
+  const [filteredAppointments, setFilteredAppointments] = useState<
+    IAppointment[]
+  >([]);
   const [filterBy, setFilterBy] = useState("Date");
 
+  useEffect(() => {
+    if (appointmentsData) {
+      setFilteredAppointments(appointmentsData);
+    }
+  }, [appointmentsData]);
+
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (!appointmentsData) return;
+
     setSearchTerm(e.target.value);
     const filtered = appointmentsData.filter(
-      (patient) =>
-        patient.patientName
+      (appointment) =>
+        appointment.patient.firstName
           .toLowerCase()
           .includes(e.target.value.toLowerCase()) ||
-        patient.assignedHO.toLowerCase().includes(e.target.value.toLowerCase())
+        appointment.patient.lastName
+          .toLowerCase()
+          .includes(e.target.value.toLowerCase()) ||
+        appointment.official
+          .toLowerCase()
+          .includes(e.target.value.toLowerCase())
     );
+
     setFilteredAppointments(filtered);
   };
 
@@ -60,6 +86,10 @@ const AppointmentsTable = () => {
     setSearchTerm("");
   };
 
+  if (isLoading) {
+    return <RenderEmptyComponent />;
+  }
+
   return (
     <div className="w-full flex flex-col gap-5 px-5 py-5">
       <Tabs defaultValue={tabMenu[0].value}>
@@ -79,13 +109,17 @@ const AppointmentsTable = () => {
           <TabsContent value={tab.value} key={index}>
             <AppointmentsCommonTable
               filteredAppointments={filteredAppointments.filter(
-                (patient) => patient.status.toLowerCase() === tab.value
+                (appointment) =>
+                  tab.value === "new"
+                    ? !appointment.isClosed
+                    : appointment.isClosed
               )}
               searchTerm={searchTerm}
               filterBy={filterBy}
               handleSearch={handleSearch}
               handleFilter={handleFilter}
               setFilteredAppointments={setFilteredAppointments}
+              refetchAppointments={refetchAppointments}
             />
           </TabsContent>
         ))}
@@ -97,14 +131,13 @@ const AppointmentsTable = () => {
 export default AppointmentsTable;
 
 type AppointmentsCommonTableProps = {
-  filteredAppointments: AppointmentsDataType[];
+  filteredAppointments: IAppointment[];
   searchTerm: string;
   filterBy: string;
   handleSearch: (e: React.ChangeEvent<HTMLInputElement>) => void;
   handleFilter: (value: string) => void;
-  setFilteredAppointments: React.Dispatch<
-    React.SetStateAction<AppointmentsDataType[]>
-  >;
+  setFilteredAppointments: React.Dispatch<React.SetStateAction<IAppointment[]>>;
+  refetchAppointments: () => void;
 };
 
 const AppointmentsCommonTable = ({
@@ -114,15 +147,16 @@ const AppointmentsCommonTable = ({
   handleSearch,
   handleFilter,
   setFilteredAppointments,
+  refetchAppointments,
 }: AppointmentsCommonTableProps) => {
   const filterOptions = [
     {
-      value: "patientName",
+      value: "lastName",
       label: "Patient Name",
     },
     {
-      value: "age",
-      label: "Age",
+      value: "patientId",
+      label: "Patient ID",
     },
     {
       value: "time",
@@ -137,7 +171,7 @@ const AppointmentsCommonTable = ({
       label: "Phone Number",
     },
     {
-      value: "assignedHO",
+      value: "official",
       label: "Assigned HO",
     },
   ];
@@ -172,6 +206,7 @@ const AppointmentsCommonTable = ({
         <GenerateAppointmentsTable
           filteredAppointmentsData={filteredAppointments}
           setFilteredAppointmentsData={setFilteredAppointments}
+          refetchAppointments={refetchAppointments}
         />
 
         {filteredAppointments.length === 0 && (

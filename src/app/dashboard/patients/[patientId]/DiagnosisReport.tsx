@@ -127,6 +127,19 @@ const DiagnosisReport = ({ patient }: { patient: Patient }) => {
 
               <div className="grid grid-cols-2 place-content-start place-items-start text-sm">
                 <h3 className="text-primary-gray font-semibold">
+                  Final Diagnosis
+                </h3>
+                <p className="text-primary-gray/50 font-medium">
+                  {
+                    ["Malaria", "Diarrhea", "Fever", "Cough", "Headache"][
+                      Math.floor(Math.random() * 5)
+                    ]
+                  }
+                </p>
+              </div>
+
+              <div className="grid grid-cols-2 place-content-start place-items-start text-sm">
+                <h3 className="text-primary-gray font-semibold">
                   Recommended Tests
                 </h3>
                 <p className="text-primary-gray/50 font-medium">

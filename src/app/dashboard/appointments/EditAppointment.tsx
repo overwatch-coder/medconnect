@@ -18,52 +18,90 @@ import CustomInputForm from "@/components/CustomInputForm";
 import { toast } from "react-toastify";
 import { AppointmentType } from "@/types/index";
 import { appointmentSchema } from "@/schema/appointment.schema";
-import { useMutation } from "@tanstack/react-query";
-import { AppointmentsDataType } from "@/app/dashboard/appointments/AppointmentsTable";
+import { useQueryClient } from "@tanstack/react-query";
 import { TbEdit } from "react-icons/tb";
+import { IAppointment } from "@/types/backend";
+import { useMutateData } from "@/hooks/useFetch";
+import { createOrEditAppointment } from "@/actions/single-patient.action";
+import RenderCustomError from "@/components/RenderCustomError";
+
+type EditAppointmentProps = {
+  appointment: IAppointment;
+  refetchAppointments: () => void;
+  open: boolean;
+  setOpen: React.Dispatch<React.SetStateAction<boolean>>;
+};
 
 const EditAppointment = ({
   appointment,
-}: {
-  appointment: AppointmentsDataType;
-}) => {
+  refetchAppointments,
+  open,
+  setOpen,
+}: EditAppointmentProps) => {
+  const queryClient = useQueryClient();
+
   const {
     register,
     reset,
+    watch,
     formState: { errors },
     handleSubmit,
-  } = useForm<Partial<AppointmentType>>({
-    resolver: zodResolver(appointmentSchema.partial()),
+  } = useForm<AppointmentType>({
+    resolver: zodResolver(appointmentSchema),
     defaultValues: {
-      ...appointment,
-      age: appointment.age.toString(),
+      isClosed: appointment.isClosed === true ? "true" : "false",
+      official: appointment.official,
+      date: new Date(appointment.date)
+        .toISOString()
+        .split(":")
+        .slice(0, 2)
+        .join(":"),
+      patientId: appointment.patientId,
     },
     mode: "all",
   });
 
-  const { mutateAsync, isPending: pending } = useMutation({
-    mutationFn: async (data: Partial<AppointmentType>) => {
-      console.log({ data });
-      return data;
-    },
+  const isClosed = watch("isClosed");
+  const date = watch("date");
+  const official = watch("official");
 
-    onSuccess: () => {
-      toast.success("Appointment updated successfully");
-      reset();
+  const {
+    mutateAsync,
+    isPending: pending,
+    isError,
+    error,
+  } = useMutateData({
+    mutationFn: async (data: AppointmentType) =>
+      createOrEditAppointment(data, appointment.patientId, appointment._id),
+    config: {
+      queryKey: ["appointments"],
     },
   });
 
-  const handleFormSubmit: SubmitHandler<Partial<AppointmentType>> = async (
-    data
-  ) => {
+  const handleFormSubmit: SubmitHandler<AppointmentType> = async (data) => {
     console.log({ data });
-    await mutateAsync(data);
+    await mutateAsync(
+      { ...data, isClosed: isClosed },
+      {
+        onSuccess: (data) => {
+          console.log({ data, in: "onSuccess" });
+          toast.success("Appointment updated successfully");
+          queryClient.invalidateQueries({
+            queryKey: ["appointments"],
+          });
+          refetchAppointments();
+          reset();
+
+          setOpen(false);
+        },
+      }
+    );
   };
 
   return (
     <>
-      <Dialog>
-        <DialogTrigger asChild>
+      <Dialog open={open} onOpenChange={setOpen}>
+        <DialogTrigger asChild onClick={() => setOpen(true)}>
           <TbEdit size={20} className="text-primary-green cursor-pointer" />
         </DialogTrigger>
 
@@ -79,6 +117,7 @@ const EditAppointment = ({
               <DialogClose
                 onClick={() => {
                   reset();
+                  setOpen(false);
                 }}
               >
                 <X
@@ -89,6 +128,8 @@ const EditAppointment = ({
             </DialogTitle>
 
             <div className="flex flex-col gap-5 w-full">
+              <RenderCustomError isError={isError} error={error} />
+
               <form
                 onSubmit={handleSubmit(handleFormSubmit)}
                 className="flex flex-col gap-4 w-full"
@@ -99,66 +140,51 @@ const EditAppointment = ({
                   <div className="flex flex-col gap-5 rounded-none w-full">
                     <div className="grid grid-cols-1 gap-5 w-full">
                       <CustomInputForm
-                        labelName="Patient Name"
-                        inputName="patientName"
-                        register={register}
-                        errors={errors}
-                        inputType="text"
-                        placeholderText="Enter patient name"
-                      />
-
-                      <CustomInputForm
-                        labelName="Patient ID"
-                        inputName="patientID"
-                        register={register}
-                        errors={errors}
-                        inputType="text"
-                        placeholderText="Enter patient ID"
-                      />
-
-                      <CustomInputForm
-                        labelName="Age"
-                        inputName="age"
-                        register={register}
-                        errors={errors}
-                        inputType="text"
-                        placeholderText="Enter age"
-                      />
-
-                      <CustomInputForm
-                        labelName="Date"
+                        labelName="Date & Time"
                         inputName="date"
                         register={register}
                         errors={errors}
-                        inputType="date"
-                      />
-                    </div>
-
-                    <div className="grid grid-cols-1 gap-5 w-full">
-                      <CustomInputForm
-                        labelName="Time"
-                        inputName="time"
-                        register={register}
-                        errors={errors}
-                        inputType="time"
+                        inputType="datetime-local"
+                        value={new Date(date)
+                          .toISOString()
+                          .split(":")
+                          .slice(0, 2)
+                          .join(":")}
                       />
 
                       <CustomInputForm
                         labelName="Assigned Health official"
-                        inputName="assignedHO"
+                        inputName="official"
                         register={register}
                         errors={errors}
                         inputType="text"
                         placeholderText="Enter assigned health official"
+                        value={official}
                       />
 
                       <CustomInputForm
-                        labelName="Phone Number"
-                        inputName="phoneNumber"
+                        labelName="Mark as Completed"
+                        inputName="isClosed"
                         register={register}
                         errors={errors}
-                        inputType="text"
-                        placeholderText="Enter phone Number"
+                        inputType="select"
+                        selectOptions={[
+                          { value: "true", label: "Completed" },
+                          {
+                            value: "false",
+                            label: "Not Completed",
+                          },
+                        ]}
+                        value={isClosed}
+                      />
+
+                      <CustomInputForm
+                        labelName="Patient ID"
+                        inputName="patientId"
+                        register={register}
+                        errors={errors}
+                        inputType="hidden"
+                        value={appointment.patientId}
                       />
                     </div>
                   </div>

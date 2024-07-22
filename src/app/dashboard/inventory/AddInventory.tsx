@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import { PlusCircle, X } from "lucide-react";
 import {
   Dialog,
@@ -16,11 +16,26 @@ import { Button } from "@/components/ui/button";
 import ClipLoader from "react-spinners/ClipLoader";
 import CustomInputForm from "@/components/CustomInputForm";
 import { toast } from "react-toastify";
-import { useMutation } from "@tanstack/react-query";
+import { useQueryClient } from "@tanstack/react-query";
 import { InventoryType } from "@/types/index";
 import { inventorySchema } from "@/schema/inventory.schema";
+import { useFetch, useMutateData } from "@/hooks/useFetch";
+import {
+  createOrEditInventory,
+  getAllInventories,
+} from "@/actions/inventory.action";
+import RenderCustomError from "@/components/RenderCustomError";
+import { Inventory } from "@/types/backend";
 
 const AddInventory = () => {
+  const { refetch: refetchInventory } = useFetch<Inventory[]>({
+    queryFn: async () => await getAllInventories(),
+    queryKey: ["inventory"],
+    enabled: true,
+  });
+  const [open, setOpen] = useState(false);
+  const queryClient = useQueryClient();
+
   const {
     register,
     reset,
@@ -31,27 +46,36 @@ const AddInventory = () => {
     mode: "all",
   });
 
-  const { mutateAsync, isPending: pending } = useMutation({
-    mutationFn: async (data: InventoryType) => {
-      console.log({ data });
-      return data;
-    },
-
-    onSuccess: () => {
-      toast.success("Inventory added successfully");
-      reset();
+  const {
+    mutateAsync,
+    isPending: pending,
+    error,
+    isError,
+  } = useMutateData({
+    mutationFn: async (data: InventoryType) => createOrEditInventory(data),
+    config: {
+      queryKey: ["inventory"],
     },
   });
 
   const handleFormSubmit: SubmitHandler<InventoryType> = async (data) => {
-    console.log({ data });
-    await mutateAsync(data);
+    await mutateAsync(data, {
+      onSuccess: () => {
+        toast.success("Inventory added successfully");
+        queryClient.invalidateQueries({
+          queryKey: ["inventory"],
+        });
+        reset();
+        setOpen(false);
+        refetchInventory();
+      },
+    });
   };
 
   return (
     <>
-      <Dialog>
-        <DialogTrigger asChild>
+      <Dialog open={open} onOpenChange={setOpen}>
+        <DialogTrigger asChild onClick={() => setOpen(true)}>
           <Button className="bg-primary-green hover:bg-primary-green hover:scale-105 transition py-2 px-5 flex items-center gap-3 rounded-md text-white">
             <PlusCircle className="text-white" size={20} />
             <span className="font-semibold">Add Product</span>
@@ -70,6 +94,7 @@ const AddInventory = () => {
               <DialogClose
                 onClick={() => {
                   reset();
+                  setOpen(false);
                 }}
               >
                 <X
@@ -80,6 +105,8 @@ const AddInventory = () => {
             </DialogTitle>
 
             <div className="flex flex-col gap-5 w-full">
+              <RenderCustomError isError={isError} error={error} />
+
               <form
                 onSubmit={handleSubmit(handleFormSubmit)}
                 className="flex flex-col gap-4 w-full"
@@ -107,12 +134,12 @@ const AddInventory = () => {
                       />
 
                       <CustomInputForm
-                        labelName="In Stock"
+                        labelName="Quantity In Stock (pcs)"
                         inputName="inStock"
                         register={register}
                         errors={errors}
-                        inputType="text"
-                        placeholderText="e.g 100 pcs"
+                        inputType="number"
+                        placeholderText="e.g 100"
                       />
 
                       <CustomInputForm

@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import { X } from "lucide-react";
 import {
   Dialog,
@@ -16,47 +16,74 @@ import { Button } from "@/components/ui/button";
 import ClipLoader from "react-spinners/ClipLoader";
 import CustomInputForm from "@/components/CustomInputForm";
 import { toast } from "react-toastify";
-import { useMutation } from "@tanstack/react-query";
 import { InventoryType } from "@/types/index";
 import { inventorySchema } from "@/schema/inventory.schema";
 import { TbEdit } from "react-icons/tb";
-import { InventoryDataType } from "@/app/dashboard/inventory/InventoryTable";
+import { createOrEditInventory } from "@/actions/inventory.action";
+import { useMutateData } from "@/hooks/useFetch";
+import { Inventory } from "@/types/backend";
+import { useQueryClient } from "@tanstack/react-query";
+import RenderCustomError from "@/components/RenderCustomError";
 
-const EditInventory = ({ inventory }: { inventory: InventoryDataType }) => {
+type EditInventoryProps = {
+  inventory: Inventory;
+  refetchInventory: () => void;
+};
+
+const EditInventory = ({ inventory, refetchInventory }: EditInventoryProps) => {
+  const queryClient = useQueryClient();
+  const [open, setOpen] = useState(false);
+
   const {
     register,
     reset,
     formState: { errors },
     handleSubmit,
-  } = useForm<Partial<InventoryType>>({
-    resolver: zodResolver(inventorySchema.partial()),
-    defaultValues: inventory,
+  } = useForm<InventoryType>({
+    resolver: zodResolver(inventorySchema),
+    defaultValues: {
+      productName: inventory.name,
+      productType: inventory.type,
+      manufacturer: inventory.manufacturer,
+      expiryDate: new Date(inventory.expiryDate).toISOString().split("T")[0],
+      inStock: inventory.inStock,
+      receivedDate: new Date(inventory.receivedDate)
+        .toISOString()
+        .split("T")[0],
+    },
     mode: "all",
   });
 
-  const { mutateAsync, isPending: pending } = useMutation({
-    mutationFn: async (data: Partial<InventoryType>) => {
-      console.log({ data });
-      return data;
-    },
-
-    onSuccess: () => {
-      toast.success("Inventory updated successfully");
-      reset();
+  const {
+    mutateAsync,
+    isPending: pending,
+    error,
+    isError,
+  } = useMutateData({
+    mutationFn: async (data: InventoryType) =>
+      createOrEditInventory(data, inventory._id),
+    config: {
+      queryKey: ["inventory"],
     },
   });
 
-  const handleFormSubmit: SubmitHandler<Partial<InventoryType>> = async (
-    data
-  ) => {
-    console.log({ data });
-    await mutateAsync(data);
+  const handleFormSubmit: SubmitHandler<InventoryType> = async (data) => {
+    await mutateAsync(data, {
+      onSuccess: () => {
+        toast.success("Inventory updated successfully");
+        queryClient.invalidateQueries({
+          queryKey: ["inventory"],
+        });
+        refetchInventory();
+        setOpen(false);
+      },
+    });
   };
 
   return (
     <>
-      <Dialog>
-        <DialogTrigger asChild>
+      <Dialog open={open} onOpenChange={setOpen}>
+        <DialogTrigger asChild onClick={() => setOpen(true)}>
           <TbEdit size={20} className="text-primary-green cursor-pointer" />
         </DialogTrigger>
 
@@ -72,6 +99,7 @@ const EditInventory = ({ inventory }: { inventory: InventoryDataType }) => {
               <DialogClose
                 onClick={() => {
                   reset();
+                  setOpen(false);
                 }}
               >
                 <X
@@ -82,6 +110,8 @@ const EditInventory = ({ inventory }: { inventory: InventoryDataType }) => {
             </DialogTitle>
 
             <div className="flex flex-col gap-5 w-full">
+              <RenderCustomError isError={isError} error={error} />
+
               <form
                 onSubmit={handleSubmit(handleFormSubmit)}
                 className="flex flex-col gap-4 w-full"
@@ -113,8 +143,8 @@ const EditInventory = ({ inventory }: { inventory: InventoryDataType }) => {
                         inputName="inStock"
                         register={register}
                         errors={errors}
-                        inputType="text"
-                        placeholderText="e.g 100 pcs"
+                        inputType="number"
+                        placeholderText="e.g 100"
                       />
 
                       <CustomInputForm

@@ -16,51 +16,90 @@ import { Button } from "@/components/ui/button";
 import ClipLoader from "react-spinners/ClipLoader";
 import CustomInputForm from "@/components/CustomInputForm";
 import { toast } from "react-toastify";
-import { RescheduleAppointmentType } from "@/types/index";
-import { rescheduleAppointmentSchema } from "@/schema/appointment.schema";
-import { useMutation } from "@tanstack/react-query";
-import { AppointmentsDataType } from "@/app/dashboard/appointments/AppointmentsTable";
+import { useQueryClient } from "@tanstack/react-query";
 import Image from "next/image";
+import { IAppointment } from "@/types/backend";
+import { AppointmentType } from "@/types/index";
+import { appointmentSchema } from "@/schema/appointment.schema";
+import RenderCustomError from "@/components/RenderCustomError";
+import { createOrEditAppointment } from "@/actions/single-patient.action";
+import { useMutateData } from "@/hooks/useFetch";
+
+type RescheduleAppointmentProps = {
+  appointment: IAppointment;
+  refetchAppointments: () => void;
+  open: boolean;
+  setOpen: React.Dispatch<React.SetStateAction<boolean>>;
+};
 
 const RescheduleAppointment = ({
   appointment,
-}: {
-  appointment: AppointmentsDataType;
-}) => {
+  refetchAppointments,
+  open,
+  setOpen,
+}: RescheduleAppointmentProps) => {
+  const queryClient = useQueryClient();
+
   const {
     register,
     reset,
+    watch,
     formState: { errors },
     handleSubmit,
-  } = useForm<RescheduleAppointmentType>({
-    resolver: zodResolver(rescheduleAppointmentSchema),
-    defaultValues: appointment,
+  } = useForm<AppointmentType>({
+    resolver: zodResolver(appointmentSchema),
+    defaultValues: {
+      date: new Date(appointment.date)
+        .toISOString()
+        .split(":")
+        .slice(0, 2)
+        .join(":"),
+      official: appointment.official,
+      isClosed: appointment.isClosed === true ? "true" : "false",
+      patientId: appointment.patientId,
+    },
     mode: "all",
   });
 
-  const { mutateAsync, isPending: pending } = useMutation({
-    mutationFn: async (data: RescheduleAppointmentType) => {
-      console.log({ data });
-      return data;
-    },
+  const date = watch("date");
 
-    onSuccess: () => {
-      toast.success("Appointment rescheduled successfully");
-      reset();
+  const {
+    mutateAsync,
+    isPending: pending,
+    isError,
+    error,
+  } = useMutateData({
+    mutationFn: async (data: AppointmentType) =>
+      createOrEditAppointment(data, appointment.patientId, appointment._id),
+    config: {
+      queryKey: ["appointments"],
     },
   });
 
-  const handleFormSubmit: SubmitHandler<RescheduleAppointmentType> = async (
-    data
-  ) => {
-    console.log({ data });
-    await mutateAsync(data);
+  const handleFormSubmit: SubmitHandler<AppointmentType> = async (data) => {
+    await mutateAsync(
+      {
+        ...data,
+        isClosed: "false",
+      },
+      {
+        onSuccess: () => {
+          toast.success("Appointment rescheduled successfully");
+          queryClient.invalidateQueries({
+            queryKey: ["appointments"],
+          });
+          refetchAppointments();
+          reset();
+          setOpen(false);
+        },
+      }
+    );
   };
 
   return (
     <>
-      <Dialog>
-        <DialogTrigger asChild>
+      <Dialog open={open} onOpenChange={setOpen}>
+        <DialogTrigger asChild onClick={() => setOpen(true)}>
           <Image
             src="/assets/icons/calendar.svg"
             alt="Calendar"
@@ -82,6 +121,7 @@ const RescheduleAppointment = ({
               <DialogClose
                 onClick={() => {
                   reset();
+                  setOpen(false);
                 }}
               >
                 <X
@@ -92,6 +132,8 @@ const RescheduleAppointment = ({
             </DialogTitle>
 
             <div className="flex flex-col gap-5 w-full">
+              <RenderCustomError isError={isError} error={error} />
+
               <form
                 onSubmit={handleSubmit(handleFormSubmit)}
                 className="flex flex-col gap-4 w-full"
@@ -102,27 +144,43 @@ const RescheduleAppointment = ({
                   <div className="flex flex-col gap-5 rounded-none w-full">
                     <div className="grid grid-cols-1 gap-5 w-full">
                       <CustomInputForm
-                        labelName="Date"
+                        labelName="Date & Time"
                         inputName="date"
                         register={register}
                         errors={errors}
-                        inputType="date"
+                        inputType="datetime-local"
+                        value={new Date(date)
+                          .toISOString()
+                          .split(":")
+                          .slice(0, 2)
+                          .join(":")}
                       />
 
                       <CustomInputForm
-                        labelName="Time"
-                        inputName="time"
+                        labelName="Assigned H.O"
+                        inputName="official"
                         register={register}
                         errors={errors}
-                        inputType="time"
+                        inputType="hidden"
+                        value={appointment.official}
+                      />
+
+                      <CustomInputForm
+                        labelName="Mark as Completed"
+                        inputName="isClosed"
+                        register={register}
+                        errors={errors}
+                        inputType="hidden"
+                        value={"false"}
                       />
 
                       <CustomInputForm
                         labelName="Patient ID"
-                        inputName="patientID"
+                        inputName="patientId"
                         register={register}
                         errors={errors}
                         inputType="hidden"
+                        value={appointment.patientId}
                       />
                     </div>
                   </div>

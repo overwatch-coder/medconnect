@@ -13,8 +13,10 @@ import {
 import DeleteModal from "@/components/DeleteModal";
 import { toast } from "react-toastify";
 import EditInventory from "@/app/dashboard/inventory/EditInventory";
-import { InventoryDataType } from "@/app/dashboard/inventory/InventoryTable";
 import GenerateTablePagination from "@/components/GenerateTablePagination";
+import { Inventory } from "@/types/backend";
+import { deleteInventory, getAllInventories } from "@/actions/inventory.action";
+import { useFetch } from "@/hooks/useFetch";
 
 const tableHeaderNames = [
   "Product Name",
@@ -29,11 +31,18 @@ const GenerateInventoryTable = ({
   filteredData,
   setFilteredData,
 }: {
-  filteredData: InventoryDataType[];
-  setFilteredData: React.Dispatch<React.SetStateAction<InventoryDataType[]>>;
+  filteredData: Inventory[];
+  setFilteredData: React.Dispatch<React.SetStateAction<Inventory[]>>;
 }) => {
+  const { refetch: refetchInventory } = useFetch({
+    queryFn: async () => await getAllInventories(),
+    queryKey: ["inventory"],
+    enabled: true,
+  });
+
+  const [pending, setPending] = useState(false);
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
-  const [dataToDelete, setDataToDelete] = useState<InventoryDataType>();
+  const [dataToDelete, setDataToDelete] = useState<Inventory>();
 
   const [currentTablePage, setCurrentTablePage] = useState(1);
   const dataPerPage = 7;
@@ -54,16 +63,18 @@ const GenerateInventoryTable = ({
   };
 
   // Handle delete
-  const handleDelete = async (item: InventoryDataType) => {
-    const data = filteredData.filter((p) => p.id !== item.id);
+  const handleDelete = async (item: Inventory) => {
+    setPending(true);
+    await deleteInventory(item._id);
 
-    setFilteredData(data);
+    setFilteredData((prev) => prev.filter((p) => p._id !== item._id));
 
     setDataToDelete(undefined);
 
     setOpenDeleteModal(false);
 
     toast.success("Product deleted successfully");
+    setPending(false);
   };
 
   return (
@@ -104,25 +115,26 @@ const GenerateInventoryTable = ({
           {currentData.map((data, index) => (
             <TableRow key={index}>
               <TableCell className="text-secondary-gray flex items-center gap-2">
-                {data.productName}
+                {data.name}
               </TableCell>
-              <TableCell className="text-secondary-gray">
-                {data.productType}
-              </TableCell>
+              <TableCell className="text-secondary-gray">{data.type}</TableCell>
               <TableCell className="text-secondary-gray">
                 {data.inStock}
               </TableCell>
               <TableCell className="text-secondary-gray">
-                {data.receivedDate}
+                {new Date(data.receivedDate).toISOString().split("T")[0]}
               </TableCell>
               <TableCell className="text-secondary-gray">
-                {data.expiryDate}
+                {new Date(data.expiryDate).toISOString().split("T")[0]}
               </TableCell>
               <TableCell className="text-secondary-gray">
                 {data.manufacturer}
               </TableCell>
               <TableCell className="flex items-center gap-3">
-                <EditInventory inventory={data} />
+                <EditInventory
+                  inventory={data}
+                  refetchInventory={refetchInventory}
+                />
 
                 <Trash2
                   size={20}
@@ -144,6 +156,7 @@ const GenerateInventoryTable = ({
         title="Delete Product"
         description="Are you sure you want to delete this product from the inventory?"
         deleteFn={() => handleDelete(dataToDelete!)}
+        pending={pending}
       />
 
       {/* Pagination */}

@@ -1,30 +1,43 @@
 "use client";
 
 import { Search } from "lucide-react";
-import React, { useState } from "react";
-import { MEDCONNECT_DASHBOARD_PATIENTS_INVENTORY as inventoryData } from "@/constants";
+import React, { useEffect, useState } from "react";
 import CustomFilterDropdown from "@/components/CustomFilterDropdown";
 import GenerateInventoryTable from "@/app/dashboard/inventory/GenerateInventoryTable";
-
-export type InventoryDataType = (typeof inventoryData)[number];
+import { getAllInventories } from "@/actions/inventory.action";
+import { useFetch } from "@/hooks/useFetch";
+import { Inventory } from "@/types/backend";
+import { RenderEmptyComponent } from "@/app/dashboard/health-officials/HealthOfficialsTable";
 
 const InventoryTable = () => {
-  const [searchTerm, setSearchTerm] = useState("");
+  const { data: inventoryData, isLoading } = useFetch<Inventory[]>({
+    queryFn: async () => await getAllInventories(),
+    queryKey: ["inventory"],
+    enabled: true,
+  });
 
-  const [filteredInventory, setFilteredInventory] =
-    useState<InventoryDataType[]>(inventoryData);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [filteredInventory, setFilteredInventory] = useState<Inventory[]>([]);
   const [filterBy, setFilterBy] = useState({
     1: "Expiry Date",
     2: "Product Type",
     3: "In Stock",
   });
 
+  useEffect(() => {
+    if (inventoryData) {
+      setFilteredInventory(inventoryData);
+    }
+  }, [inventoryData]);
+
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (!inventoryData) return;
+
     setSearchTerm(e.target.value);
     const filtered = inventoryData.filter(
       (data) =>
-        data.productName.toLowerCase().includes(e.target.value.toLowerCase()) ||
-        data.productType.toLowerCase().includes(e.target.value.toLowerCase()) ||
+        data.name.toLowerCase().includes(e.target.value.toLowerCase()) ||
+        data.type.toLowerCase().includes(e.target.value.toLowerCase()) ||
         data.manufacturer.toLowerCase().includes(e.target.value.toLowerCase())
     );
     setFilteredInventory(filtered);
@@ -51,6 +64,10 @@ const InventoryTable = () => {
     setSearchTerm("");
   };
 
+  if (isLoading) {
+    return <RenderEmptyComponent />;
+  }
+
   return (
     <div className="w-full flex flex-col gap-5 px-5 py-5">
       <InventoryCommonTable
@@ -68,7 +85,7 @@ const InventoryTable = () => {
 export default InventoryTable;
 
 const filterOptions: {
-  value: keyof InventoryDataType;
+  value: keyof Inventory;
   label: string;
 }[] = [
   {
@@ -76,7 +93,7 @@ const filterOptions: {
     label: "Expiry Date",
   },
   {
-    value: "productType",
+    value: "type",
     label: "Product Type",
   },
   {
@@ -84,7 +101,7 @@ const filterOptions: {
     label: "In Stock",
   },
   {
-    value: "productName",
+    value: "name",
     label: "Product Name",
   },
   {
@@ -98,14 +115,12 @@ const filterOptions: {
 ];
 
 type InventoryCommonTableProps = {
-  filteredInventory: InventoryDataType[];
+  filteredInventory: Inventory[];
   searchTerm: string;
   filterBy: { 1: string; 2: string; 3: string };
   handleSearch: (e: React.ChangeEvent<HTMLInputElement>) => void;
   handleFilter: (value: string, index?: number) => void;
-  setFilteredInventory: React.Dispatch<
-    React.SetStateAction<InventoryDataType[]>
-  >;
+  setFilteredInventory: React.Dispatch<React.SetStateAction<Inventory[]>>;
 };
 
 const InventoryCommonTable = ({

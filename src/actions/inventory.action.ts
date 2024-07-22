@@ -1,29 +1,83 @@
 "use server";
 
-import { fetchData, mutateData } from "@/actions/api-request.action";
 import { currentUser } from "@/actions/user.action";
 import { axiosInstance } from "@/lib/utils";
-import { handleApiError } from "@/lib/validations";
 import { Inventory } from "@/types/backend";
 import { InventoryType } from "@/types/index";
 import { isAxiosError } from "axios";
 
+// === INVENTORY ===
+// get all inventories
+export const getAllInventories = async (): Promise<Inventory[]> => {
+  try {
+    const user = await currentUser();
+
+    if (!user) {
+      throw new Error("You are not authorized to access this feature");
+    }
+
+    const res = await axiosInstance.get(
+      `/chps-compound/${user?.staff?.chpsCompoundId}/inventories`,
+      {
+        headers: {
+          Authorization: `Bearer ${user.auth.token}`,
+        },
+      }
+    );
+
+    const resData = res.data;
+
+    if (!resData?.status) {
+      throw new Error(resData?.message);
+    }
+
+    const inventories = resData?.data as Inventory[];
+
+    return inventories.sort(
+      (a, b) =>
+        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+    );
+  } catch (error: any) {
+    console.log({
+      error,
+      data: error?.response?.data,
+      message: error?.response?.data?.message,
+      in: "getAllInventories action",
+    });
+
+    return error;
+  }
+};
+
 //create a new inventory
 export const createOrEditInventory = async (
-  data: Inventory,
+  data: InventoryType,
   inventoryId?: string
 ): Promise<Inventory> => {
   try {
     const user = await currentUser();
 
+    if (!user) {
+      throw new Error("You are not authorized the inventories");
+    }
+
     const url = inventoryId
       ? `/chps-compound/${user?.staff?.chpsCompoundId}/inventory/${inventoryId}`
       : `/chps-compound/${user?.staff?.chpsCompoundId}/inventories`;
 
+    const backendData = {
+      name: data.productName,
+      type: data.productType,
+      inStock: data.inStock,
+      receivedDate: data.receivedDate,
+      expiryDate: data.expiryDate,
+      manufacturer: data.manufacturer,
+    };
+
     const res = await axiosInstance({
-      method: data.name ? "DELETE" : data.inventoryId ? "PUT" : "POST",
+      method: inventoryId ? "PATCH" : "POST",
       url: url,
-      data: data.name,
+      data: backendData,
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${user?.auth.token}`,
@@ -36,7 +90,9 @@ export const createOrEditInventory = async (
       throw new Error(resData?.message);
     }
 
-    return resData?.data as Inventory;
+    const inventory = resData?.data as Inventory;
+
+    return inventory;
   } catch (error: any) {
     console.log({
       error,
@@ -49,6 +105,40 @@ export const createOrEditInventory = async (
     ) {
       throw new Error("Product name already exists!");
     }
+    return error;
+  }
+};
+
+// delete inventory
+export const deleteInventory = async (inventoryId: string) => {
+  try {
+    const user = await currentUser();
+    if (!user) {
+      throw new Error("You are not authorized to access this feature");
+    }
+
+    const res = await axiosInstance.delete(
+      `/chps-compound/${user?.staff?.chpsCompoundId}/inventory/${inventoryId}`,
+      {
+        headers: {
+          Authorization: `Bearer ${user.auth.token}`,
+        },
+      }
+    );
+
+    const resData = {
+      status: true,
+    };
+
+    return resData;
+  } catch (error: any) {
+    console.log({
+      error,
+      data: error?.response?.data,
+      message: error?.response?.data?.message,
+      in: "deleteInventory catch",
+    });
+
     return error;
   }
 };

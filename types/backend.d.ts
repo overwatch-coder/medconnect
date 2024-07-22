@@ -288,13 +288,16 @@ declare interface IVisitLogs {
 
 // === INVENTORY ==
 declare interface Inventory {
-  inventoryId: string;
+  _id: string;
   name: string;
   type: string;
+  manufacturer: string;
   inStock: number;
   receivedDate: string;
   expiryDate: string;
-  manufacturer: string;
+  chpsCompoundId: string;
+  createdAt: string;
+  updatedAt: string;
   __v: number;
 }
 

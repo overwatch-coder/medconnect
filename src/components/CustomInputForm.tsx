@@ -81,6 +81,7 @@ const CustomInputForm = <T extends FieldValues>({
           placeholder={placeholderText}
           defaultValue={value}
           disabled={disableField}
+          min={inputType === "number" ? 0 : undefined}
         />
       )}
 

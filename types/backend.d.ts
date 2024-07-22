@@ -285,3 +285,15 @@ declare interface IVisitLogs {
   visitLogId: string;
   __v: number;
 }
+
+// === INVENTORY ==
+declare interface Inventory {
+  inventoryId: string;
+  name: string;
+  type: string;
+  inStock: number;
+  receivedDate: string;
+  expiryDate: string;
+  manufacturer: string;
+  __v: number;
+}

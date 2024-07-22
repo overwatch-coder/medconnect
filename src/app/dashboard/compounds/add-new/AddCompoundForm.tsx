@@ -16,13 +16,22 @@ import { useAuth } from "@/hooks";
 import { useQueryClient } from "@tanstack/react-query";
 import { compoundSchema } from "@/schema/compound.schema";
 import { z } from "zod";
-import { fileToBase64 } from "file64";
-import axios from "axios";
-import { useMutateData } from "@/hooks/useFetch";
-import { createChpsCompound } from "@/actions/chps-compound.action";
-import { ChpsCompound } from "@/types/backend";
+import { useFetch, useMutateData } from "@/hooks/useFetch";
+import {
+  createChpsCompound,
+  getAllChpsCompounds,
+} from "@/actions/chps-compound.action";
+import { IChpsCompound } from "@/types/backend";
+import RenderCustomError from "@/components/RenderCustomError";
+import { Checkbox } from "@/components/ui/checkbox";
 
 const AddCompoundForm = () => {
+  const { refetch: refetchCompounds } = useFetch({
+    queryFn: async () => await getAllChpsCompounds(),
+    queryKey: ["compounds"],
+    enabled: true,
+  });
+
   const router = useRouter();
   const [user] = useAuth();
   const queryClient = useQueryClient();
@@ -41,18 +50,18 @@ const AddCompoundForm = () => {
     ),
     defaultValues: {
       createdById: user?.admin?._id!,
-      authUserId: user?.auth.id!,
-      isSuperAdmin: user?.isSuperAdmin!,
     },
     mode: "all",
   });
 
   const profilePicture = watch("profilePicture");
 
-  const { mutateAsync, isPending: pending } = useMutateData<
-    CompoundType,
-    ChpsCompound
-  >({
+  const {
+    mutateAsync,
+    isPending: pending,
+    error,
+    isError,
+  } = useMutateData<CompoundType, IChpsCompound>({
     mutationFn: async (data: CompoundType) => createChpsCompound(data),
     config: {
       queryKey: ["compounds"],
@@ -62,35 +71,18 @@ const AddCompoundForm = () => {
   const submitAddCompound: SubmitHandler<
     CompoundType & { profilePicture: any }
   > = async (data) => {
-    const baseUrl =
-      "https://freeimage.host/api/1/upload?key=6d207e02198a847aa98d0a2a901485a5";
-
-    const profilePicbase64 = data.profilePicture
-      ? await fileToBase64(data.profilePicture)
-      : "";
-    console.log({ profilePicbase64, data });
-
-    const res = await axios.post(`${baseUrl}&source=${profilePicbase64}`);
-    const profilePictureUrl = res.data?.image?.url as string;
-
-    const { profilePicture, ...rest } = data;
-
-    console.log({ profilePictureUrl, rest });
-
-    await mutateAsync(
-      { ...rest, profilePictureUrl: profilePictureUrl },
-      {
-        onSuccess: (data) => {
-          toast.success("Compound added successfully");
-          const compoundId = data?._id!;
-          queryClient.invalidateQueries({ queryKey: ["compounds"] });
-          router.replace(`/dashboard/compounds/${compoundId}`);
-        },
-        onError: (err) => {
-          toast.error("Something went wrong");
-        },
-      }
-    );
+    await mutateAsync(data, {
+      onSuccess: (data) => {
+        const compoundId = data?.chpsCompound._id!;
+        queryClient.invalidateQueries({ queryKey: ["compounds"] });
+        refetchCompounds();
+        toast.success("Compound added successfully");
+        router.replace(`/dashboard/compounds/${compoundId}`);
+      },
+      onError: (err) => {
+        toast.error("Something went wrong while adding compound");
+      },
+    });
   };
 
   return (
@@ -109,6 +101,8 @@ const AddCompoundForm = () => {
         method="POST"
         className="flex flex-col gap-5 px-3 pt-5 pb-10 bg-white h-full"
       >
+        <RenderCustomError error={error} isError={isError} />
+
         {/* General Information */}
         <div className="flex flex-col gap-5 p-4 rounded-md border border-secondary-gray/50 w-full">
           <FormSectionHeader title="General Information" />
@@ -183,36 +177,12 @@ const AddCompoundForm = () => {
               />
 
               <CustomInputForm
-                labelName="Auth User ID"
-                inputName="authUserId"
-                errors={errors}
-                inputType="hidden"
-                register={register}
-              />
-
-              <CustomInputForm
                 labelName="Created By ID"
                 inputName="createdById"
                 errors={errors}
                 inputType="hidden"
                 register={register}
-              />
-
-              <CustomInputForm
-                labelName="Is Super Admin?"
-                inputName="isSuperAdmin"
-                errors={errors}
-                inputType="hidden"
-                register={register}
-              />
-
-              <CustomInputForm
-                labelName="Do you accept the terms and conditions?"
-                inputName="hasAcceptedTC"
-                errors={errors}
-                inputType="hidden"
-                register={register}
-                value={["true", "false"][Math.floor(Math.random() * 2)]}
+                value={user?.admin?._id}
               />
             </div>
           </div>
@@ -241,44 +211,6 @@ const AddCompoundForm = () => {
                 placeholderText="Enter emergency contact"
                 register={register}
               />
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-3 w-full gap-5">
-              {/* <CustomInputForm
-                labelName="Historical Information"
-                inputName="historicalInformation"
-                errors={errors}
-                inputType="text"
-                placeholderText="Enter historical information"
-                register={register}
-              /> */}
-
-              {/* <CustomInputForm
-                labelName="Community Outreach Programs"
-                inputName="communityOutreachContact"
-                errors={errors}
-                inputType="text"
-                placeholderText="Enter community outreach programs"
-                register={register}
-              /> */}
-
-              {/* <CustomInputForm
-                labelName="Staff Information"
-                inputName="staffInformation"
-                errors={errors}
-                inputType="text"
-                placeholderText="Enter staff information"
-                register={register}
-              /> */}
-
-              {/* <CustomInputForm
-                labelName="Facility Details"
-                inputName="facilityDetails"
-                errors={errors}
-                inputType="text"
-                placeholderText="Enter facility details"
-                register={register}
-              /> */}
             </div>
           </div>
         </div>
@@ -320,6 +252,29 @@ const AddCompoundForm = () => {
                 ))}
               </div>
             )}
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 w-full gap-5">
+          <div className="flex items-center gap-3">
+            <Checkbox
+              id="hasAcceptedTC"
+              className="border-secondary-gray border-2"
+              {...register("hasAcceptedTC")}
+              onCheckedChange={(value) =>
+                setValue("hasAcceptedTC", value as boolean)
+              }
+              defaultChecked={false}
+            />
+
+            <div className="grid gap-1.5 leading-none">
+              <label
+                htmlFor="hasAcceptedTC"
+                className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+              >
+                Do you accept the terms and conditions?
+              </label>
+            </div>
           </div>
         </div>
 

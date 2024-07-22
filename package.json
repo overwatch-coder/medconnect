@@ -32,7 +32,6 @@
     "clsx": "^2.1.1",
     "dob-to-age": "^1.0.1",
     "embla-carousel-react": "^8.1.3",
-    "file64": "^1.0.3",
     "jotai": "^2.8.3",
     "lucide-react": "^0.383.0",
     "moment-timezone": "^0.5.45",

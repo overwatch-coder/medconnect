@@ -335,15 +335,15 @@ const AdminDashboard = () => {
             </div>
 
             {/* Stats */}
-            <div className="flex flex-col gap-4 justify-end md:absolute md:bottom-10">
-              <div className="w-full p-3 bg-secondary-gray/10 flex items-center justify-end gap-3 rounded-md">
+            <div className="flex flex-col gap-4 justify-end w-full">
+              <div className="w-full p-3 bg-secondary-gray/10 flex items-center justify-center gap-3 rounded-md">
                 <p className="capitalize font-semibold text-secondary-gray">
                   Patient Satisfactory Rate
                 </p>
                 <span className="text-primary-green">80%</span>
               </div>
 
-              <button className="group flex items-center w-full gap-3 px-5">
+              <button className="group flex items-center ml-auto w-auto gap-3 px-5">
                 <span className="group-hover:font-semibold">
                   Start a new diagnosis
                 </span>

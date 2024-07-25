@@ -21,13 +21,21 @@ const OutreachProgramAnalytics = () => {
 
   useEffect(() => {
     if (outreachProgramsData) {
-      setOutreachPrograms(outreachProgramsData);
+      setOutreachPrograms(
+        outreachProgramsData.sort(
+          (a, b) =>
+            new Date(b?.programDate).getTime() -
+            new Date(a?.programDate).getTime()
+        )
+      );
     }
   }, [outreachProgramsData]);
 
   if (isLoading) {
     return <RenderEmptyComponent />;
   }
+
+  console.log({ outreachPrograms });
 
   return (
     <div className="flex flex-col gap-2 w-full">
@@ -39,11 +47,11 @@ const OutreachProgramAnalytics = () => {
           </h2>
 
           <p className="font-bold text-2xl relative text-primary-green">
-            <span>{outreachPrograms.length}</span>
+            <span>{outreachPrograms?.length}</span>
             <span className="text-xs text-secondary-gray absolute bottom-0 left-10 flex items-center gap-1">
               <IoIosArrowRoundUp size={10} className="text-red-500" />{" "}
               <span className="text-red-500">
-                {outreachPrograms.length * 20}%
+                {outreachPrograms?.length * 20}%
               </span>{" "}
               <span>from last period</span>
             </span>
@@ -59,9 +67,9 @@ const OutreachProgramAnalytics = () => {
           <p className="font-bold text-2xl relative text-primary-green">
             <span>
               {
-                outreachPrograms.filter(
+                outreachPrograms?.filter(
                   (program) =>
-                    new Date(program.programDate).getTime() >
+                    new Date(program?.programDate).getTime() >
                     new Date().getTime()
                 ).length
               }
@@ -71,13 +79,9 @@ const OutreachProgramAnalytics = () => {
           <p className="flex flex-col gap-1">
             <span className="text-secondary-gray font-bold text-xs">Next</span>
             <span className="text-xs text-primary-gray/50">
-              {
-                outreachPrograms.sort(
-                  (a, b) =>
-                    new Date(a.programDate).getTime() -
-                    new Date(b.programDate).getTime()
-                )[0].programDate
-              }
+              {outreachPrograms[0]?.programDate.includes("T")
+                ? outreachPrograms[0]?.programDate.split("T")[0]
+                : outreachPrograms[0]?.programDate}
             </span>
           </p>
         </div>
@@ -89,7 +93,7 @@ const OutreachProgramAnalytics = () => {
           </h2>
 
           <p className="font-bold text-2xl relative text-primary-green">
-            <span>{Math.floor(Math.random() * outreachPrograms.length)}</span>
+            <span>{outreachPrograms.length}</span>
             <span className="text-xs text-secondary-gray absolute bottom-0 left-10 flex items-center gap-1">
               <IoIosArrowRoundUp size={10} className="text-red-500" />{" "}
               <span className="text-red-500">

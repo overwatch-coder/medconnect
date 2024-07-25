@@ -19,10 +19,7 @@ import { toast } from "react-toastify";
 import { OutreachProgramType } from "@/types/index";
 import { useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
-import {
-  outreachProgramSchema,
-  programSchema,
-} from "@/schema/outreach-programs.schema";
+import { outreachProgramSchema } from "@/schema/outreach-programs.schema";
 import { TbEdit } from "react-icons/tb";
 import {
   createOrEditOutreachProgram,
@@ -35,9 +32,10 @@ import RenderCustomError from "@/components/RenderCustomError";
 
 type EditProgramProps = {
   program: IOutreachProgram;
+  setPrograms: React.Dispatch<React.SetStateAction<IOutreachProgram[]>>;
 };
 
-const EditProgram = ({ program }: EditProgramProps) => {
+const EditProgram = ({ program, setPrograms }: EditProgramProps) => {
   const { refetch: refetchOutreachPrograms } = useFetch({
     queryFn: async () => await getAllOutreachPrograms(),
     queryKey: ["outreach-programs"],
@@ -45,6 +43,22 @@ const EditProgram = ({ program }: EditProgramProps) => {
 
   const queryClient = useQueryClient();
   const [open, setOpen] = useState(false);
+  const startTimeHour = parseInt(program.programStartTime.split(":")[0]);
+  const startTimeMinute = parseInt(program.programStartTime.split(":")[1]);
+
+  const formattedEndTimeHour =
+    startTimeHour < 10 ? "0" + startTimeHour : startTimeHour;
+  const formattedEndTimeMinute =
+    startTimeMinute < 10 ? "0" + startTimeMinute : startTimeMinute;
+
+  const startTime = `${formattedEndTimeHour}:${formattedEndTimeMinute}`;
+  const startTimeWithDate = `2024-07-25T${startTime}:00.000Z`;
+
+  const newStartTime = new Date(startTimeWithDate)
+    .toLocaleTimeString("en-US", {
+      timeStyle: "short",
+    })
+    .slice(0, 5);
 
   const {
     register,
@@ -63,14 +77,7 @@ const EditProgram = ({ program }: EditProgramProps) => {
       numberOfParticipants: program.estimatedAudience,
       location: program.location,
       programDate: new Date(program.programDate).toISOString().split("T")[0],
-      programStartTime: `${new Date(
-        `${program.programDate}T${program.programStartTime.split(" ")[0]}`
-      )
-        .toLocaleTimeString("en-US", {
-          timeZone: "UTC",
-          timeStyle: "short",
-        })
-        .slice(0, 5)}`,
+      programStartTime: newStartTime,
     },
     mode: "all",
   });
@@ -89,7 +96,6 @@ const EditProgram = ({ program }: EditProgramProps) => {
   });
 
   const handleFormSubmit: SubmitHandler<OutreachProgramType> = async (data) => {
-    console.log({ data });
     const dataToSubmit: OutreachProgramType = {
       ...data,
       organization: data.organizerName
@@ -106,12 +112,18 @@ const EditProgram = ({ program }: EditProgramProps) => {
       }),
     };
     await mutateAsync(dataToSubmit, {
-      onSuccess: () => {
+      onSuccess: (data) => {
         toast.success("Outreach Program updated successfully");
         queryClient.invalidateQueries({
           queryKey: ["outreach-programs"],
         });
         refetchOutreachPrograms();
+
+        setPrograms((prevPrograms) => [
+          ...prevPrograms.filter((p) => p._id !== program._id),
+          data!,
+        ]);
+
         reset();
         setOpen(false);
       },
@@ -147,7 +159,8 @@ const EditProgram = ({ program }: EditProgramProps) => {
               </DialogClose>
             </DialogTitle>
 
-            <DialogDescription className="flex flex-col gap-5 w-full">
+            <DialogDescription></DialogDescription>
+            <div className="flex flex-col gap-5 w-full">
               <RenderCustomError error={error} isError={isError} />
 
               <form
@@ -284,7 +297,7 @@ const EditProgram = ({ program }: EditProgramProps) => {
                   <EditProgramButton pending={pending} reset={reset} />
                 </div>
               </form>
-            </DialogDescription>
+            </div>
           </DialogHeader>
         </DialogContent>
       </Dialog>

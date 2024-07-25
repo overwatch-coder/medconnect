@@ -37,13 +37,7 @@ const OutreachPrograms = async () => {
 
       {isSuperAdmin && <OutreachProgramAnalytics />}
 
-      <section className="bg-white rounded-md shadow w-full flex flex-col gap-5 p-5">
-        <h2 className="text-secondary-gray text-xl font-medium">
-          {isSuperAdmin ? "All Programs" : "Upcoming"}
-        </h2>
-
-        <OutreachProgramsWithSearch isAdmin={isSuperAdmin!} />
-      </section>
+      <OutreachProgramsWithSearch isAdmin={isSuperAdmin!} />
     </div>
   );
 };

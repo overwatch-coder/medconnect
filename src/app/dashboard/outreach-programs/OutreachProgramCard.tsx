@@ -9,11 +9,13 @@ import Link from "next/link";
 type OutreachProgramCardProps = {
   program: IOutreachProgram;
   children: React.ReactNode;
+  setPrograms: React.Dispatch<React.SetStateAction<IOutreachProgram[]>>;
 };
 
 const OutreachProgramCard = ({
   program,
   children,
+  setPrograms,
 }: OutreachProgramCardProps) => {
   const [user] = useAuth();
   const isSuperAdmin = user?.isSuperAdmin;
@@ -31,6 +33,7 @@ const OutreachProgramCard = ({
           width={300}
           height={300}
           className="rounded-none object-cover h-full"
+          priority={true}
         />
 
         <div className="flex flex-col gap-2 flex-grow w-full">
@@ -58,7 +61,7 @@ const OutreachProgramCard = ({
 
           {isSuperAdmin && (
             <div className="flex items-center gap-4">
-              <EditProgram program={program} />
+              <EditProgram program={program} setPrograms={setPrograms} />
 
               {children}
             </div>

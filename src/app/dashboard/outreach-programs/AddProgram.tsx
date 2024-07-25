@@ -64,7 +64,6 @@ const AddProgram = () => {
   });
 
   const handleFormSubmit: SubmitHandler<OutreachProgramType> = async (data) => {
-    console.log({ data });
     const dataToSubmit: OutreachProgramType = {
       ...data,
       organization: data.organizerName ? data.organizerName : "N/A",
@@ -77,14 +76,18 @@ const AddProgram = () => {
       }),
     };
     await mutateAsync(dataToSubmit, {
-      onSuccess: () => {
-        toast.success("Outreach Program added successfully");
-        queryClient.invalidateQueries({
-          queryKey: ["outreach-programs"],
-        });
-        refetchOutreachPrograms();
-        reset();
-        setOpen(false);
+      onSuccess: (data) => {
+        if (data && data._id) {
+          toast.success("Outreach Program added successfully");
+          queryClient.invalidateQueries({
+            queryKey: ["outreach-programs"],
+          });
+          refetchOutreachPrograms();
+          reset();
+          setOpen(false);
+        } else {
+          toast.error("Something went wrong");
+        }
       },
     });
   };
@@ -125,7 +128,8 @@ const AddProgram = () => {
               </DialogClose>
             </DialogTitle>
 
-            <DialogDescription className="flex flex-col gap-5 w-full">
+            <DialogDescription></DialogDescription>
+            <div className="flex flex-col gap-5 w-full">
               <RenderCustomError error={error} isError={isError} />
 
               <form
@@ -262,7 +266,7 @@ const AddProgram = () => {
                   <AddProgramButton pending={pending} reset={reset} />
                 </div>
               </form>
-            </DialogDescription>
+            </div>
           </DialogHeader>
         </DialogContent>
       </Dialog>

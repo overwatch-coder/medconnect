@@ -10,7 +10,6 @@ import CustomFilterDropdown from "@/components/CustomFilterDropdown";
 import DeleteModal from "@/components/DeleteModal";
 import { useFetch } from "@/hooks/useFetch";
 import { IOutreachProgram } from "@/types/backend";
-import { OutreachProgramType } from "@/types/index";
 import { Search, Trash2 } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
@@ -59,7 +58,7 @@ const OutreachProgramsWithSearch = ({
     queryKey: ["outreach-programs"],
   });
 
-  const [filterBy, setFilterBy] = useState("Category");
+  const [filterBy, setFilterBy] = useState("Program Name");
   const [filteredPrograms, setFilteredPrograms] = useState<IOutreachProgram[]>(
     []
   );
@@ -140,7 +139,11 @@ const OutreachProgramsWithSearch = ({
   }
 
   return (
-    <>
+    <section className="bg-white rounded-md shadow w-full flex flex-col gap-5 p-5">
+      <h2 className="text-secondary-gray text-xl font-medium">
+        {isAdmin ? "All Programs" : "Upcoming"}
+      </h2>
+
       {isAdmin && (
         <div className="flex items-center gap-5 justify-between bg-secondary-gray/10 py-3 px-2 md:px-5">
           <div className="flex items-center gap-2 relative w-full md:w-1/2">
@@ -162,7 +165,7 @@ const OutreachProgramsWithSearch = ({
             handleFilter={handleFilter}
             filterOptions={filterOptions}
             filterName="Sort by"
-            className="bg-red-500 text-white rounded-md hover:bg-red-500 border-0"
+            className="bg-red-500 text-white hover:text-white rounded-md hover:bg-red-500 border-0"
             iconClassName="text-white"
           />
         </div>
@@ -178,7 +181,11 @@ const OutreachProgramsWithSearch = ({
           </div>
         ) : (
           filteredPrograms.map((program) => (
-            <OutreachProgramCard program={program} key={program._id}>
+            <OutreachProgramCard
+              program={program}
+              key={program._id}
+              setPrograms={setFilteredPrograms}
+            >
               <Trash2
                 onClick={() => {
                   setDataToDelete(program);
@@ -200,7 +207,7 @@ const OutreachProgramsWithSearch = ({
         deleteFn={() => handleDelete(dataToDelete!)}
         pending={pending}
       />
-    </>
+    </section>
   );
 };
 

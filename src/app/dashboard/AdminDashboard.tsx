@@ -23,6 +23,7 @@ import {
   getAllAppointments,
   getAllPrescriptions,
 } from "@/actions/single-patient.action";
+import Link from "next/link";
 
 const AdminDashboard = () => {
   const [user] = useAuth();
@@ -343,7 +344,10 @@ const AdminDashboard = () => {
                 <span className="text-primary-green">80%</span>
               </div>
 
-              <button className="group flex items-center ml-auto w-auto gap-3 px-5">
+              <Link
+                href={"/dashboard/diagnostic-support"}
+                className="group flex items-center ml-auto w-auto gap-3 px-5"
+              >
                 <span className="group-hover:font-semibold">
                   Start a new diagnosis
                 </span>
@@ -351,7 +355,7 @@ const AdminDashboard = () => {
                   size={20}
                   className="text-primary-green group-hover:text-secondary-gray"
                 />
-              </button>
+              </Link>
             </div>
           </div>
         </aside>

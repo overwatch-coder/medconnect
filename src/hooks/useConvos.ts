@@ -1,4 +1,4 @@
-import { ChatPayload, Convo, Message, QuestionPayload } from "@/types/backend";
+import { Convo, Message, QuestionPayload } from "@/types/backend";
 import axios from "axios";
 import { useSearchParams } from "next/navigation";
 import React, { useCallback, useEffect, useState } from "react";

@@ -24,6 +24,7 @@ import {
 import { IChpsCompound } from "@/types/backend";
 import RenderCustomError from "@/components/RenderCustomError";
 import { Checkbox } from "@/components/ui/checkbox";
+import { axiosInstance } from "@/lib/utils";
 
 const AddCompoundForm = () => {
   const { refetch: refetchCompounds } = useFetch({
@@ -38,6 +39,7 @@ const AddCompoundForm = () => {
 
   const {
     register,
+    reset,
     formState: { errors },
     handleSubmit,
     watch,
@@ -71,12 +73,39 @@ const AddCompoundForm = () => {
   const submitAddCompound: SubmitHandler<
     CompoundType & { profilePicture: any }
   > = async (data) => {
-    await mutateAsync(data, {
+    if (profilePicture && profilePicture.length > 0) {
+      const formData = new FormData();
+      formData.append("image", profilePicture[0]);
+
+      axiosInstance
+        .post("/upload", formData, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+            Authorization: `Bearer ${user?.auth.token}`,
+          },
+        })
+        .then((res) => {
+          if (res.status === 200) {
+            data.profilePictureUrl = res.data.fileUrl;
+          } else {
+            data.profilePictureUrl = "";
+          }
+        });
+    }
+
+    console.log({ data, in: "AddCompoundForm submitAddCompound" });
+
+    const { profilePicture: pic, ...rest } = data;
+
+    await mutateAsync(rest as CompoundType, {
       onSuccess: (data) => {
         const compoundId = data?.chpsCompound._id!;
         queryClient.invalidateQueries({ queryKey: ["compounds"] });
+        queryClient.invalidateQueries({ queryKey: ["compounds", ""] });
         refetchCompounds();
         toast.success("Compound added successfully");
+        reset();
+        setValue("profilePicture", null);
         router.replace(`/dashboard/compounds/${compoundId}`);
       },
       onError: (err) => {

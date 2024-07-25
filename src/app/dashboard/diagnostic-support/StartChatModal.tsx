@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -10,24 +10,38 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { useForm } from "react-hook-form";
-import { useAuth, usePatients } from "@/hooks";
-import { ChatPayload } from "@/types/backend";
+import { useAuth } from "@/hooks";
+import { ChatPayload, Patient } from "@/types/backend";
 import { MessageCirclePlus } from "lucide-react";
 import axios from "axios";
 import { baseChatUrl } from "@/hooks/useConvos";
 import { ClipLoader } from "react-spinners";
 import { useRouter } from "next/navigation";
 import dobToAge from "dob-to-age";
+import { useFetch } from "@/hooks/useFetch";
+import { getChpsPatients } from "@/actions/patients.action";
 
 export const StartChatModal = () => {
+  const { data: patientsData } = useFetch({
+    queryKey: ["patients"],
+    queryFn: async () => getChpsPatients(),
+    enabled: true,
+  });
+
   const {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
   } = useForm<ChatPayload>();
-  const [patients] = usePatients();
+  const [patients, setPatients] = useState<Patient[]>([]);
   const [user] = useAuth();
   const router = useRouter();
+
+  useEffect(() => {
+    if (patientsData) {
+      setPatients(patientsData);
+    }
+  }, [patientsData]);
 
   const getPatient = (id: string) => {
     const { firstName, lastName, location, dateOfBirth, gender } =

@@ -10,6 +10,10 @@ const nextConfig = {
         protocol: "https",
         hostname: "picsum.photos",
       },
+      {
+        protocol: "https",
+        hostname: "d140uiq1keqywy.cloudfront.net",
+      },
     ],
   },
 };

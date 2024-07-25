@@ -311,3 +311,36 @@ declare interface IAppointment {
   __v: number;
   patient: Patient;
 }
+
+// === OUTREACH PROGRAMS ===
+declare interface IOutreachProgram {
+  title: string;
+  description: string;
+  organizerName: string;
+  organizerPhone: string;
+  organization: string;
+  location: string;
+  targetGroup: string;
+  programDate: string;
+  programStartTime: string;
+  estimatedAudience: number;
+  createdById: string;
+  _id: string;
+  createdAt: string;
+  updatedAt: string;
+  __v: number;
+}
+
+export type OutreachChoice = "Volunteer" | "Participate";
+
+declare interface IOutreachProgramChoice {
+  choice: OutreachChoice;
+  supportType?: string;
+  _id: string;
+  createdAt: string;
+  updatedAt: string;
+  __v: number;
+  status: boolean;
+  outreachProgramId: string;
+  chpsCompoundId: string;
+}

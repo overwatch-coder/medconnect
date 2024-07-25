@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import {
   Dialog,
   DialogClose,
@@ -9,28 +9,30 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useMutation } from "@tanstack/react-query";
 import { z } from "zod";
-import { useAuth } from "@/hooks";
 import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 import { Button } from "@/components/ui/button";
 import { X } from "lucide-react";
 import CustomInputForm from "@/components/CustomInputForm";
 import ClipLoader from "react-spinners/ClipLoader";
-import { OutreachProgramType } from "@/types/index";
+import { IOutreachProgram } from "@/types/backend";
+import { useMutateData } from "@/hooks/useFetch";
+import { submitOutreachProgramParticipation } from "@/actions/outreach-programs.actions";
+import RenderCustomError from "@/components/RenderCustomError";
 
 // Register Program
-const RegisterProgramSchema = z.object({
-  participation: z.string().trim().min(1, "Answer is required"),
-  userId: z.string().trim().min(1, "User ID is required"),
-  programId: z.string().trim().min(1, "Program ID is required"),
+export const RegisterProgramSchema = z.object({
+  status: z.string().trim().min(1, "Answer is required"),
+  choice: z.string().trim().min(1, "Choice is required"),
+  outreachProgramId: z.string().trim().min(1, "Program ID is required"),
+  supportType: z.string().optional(),
 });
 
-type RegisterProgramSchemaType = z.infer<typeof RegisterProgramSchema>;
+export type RegisterProgramSchemaType = z.infer<typeof RegisterProgramSchema>;
 
-const RegisterProgram = ({ program }: { program: OutreachProgramType }) => {
-  const [user] = useAuth();
+const RegisterProgram = ({ program }: { program: IOutreachProgram }) => {
+  const [open, setOpen] = useState(false);
 
   const {
     register,
@@ -40,31 +42,34 @@ const RegisterProgram = ({ program }: { program: OutreachProgramType }) => {
   } = useForm<RegisterProgramSchemaType>({
     resolver: zodResolver(RegisterProgramSchema),
     defaultValues: {
-      userId: user?.auth.id,
-      programId: program?.id,
+      choice: "Participate",
+      outreachProgramId: program._id,
+      supportType: undefined,
     },
     mode: "all",
   });
 
-  const { mutateAsync, isPending, error, isError } = useMutation({
-    mutationFn: async (data: RegisterProgramSchemaType) => {
-      console.log({ data });
-      return data;
-    },
-    onSuccess: (data) => {
-      toast.success("Request to become a participant sent successfully");
-      reset();
+  const { mutateAsync, isPending, error, isError } = useMutateData({
+    mutationFn: async (data: RegisterProgramSchemaType) =>
+      submitOutreachProgramParticipation(data),
+    config: {
+      queryKey: ["outreach-programs", program._id],
     },
   });
 
   const handleSubmitForm = async (data: RegisterProgramSchemaType) => {
-    console.log(data);
-    await mutateAsync({ ...data });
+    await mutateAsync(data, {
+      onSuccess: () => {
+        toast.success("Request to become a participant sent successfully");
+        setOpen(false);
+        reset();
+      },
+    });
   };
 
   return (
-    <Dialog>
-      <DialogTrigger asChild>
+    <Dialog open={open} onOpenChange={setOpen}>
+      <DialogTrigger asChild onClick={() => setOpen(true)}>
         <Button className="bg-secondary-gray hover:bg-secondary-gray w-full text-center text-white rounded">
           Register to Participate
         </Button>
@@ -85,6 +90,7 @@ const RegisterProgram = ({ program }: { program: OutreachProgramType }) => {
           <DialogClose
             onClick={() => {
               reset();
+              setOpen(false);
             }}
             className="flex items-center justify-center w-6 h-6 border border-red-500 rounded-full"
           >
@@ -98,47 +104,49 @@ const RegisterProgram = ({ program }: { program: OutreachProgramType }) => {
           onSubmit={handleSubmit(handleSubmitForm)}
           className="flex flex-col gap-5"
         >
-          {isError && (
-            <div className="flex items-center justify-center p-4 text-center bg-red-200 rounded-md">
-              <p className="text-xs text-red-500">{error.message}</p>
-            </div>
-          )}
+          <RenderCustomError isError={isError} error={error} />
 
           <div className="flex flex-col w-full gap-5">
             <CustomInputForm
-              labelName="Participation"
-              inputName="participation"
+              labelName="Do you want to participate?"
+              inputName="status"
               register={register}
               errors={errors}
               inputType="select"
               selectOptions={[
                 {
-                  value: "yes",
+                  value: "true",
                   label: "Yes",
                 },
                 {
-                  value: "no",
+                  value: "false",
                   label: "No",
                 },
               ]}
             />
 
             <CustomInputForm
-              labelName="User ID"
-              inputName="userId"
+              labelName="Choice"
+              inputName="choice"
               errors={errors}
               register={register}
               inputType="hidden"
-              value={user?.auth.id}
             />
 
             <CustomInputForm
               labelName="Program ID"
-              inputName="programId"
+              inputName="outreachProgramId"
               errors={errors}
               register={register}
               inputType="hidden"
-              value={program?.id}
+            />
+
+            <CustomInputForm
+              labelName="Support Type"
+              inputName="supportType"
+              errors={errors}
+              register={register}
+              inputType="hidden"
             />
 
             {/* Submit Button */}

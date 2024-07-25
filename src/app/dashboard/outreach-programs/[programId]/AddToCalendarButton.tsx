@@ -1,23 +1,23 @@
 "use client";
 
 import React from "react";
-import { OutreachProgramType } from "@/types/index";
 import "add-to-calendar-button";
 import { getEndTime } from "@/lib/utils";
 import { useAuth } from "@/hooks";
+import { IOutreachProgram } from "@/types/backend";
 
 const getTime = (time: string) => {
-  return time.split(" ")[0];
+  return time;
 };
 
-const AddToCalendarButton = ({ program }: { program: OutreachProgramType }) => {
+const AddToCalendarButton = ({ program }: { program: IOutreachProgram }) => {
   const [user] = useAuth();
   const name = `[Reminder] Add ${program.title} to Calendar`;
   const startDate = `${program.programDate}`;
-  const startTime = program.programStartTime;
-  const endTime = getEndTime(startTime);
+  // const startTime = program.programStartTime;
+  // const endTime = getEndTime(startTime);
   const attendee = `${user?.isSuperAdmin ? user?.admin?.name : user?.staff?.fullName}|${user?.auth.email}`;
-  const organizer = `${program.organizerName}|${program.id}@gmail.com`;
+  const organizer = `${program.organizerName}|${program.organizerName}@gmail.com`;
 
   return (
     <>
@@ -28,8 +28,6 @@ const AddToCalendarButton = ({ program }: { program: OutreachProgramType }) => {
         buttonStyle="3d"
         listStyle="modal"
         hideIconButton
-        startTime={getTime(startTime)}
-        endTime={getTime(endTime)}
         organizer={organizer}
         attendee={attendee}
         iCalFileName="add-program-to-calendar"

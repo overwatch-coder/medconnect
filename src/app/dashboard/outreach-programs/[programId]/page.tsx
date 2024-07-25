@@ -1,9 +1,7 @@
-import { Metadata } from "next";
 import React from "react";
-import { MEDCONNECT_DASHBOARD_OUTREACH_PROGRAMS as outreachPrograms } from "@/constants";
 import { redirect } from "next/navigation";
-import { OutreachProgramType } from "@/types/index";
 import OutreachProgramDetails from "@/app/dashboard/outreach-programs/[programId]/OutreachProgramDetails";
+import { getOutreachProgram } from "@/actions/outreach-programs.actions";
 
 type PatientInfoProps = {
   params: {
@@ -11,38 +9,26 @@ type PatientInfoProps = {
   };
 };
 
-export const generateMetadata = ({
+export const generateMetadata = async ({
   params: { programId },
-}: PatientInfoProps): Metadata => {
-  const program = outreachPrograms.find(
-    (data) => data.id.toLowerCase() === programId.toLowerCase()
-  );
+}: PatientInfoProps) => {
+  const program = await getOutreachProgram(programId);
 
   if (!program) {
     return {
-      title: "Outreach Program | Not Found",
-      description: "Outreach Program | Not Found",
-      openGraph: {
-        title: "Outreach Program | Not Found",
-        description: "Outreach Program | Not Found",
-      },
+      title: "Outreach Program Not Found | MedConnect",
+      description: "Outreach Program Not Found | MedConnect",
     };
   }
 
   return {
-    title: `${program.title} | Outreach Programs`,
-    description: `${program.title} | Outreach Programs`,
-    openGraph: {
-      title: `${program.title} | Outreach Programs`,
-      description: `${program.title} | Outreach Programs`,
-    },
+    title: `${program.title} | Outreach Programs - MedConnect`,
+    description: `${program.title} | Outreach Programs - MedConnect`,
   };
 };
 
-const ProgramDetails = ({ params: { programId } }: PatientInfoProps) => {
-  const program: OutreachProgramType | undefined = outreachPrograms.find(
-    (data) => data.id.toLowerCase() === programId.toLowerCase()
-  );
+const ProgramDetails = async ({ params: { programId } }: PatientInfoProps) => {
+  const program = await getOutreachProgram(programId);
 
   if (!program) {
     return redirect("/dashboard/outreach-programs");

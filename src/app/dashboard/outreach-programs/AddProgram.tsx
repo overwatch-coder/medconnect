@@ -17,14 +17,28 @@ import { FormSectionHeader } from "@/app/dashboard/compounds/add-new/AddCompound
 import CustomInputForm from "@/components/CustomInputForm";
 import { toast } from "react-toastify";
 import { OutreachProgramType } from "@/types/index";
-import { useMutation } from "@tanstack/react-query";
+import { useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks";
 import { outreachProgramSchema } from "@/schema/outreach-programs.schema";
+import { useFetch, useMutateData } from "@/hooks/useFetch";
+import {
+  createOrEditOutreachProgram,
+  getAllOutreachPrograms,
+} from "@/actions/outreach-programs.actions";
+import { useState } from "react";
+import RenderCustomError from "@/components/RenderCustomError";
 
 const AddProgram = () => {
-  const [user, setUser] = useAuth();
+  const { refetch: refetchOutreachPrograms } = useFetch({
+    queryFn: async () => await getAllOutreachPrograms(),
+    queryKey: ["outreach-programs"],
+  });
+
+  const [user] = useAuth();
   const isSuperAdmin = user?.isSuperAdmin;
+  const queryClient = useQueryClient();
+  const [open, setOpen] = useState(false);
 
   const {
     register,
@@ -36,27 +50,52 @@ const AddProgram = () => {
     mode: "all",
   });
 
-  const { mutateAsync, isPending: pending } = useMutation({
-    mutationFn: async (data: OutreachProgramType) => {
-      console.log({ data });
-      return data;
-    },
-
-    onSuccess: (data) => {
-      toast.success("Outreach Program added successfully");
-      reset();
+  const {
+    mutateAsync,
+    isPending: pending,
+    error,
+    isError,
+  } = useMutateData({
+    mutationFn: async (data: OutreachProgramType) =>
+      createOrEditOutreachProgram(data),
+    config: {
+      queryKey: ["outreach-programs"],
     },
   });
 
   const handleFormSubmit: SubmitHandler<OutreachProgramType> = async (data) => {
-    console.log({ data });
-    await mutateAsync(data);
+    const dataToSubmit: OutreachProgramType = {
+      ...data,
+      organization: data.organizerName ? data.organizerName : "N/A",
+      organizerName: data.organizerName ? data.organizerName : "N/A",
+      programStartTime: new Date(
+        `${data.programDate}T${data.programStartTime}`
+      ).toLocaleTimeString("en-US", {
+        timeZone: "UTC",
+        timeStyle: "short",
+      }),
+    };
+    await mutateAsync(dataToSubmit, {
+      onSuccess: (data) => {
+        if (data && data._id) {
+          toast.success("Outreach Program added successfully");
+          queryClient.invalidateQueries({
+            queryKey: ["outreach-programs"],
+          });
+          refetchOutreachPrograms();
+          reset();
+          setOpen(false);
+        } else {
+          toast.error("Something went wrong");
+        }
+      },
+    });
   };
 
   return (
     <>
-      <Dialog>
-        <DialogTrigger asChild>
+      <Dialog open={open} onOpenChange={setOpen}>
+        <DialogTrigger asChild onClick={() => setOpen(true)}>
           <Button className="bg-primary-green hover:bg-primary-green hover:scale-105 transition py-2 px-5 flex items-center gap-3 rounded-md text-white">
             <Plus className="text-white" size={20} />
             <span className="font-bold">
@@ -79,6 +118,7 @@ const AddProgram = () => {
               <DialogClose
                 onClick={() => {
                   reset();
+                  setOpen(false);
                 }}
               >
                 <X
@@ -88,7 +128,10 @@ const AddProgram = () => {
               </DialogClose>
             </DialogTitle>
 
-            <DialogDescription className="flex flex-col gap-5 w-full">
+            <DialogDescription></DialogDescription>
+            <div className="flex flex-col gap-5 w-full">
+              <RenderCustomError error={error} isError={isError} />
+
               <form
                 onSubmit={handleSubmit(handleFormSubmit)}
                 className="flex flex-col gap-4 w-full"
@@ -223,7 +266,7 @@ const AddProgram = () => {
                   <AddProgramButton pending={pending} reset={reset} />
                 </div>
               </form>
-            </DialogDescription>
+            </div>
           </DialogHeader>
         </DialogContent>
       </Dialog>

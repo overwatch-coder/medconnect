@@ -1,28 +1,30 @@
 "use client";
 
+import {
+  deleteOutreachProgram,
+  getAllOutreachPrograms,
+} from "@/actions/outreach-programs.actions";
+import { RenderEmptyComponent } from "@/app/dashboard/health-officials/HealthOfficialsTable";
 import OutreachProgramCard from "@/app/dashboard/outreach-programs/OutreachProgramCard";
 import CustomFilterDropdown from "@/components/CustomFilterDropdown";
 import DeleteModal from "@/components/DeleteModal";
+import { useFetch } from "@/hooks/useFetch";
+import { IOutreachProgram } from "@/types/backend";
 import { OutreachProgramType } from "@/types/index";
 import { Search, Trash2 } from "lucide-react";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 
 type OutreachProgramsWithSearchProps = {
-  outreachPrograms: OutreachProgramType[];
   isAdmin: boolean;
 };
 
 type FilterOptions = {
-  value: keyof OutreachProgramType | "category";
+  value: keyof IOutreachProgram;
   label: string;
 };
 
 const filterOptions: FilterOptions[] = [
-  {
-    value: "category",
-    label: "Category",
-  },
   {
     value: "title",
     label: "Program Name",
@@ -39,20 +41,48 @@ const filterOptions: FilterOptions[] = [
     value: "targetGroup",
     label: "Target Group",
   },
+  {
+    value: "organization",
+    label: "Organization",
+  },
 ];
 
 const OutreachProgramsWithSearch = ({
-  outreachPrograms,
   isAdmin,
 }: OutreachProgramsWithSearchProps) => {
+  const {
+    data: outreachPrograms,
+    isLoading,
+    refetch: refetchOutreachPrograms,
+  } = useFetch<IOutreachProgram[]>({
+    queryFn: async () => await getAllOutreachPrograms(),
+    queryKey: ["outreach-programs"],
+  });
+
   const [filterBy, setFilterBy] = useState("Category");
-  const [filteredPrograms, setFilteredPrograms] = useState(outreachPrograms);
+  const [filteredPrograms, setFilteredPrograms] = useState<IOutreachProgram[]>(
+    []
+  );
   const [searchTerm, setSearchTerm] = useState("");
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
-  const [dataToDelete, setDataToDelete] = useState<OutreachProgramType>();
+  const [dataToDelete, setDataToDelete] = useState<IOutreachProgram>();
+  const [pending, setPending] = useState(false);
+
+  useEffect(() => {
+    if (outreachPrograms) {
+      setFilteredPrograms(
+        outreachPrograms.sort(
+          (a, b) =>
+            new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+        )
+      );
+    }
+  }, [outreachPrograms]);
 
   // Handle search
   const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (!outreachPrograms) return;
+
     setSearchTerm(event.target.value);
 
     const filtered = outreachPrograms.filter((program) =>
@@ -83,17 +113,31 @@ const OutreachProgramsWithSearch = ({
   };
 
   // Handle delete
-  const handleDelete = async (item: OutreachProgramType) => {
-    const data = filteredPrograms.filter((p) => p.id !== item.id);
+  const handleDelete = async (item: IOutreachProgram) => {
+    setPending(true);
+    try {
+      await deleteOutreachProgram(item._id);
 
-    toast.success("Program deleted successfully");
+      refetchOutreachPrograms();
+      toast.success("Program deleted successfully");
 
-    setFilteredPrograms(data);
+      const data = filteredPrograms.filter((p) => p._id !== item._id);
 
-    setDataToDelete(undefined);
+      setFilteredPrograms(data);
 
-    setOpenDeleteModal(false);
+      setDataToDelete(undefined);
+
+      setOpenDeleteModal(false);
+    } catch (error) {
+      toast.error("Error deleting program");
+    } finally {
+      setPending(false);
+    }
   };
+
+  if (isLoading) {
+    return <RenderEmptyComponent />;
+  }
 
   return (
     <>
@@ -134,7 +178,7 @@ const OutreachProgramsWithSearch = ({
           </div>
         ) : (
           filteredPrograms.map((program) => (
-            <OutreachProgramCard program={program} key={program.id}>
+            <OutreachProgramCard program={program} key={program._id}>
               <Trash2
                 onClick={() => {
                   setDataToDelete(program);
@@ -154,6 +198,7 @@ const OutreachProgramsWithSearch = ({
         title="Delete Program"
         description="Are you sure you want to delete this program?"
         deleteFn={() => handleDelete(dataToDelete!)}
+        pending={pending}
       />
     </>
   );

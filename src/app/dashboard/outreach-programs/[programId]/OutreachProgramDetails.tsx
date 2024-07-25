@@ -2,19 +2,36 @@ import React from "react";
 import { Button } from "@/components/ui/button";
 import { ChevronLeft } from "lucide-react";
 import Image from "next/image";
-import { OutreachProgramType } from "@/types/index";
 import Link from "next/link";
 import BecomeASupporter from "@/app/dashboard/outreach-programs/[programId]/BecomeASupporter";
 import RegisterProgram from "@/app/dashboard/outreach-programs/[programId]/RegisterProgram";
 import AddToCalendarButton from "@/app/dashboard/outreach-programs/[programId]/AddToCalendarButton";
+import { IOutreachProgram } from "@/types/backend";
 
 type OutreachProgramDetailsProps = {
-  program: OutreachProgramType;
+  program: IOutreachProgram;
 };
 
 const OutreachProgramDetails = async ({
   program,
 }: OutreachProgramDetailsProps) => {
+  const programEndTimeHour =
+    parseInt(program.programStartTime.split(":")[0]) + 3;
+  const programEndTimeMinute = parseInt(program.programStartTime.split(":")[1]);
+  const formattedEndTimeHour =
+    programEndTimeHour < 10 ? "0" + programEndTimeHour : programEndTimeHour;
+  const formattedEndTimeMinute =
+    programEndTimeMinute < 10
+      ? "0" + programEndTimeMinute
+      : programEndTimeMinute;
+
+  const endTime = `${formattedEndTimeHour}:${formattedEndTimeMinute}`;
+  const endTimeWithDate = `2024-07-25T${endTime}:00.000Z`;
+
+  const programEndTime = new Date(endTimeWithDate).toLocaleTimeString("en-US", {
+    timeStyle: "short",
+  });
+
   return (
     <div className="flex flex-col rounded w-full scrollbar-hide pb-10">
       <section className="flex items-center justify-between w-full gap-5 py-4">
@@ -29,7 +46,7 @@ const OutreachProgramDetails = async ({
           <div className="bg-black/50 absolute flex items-center justify-center w-full h-full" />
 
           <Image
-            src={program.image ?? "/assets/images/community-outreach.jpg"}
+            src={"/assets/images/community-outreach.jpg"}
             alt={program.title}
             width={1200}
             height={800}
@@ -69,7 +86,10 @@ const OutreachProgramDetails = async ({
                 <div className="flex flex-col items-start gap-5 p-5 bg-white rounded-md shadow-xl atcb overflow-visible">
                   <h2 className="text-2xl font-bold text-black">Date & Time</h2>
                   <p className="text-primary-gray/50">
-                    {program.programDate}, {program.programStartTime}
+                    {new Date(program.programDate).toLocaleDateString("en-US", {
+                      dateStyle: "full",
+                    })}
+                    , {program.programStartTime}
                   </p>
 
                   <AddToCalendarButton program={program} />
@@ -91,10 +111,8 @@ const OutreachProgramDetails = async ({
             <div className="flex flex-col gap-3">
               <h2 className="text-2xl font-bold text-black">Description</h2>
 
-              <p className="text-secondary-gray text-sm leading-loose">
-                {
-                  "Lorem amet, consectetur adipiscing elit. Nullam id viverra odio. Pellentesque cursus neque aliquet arcu varius laoreet. Cras nunc mauris, vestibulum id nunc quis, ultricies tempus ligula. Maecenas ultricies porta aliquet. Nullam vulputate gravida eros, in pharetra magna tincidunt non. In interdum velit sapien, ac malesuada nisi ultrices eget. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam id viverra odio. Pellentesque cursus neque aliquet arcu varius laoreet. Cras nunc mauris, vestibulum id nunc quis, ultricies tempus ligula. Maecenas ultricies porta aliquet. Nullam vulputate gravida eros, in pharetra magna tincidunt non. In interdum velit sapien, ac malesuada nisi ultrices eget."
-                }
+              <p className="text-secondary-gray text-sm leading-loose prose">
+                {program.description}
               </p>
             </div>
 
@@ -107,14 +125,16 @@ const OutreachProgramDetails = async ({
               <div className="grid grid-cols-2 gap-4">
                 <p className="text-primary-gray/50 text-sm">Date</p>
                 <p className="text-primary-gray text-sm">
-                  {program.programDate}
+                  {new Date(program.programDate).toLocaleDateString("en-US", {
+                    dateStyle: "long",
+                  })}
                 </p>
               </div>
 
               <div className="grid grid-cols-2 gap-4">
                 <p className="text-primary-gray/50 text-sm">Time</p>
                 <p className="text-primary-gray text-sm">
-                  {program.programStartTime}
+                  {program.programStartTime} - {programEndTime}
                 </p>
               </div>
 
@@ -131,7 +151,7 @@ const OutreachProgramDetails = async ({
 
               <div className="grid grid-cols-2 gap-4">
                 <p className="text-primary-gray/50 text-sm">Target Group</p>
-                <p className="text-primary-gray text-sm">
+                <p className="text-primary-gray text-sm capitalize">
                   {program.targetGroup}
                 </p>
               </div>
@@ -141,7 +161,7 @@ const OutreachProgramDetails = async ({
                   Number of Participants
                 </p>
                 <p className="text-primary-gray text-sm">
-                  {program.numberOfParticipants}
+                  {program.estimatedAudience}
                 </p>
               </div>
             </div>
@@ -153,7 +173,9 @@ const OutreachProgramDetails = async ({
 
               <p className="text-primary-gray/50 text-sm">
                 For more details, contact:{" "}
-                <span className="text-primary-green">+234 098765 097623</span>
+                <span className="text-primary-green">
+                  {program.organizerPhone}
+                </span>
               </p>
             </div>
           </div>
@@ -179,12 +201,17 @@ const OutreachProgramDetails = async ({
             {/* Program Country */}
             <div className="flex flex-col gap-3">
               <h2 className="text-2xl font-medium text-black capitalize">
-                {`${program.location} Community Center`}
+                {`${program.location}`}
               </h2>
 
-              <p className="text-primary-gray/60 text-sm">
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam
-                id viverra odio
+              <p className="text-primary-gray/60 text-sm prose">
+                {program.organization} headed by {program.organizerName} is a
+                non-profit organization that aims to promote health and wellness
+                in {program.location}. Their mission is to provide comprehensive
+                healthcare services to the community, including medical care,
+                health education, and preventive measures. They are committed to
+                making a positive impact on the lives of their community members
+                by offering affordable and accessible healthcare services.
               </p>
             </div>
           </div>

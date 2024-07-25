@@ -17,50 +17,111 @@ import { FormSectionHeader } from "@/app/dashboard/compounds/add-new/AddCompound
 import CustomInputForm from "@/components/CustomInputForm";
 import { toast } from "react-toastify";
 import { OutreachProgramType } from "@/types/index";
-import { useMutation } from "@tanstack/react-query";
+import { useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
-import { programSchema } from "@/schema/outreach-programs.schema";
+import {
+  outreachProgramSchema,
+  programSchema,
+} from "@/schema/outreach-programs.schema";
 import { TbEdit } from "react-icons/tb";
+import {
+  createOrEditOutreachProgram,
+  getAllOutreachPrograms,
+} from "@/actions/outreach-programs.actions";
+import { useFetch, useMutateData } from "@/hooks/useFetch";
+import { useState } from "react";
+import { IOutreachProgram } from "@/types/backend";
+import RenderCustomError from "@/components/RenderCustomError";
 
 type EditProgramProps = {
-  program: OutreachProgramType;
+  program: IOutreachProgram;
 };
 
 const EditProgram = ({ program }: EditProgramProps) => {
+  const { refetch: refetchOutreachPrograms } = useFetch({
+    queryFn: async () => await getAllOutreachPrograms(),
+    queryKey: ["outreach-programs"],
+  });
+
+  const queryClient = useQueryClient();
+  const [open, setOpen] = useState(false);
+
   const {
     register,
     reset,
     formState: { errors },
     handleSubmit,
-  } = useForm<Partial<OutreachProgramType>>({
-    resolver: zodResolver(programSchema.partial()),
-    defaultValues: program,
+  } = useForm<OutreachProgramType>({
+    resolver: zodResolver(outreachProgramSchema),
+    defaultValues: {
+      title: program.title,
+      description: program.description,
+      organizerName: program.organizerName,
+      phoneNumber: program.organizerPhone,
+      organization: program.organization,
+      targetGroup: program.targetGroup,
+      numberOfParticipants: program.estimatedAudience,
+      location: program.location,
+      programDate: new Date(program.programDate).toISOString().split("T")[0],
+      programStartTime: `${new Date(
+        `${program.programDate}T${program.programStartTime.split(" ")[0]}`
+      )
+        .toLocaleTimeString("en-US", {
+          timeZone: "UTC",
+          timeStyle: "short",
+        })
+        .slice(0, 5)}`,
+    },
     mode: "all",
   });
 
-  const { mutateAsync, isPending: pending } = useMutation({
-    mutationFn: async (data: Partial<OutreachProgramType>) => {
-      console.log({ data });
-      return data;
-    },
-
-    onSuccess: (data) => {
-      toast.success("Outreach Program updated successfully");
-      reset();
+  const {
+    mutateAsync,
+    isPending: pending,
+    error,
+    isError,
+  } = useMutateData({
+    mutationFn: async (data: OutreachProgramType) =>
+      createOrEditOutreachProgram(data, program._id),
+    config: {
+      queryKey: ["outreach-programs"],
     },
   });
 
-  const handleFormSubmit: SubmitHandler<Partial<OutreachProgramType>> = async (
-    data
-  ) => {
+  const handleFormSubmit: SubmitHandler<OutreachProgramType> = async (data) => {
     console.log({ data });
-    await mutateAsync(data);
+    const dataToSubmit: OutreachProgramType = {
+      ...data,
+      organization: data.organizerName
+        ? data.organizerName
+        : program.organization,
+      organizerName: data.organizerName
+        ? data.organizerName
+        : program.organizerName,
+      programStartTime: new Date(
+        `${data.programDate}T${data.programStartTime}`
+      ).toLocaleTimeString("en-US", {
+        timeZone: "UTC",
+        timeStyle: "short",
+      }),
+    };
+    await mutateAsync(dataToSubmit, {
+      onSuccess: () => {
+        toast.success("Outreach Program updated successfully");
+        queryClient.invalidateQueries({
+          queryKey: ["outreach-programs"],
+        });
+        refetchOutreachPrograms();
+        reset();
+        setOpen(false);
+      },
+    });
   };
 
   return (
     <>
-      <Dialog>
-        <DialogTrigger asChild>
+      <Dialog open={open} onOpenChange={setOpen}>
+        <DialogTrigger asChild onClick={() => setOpen(true)}>
           <TbEdit size={20} className={"text-secondary-gray cursor-pointer"} />
         </DialogTrigger>
 
@@ -76,6 +137,7 @@ const EditProgram = ({ program }: EditProgramProps) => {
               <DialogClose
                 onClick={() => {
                   reset();
+                  setOpen(false);
                 }}
               >
                 <X
@@ -86,6 +148,8 @@ const EditProgram = ({ program }: EditProgramProps) => {
             </DialogTitle>
 
             <DialogDescription className="flex flex-col gap-5 w-full">
+              <RenderCustomError error={error} isError={isError} />
+
               <form
                 onSubmit={handleSubmit(handleFormSubmit)}
                 className="flex flex-col gap-4 w-full"

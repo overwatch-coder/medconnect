@@ -1,4 +1,5 @@
 "use client";
+
 import React from "react";
 import {
   Dialog,
@@ -9,27 +10,27 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { IDiagnosisReport } from "@/types/backend";
+import { IMedicalHistory } from "@/types/backend";
 import ContentHeader from "@/app/dashboard/health-officials/[staffId]/ContentHeader";
 import { Edit, X } from "lucide-react";
 
-type PastDiagnosisReportsProps = {
-  diagnosisReports: IDiagnosisReport[];
-  setDiagnosisReport: React.Dispatch<
-    React.SetStateAction<IDiagnosisReport | null>
+type PastMedicalHistoryReportsProps = {
+  medicalHistoryReports: IMedicalHistory[];
+  setMedicalHistoryReport: React.Dispatch<
+    React.SetStateAction<IMedicalHistory | null>
   >;
-  setOpenEditDiagnosisReport: React.Dispatch<React.SetStateAction<boolean>>;
+  setOpenEditMedicalHistory: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
-const PastDiagnosisReports = ({
-  diagnosisReports,
-  setDiagnosisReport,
-  setOpenEditDiagnosisReport,
-}: PastDiagnosisReportsProps) => {
+const PastMedicalHistoryReports = ({
+  medicalHistoryReports,
+  setMedicalHistoryReport,
+  setOpenEditMedicalHistory,
+}: PastMedicalHistoryReportsProps) => {
   return (
     <Dialog>
       <DialogTrigger className="w-full bg-primary-green hover:bg-primary-green text-white text-center rounded-none px-4 py-3 flex items-center justify-center gap-2">
-        <span className="text-sm">View Past Reports</span>
+        <span className="text-sm">View Past History</span>
       </DialogTrigger>
       <DialogContent
         id="hide"
@@ -38,10 +39,14 @@ const PastDiagnosisReports = ({
         <DialogHeader>
           <DialogTitle className="flex items-center justify-between">
             <span className="text-xl md:text-2xl text-secondary-gray font-bold">
-              Past Reports (
-              {diagnosisReports.slice(0, diagnosisReports.length - 1).length})
+              Past Histories (
+              {
+                medicalHistoryReports.slice(0, medicalHistoryReports.length - 1)
+                  .length
+              }
+              )
             </span>
-            <DialogClose onClick={() => setDiagnosisReport(null)}>
+            <DialogClose onClick={() => setMedicalHistoryReport(null)}>
               <X
                 className="border border-red-500 text-red-500 rounded-full"
                 size={25}
@@ -49,100 +54,115 @@ const PastDiagnosisReports = ({
             </DialogClose>
           </DialogTitle>
           <DialogDescription>
-            Manage all the treament reports for this patient
+            Manage all the medical history reports for this patient
           </DialogDescription>
         </DialogHeader>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
-          {diagnosisReports
-            .slice(0, diagnosisReports.length - 1)
+          {medicalHistoryReports
+            .slice(0, medicalHistoryReports.length - 1)
             .map((report) => (
               <div
                 key={report._id}
                 className="w-full h-full bg-white flex flex-col gap-3 p-3"
               >
                 <ContentHeader
+                  className="uppercase"
                   handleClick={() => {
-                    setDiagnosisReport(report);
-                    setOpenEditDiagnosisReport(true);
+                    setMedicalHistoryReport(report);
+                    setOpenEditMedicalHistory(true);
                   }}
-                  title={`Report ${report.diagnosisReportId}`}
+                  title={`Report ${report._id.slice(18)}`}
                 >
                   <span className="text-sm text-white">Modify</span>
                   <Edit className="text-white" size={20} />
                 </ContentHeader>
 
                 <div className="flex flex-col gap-2 mt-4">
+                  <h2 className="text-primary-green font-medium">
+                    Problem Details
+                  </h2>
                   <div className="grid grid-cols-2 place-content-start place-items-start text-sm">
                     <h3 className="text-primary-gray font-semibold">
-                      Report ID
+                      Problem Start Date
                     </h3>
                     <p className="text-primary-gray/50 font-medium">
-                      {report.diagnosisReportId}
+                      {new Date(report.date).toISOString().split("T")[0]}
                     </p>
                   </div>
 
                   <div className="grid grid-cols-2 place-content-start place-items-start text-sm">
                     <h3 className="text-primary-gray font-semibold">
-                      Doctor Name
+                      Problem Description
                     </h3>
                     <p className="text-primary-gray/50 font-medium">
-                      {report.doctorName}
+                      {report.description}
                     </p>
                   </div>
-
                   <div className="grid grid-cols-2 place-content-start place-items-start text-sm">
                     <h3 className="text-primary-gray font-semibold">
-                      Date of Diagnosis
+                      Cause of Current Problem
                     </h3>
                     <p className="text-primary-gray/50 font-medium">
-                      {report.date.split("T")[0]}
+                      {report.cause}
                     </p>
                   </div>
-
                   <div className="grid grid-cols-2 place-content-start place-items-start text-sm">
                     <h3 className="text-primary-gray font-semibold">
-                      Symptoms
+                      Surgery Requirement
                     </h3>
                     <p className="text-primary-gray/50 font-medium">
-                      {report.symptoms}
-                    </p>
-                  </div>
-
-                  <div className="grid grid-cols-2 place-content-start place-items-start text-sm">
-                    <h3 className="text-primary-gray font-semibold">
-                      Final Diagnosis
-                    </h3>
-                    <p className="text-primary-gray/50 font-medium">
-                      {report.finalDiagnosis}
-                    </p>
-                  </div>
-
-                  <div className="grid grid-cols-2 place-content-start place-items-start text-sm">
-                    <h3 className="text-primary-gray font-semibold">
-                      Recommended Tests
-                    </h3>
-                    <p className="text-primary-gray/50 font-medium">
-                      {report.recommendedTest}
-                    </p>
-                  </div>
-
-                  <div className="grid grid-cols-2 place-content-start place-items-start text-sm">
-                    <h3 className="text-primary-gray font-semibold">
-                      Follow-up Date
-                    </h3>
-                    <p className="text-primary-gray/50 font-medium">
-                      {report.followUpDate.split("T")[0]}
+                      {report.wasSurgeryRequired ? "Yes" : "No"}
                     </p>
                   </div>
                 </div>
 
-                <div className="flex flex-col gap-2 mt-3">
-                  <h2 className="text-primary-green font-medium">Notes</h2>
+                <div className="flex flex-col gap-2 mt-4">
+                  <h2 className="text-primary-green font-medium">
+                    Past Medical History
+                  </h2>
 
-                  <div className="flex flex-col w-full">
-                    <p className="text-sm text-secondary-gray">
-                      {report.notes}
+                  <div className="grid grid-cols-2 place-content-start place-items-start text-sm">
+                    <h3 className="text-primary-gray font-semibold">
+                      Breathing Problems
+                    </h3>
+                    <p className="text-primary-gray/50 font-medium">
+                      {report.hasBreathingProblem ? "True" : "False"}
+                    </p>
+                  </div>
+
+                  <div className="grid grid-cols-2 place-content-start place-items-start text-sm">
+                    <h3 className="text-primary-gray font-semibold">
+                      Current Wound/Skin Problems
+                    </h3>
+                    <p className="text-primary-gray/50 font-medium">
+                      {report.hasSkinProblem ? "True" : "False"}
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex flex-col gap-2 mt-4">
+                  <h2 className="text-primary-green font-medium">
+                    Surgeries and Hospitalizations
+                  </h2>
+
+                  <div className="grid grid-cols-2 place-content-start place-items-start text-sm">
+                    <h3 className="text-primary-gray font-semibold">Year</h3>
+                    <p className="text-primary-gray/50 font-medium">
+                      {
+                        new Date(report.hospitalizationDate)
+                          .toISOString()
+                          .split("T")[0]
+                      }
+                    </p>
+                  </div>
+
+                  <div className="grid grid-cols-2 place-content-start place-items-start text-sm">
+                    <h3 className="text-primary-gray font-semibold">
+                      Complications
+                    </h3>
+                    <p className="text-primary-gray/50 font-medium">
+                      {report.hadSurgeryComplication ? "True" : "False"}
                     </p>
                   </div>
                 </div>
@@ -154,4 +174,4 @@ const PastDiagnosisReports = ({
   );
 };
 
-export default PastDiagnosisReports;
+export default PastMedicalHistoryReports;

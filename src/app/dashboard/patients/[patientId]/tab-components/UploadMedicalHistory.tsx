@@ -20,13 +20,29 @@ import { toast } from "react-toastify";
 import { MedicalHistoryType } from "@/types/index";
 import CustomFileUpload from "@/components/CustomFileUpload";
 import { medicalHistorySchema } from "@/schema/medical-history.schema";
+import { useMutateData } from "@/hooks/useFetch";
+import { createOrEditMedicalHistory } from "@/actions/single-patient.action";
+import { useQueryClient } from "@tanstack/react-query";
+import { axiosInstance } from "@/lib/utils";
+import { useAuth } from "@/hooks";
+import RenderCustomError from "@/components/RenderCustomError";
 
 type UploadMedicalHistoryProps = {
   open: boolean;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  patientId: string;
+  refetchMedicalHistory: () => void;
 };
 
-const UploadMedicalHistory = ({ open, setOpen }: UploadMedicalHistoryProps) => {
+const UploadMedicalHistory = ({
+  open,
+  setOpen,
+  patientId,
+  refetchMedicalHistory,
+}: UploadMedicalHistoryProps) => {
+  const [user] = useAuth();
+  const queryClient = useQueryClient();
+
   const {
     register,
     reset,
@@ -39,11 +55,59 @@ const UploadMedicalHistory = ({ open, setOpen }: UploadMedicalHistoryProps) => {
     mode: "all",
   });
 
+  const {
+    mutateAsync,
+    // isPending: pending,
+    isError,
+    error,
+  } = useMutateData({
+    mutationFn: async (data: MedicalHistoryType) =>
+      createOrEditMedicalHistory(data, patientId, undefined),
+    config: {
+      queryKey: ["patients", "medical-history", patientId],
+    },
+  });
+
   const handleFormSubmit: SubmitHandler<MedicalHistoryType> = async (data) => {
-    console.log({ data });
-    setOpen(false);
-    toast.success("Medical History added successfully");
-    reset();
+    if (!data.formUrl?.length) {
+      toast.info("Please upload a file");
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append("image", data.formUrl[0]);
+
+    const res = await axiosInstance.post("/upload", formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+        Authorization: `Bearer ${user?.auth.token}`,
+      },
+    });
+
+    const resData = await res.data;
+
+    const fileUrl = resData?.fileUrl
+      ? (resData?.fileUrl as string)
+      : "https://d140uiq1keqywy.cloudfront.net/7916dd5f895d05c14a41e04727da4332-images.png";
+
+    // console.log({ data, in: "UploadMedicalHistory handleFormSubmit" });
+
+    await mutateAsync(
+      { ...data, formUrl: fileUrl },
+      {
+        onSuccess: () => {
+          setOpen(false);
+          toast.success("New medical history added successfully");
+          queryClient.invalidateQueries({
+            queryKey: ["patients", "medical-history", patientId],
+          });
+          if (refetchMedicalHistory) {
+            refetchMedicalHistory();
+          }
+          reset();
+        },
+      }
+    );
   };
 
   return (
@@ -70,7 +134,10 @@ const UploadMedicalHistory = ({ open, setOpen }: UploadMedicalHistoryProps) => {
               </DialogClose>
             </DialogTitle>
 
-            <DialogDescription className="flex flex-col gap-5 w-full">
+            <DialogDescription></DialogDescription>
+            <div className="flex flex-col gap-5 w-full">
+              <RenderCustomError isError={isError} error={error} />
+
               <form
                 onSubmit={handleSubmit(handleFormSubmit)}
                 className="flex flex-col gap-4 w-full"
@@ -90,7 +157,7 @@ const UploadMedicalHistory = ({ open, setOpen }: UploadMedicalHistoryProps) => {
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-5 w-full px-2 md:px-5">
                         <CustomInputForm
                           labelName="Problem Start Date"
-                          inputName="problemStartDate"
+                          inputName="date"
                           register={register}
                           errors={errors}
                           inputType="date"
@@ -99,11 +166,34 @@ const UploadMedicalHistory = ({ open, setOpen }: UploadMedicalHistoryProps) => {
 
                         <CustomInputForm
                           labelName="Problem Description"
-                          inputName="problemDescription"
+                          inputName="description"
                           register={register}
                           errors={errors}
                           inputType="text"
                           placeholderText="Enter problem description"
+                        />
+                      </div>
+
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-5 w-full px-2 md:px-5">
+                        <CustomInputForm
+                          labelName="Cause of current problem"
+                          inputName="cause"
+                          register={register}
+                          errors={errors}
+                          inputType="text"
+                          placeholderText="eg. unprotected sex"
+                        />
+
+                        <CustomInputForm
+                          labelName="Surgery Requirement"
+                          inputName="wasSurgeryRequired"
+                          register={register}
+                          errors={errors}
+                          inputType="select"
+                          selectOptions={[
+                            { value: "true", label: "Yes" },
+                            { value: "false", label: "No" },
+                          ]}
                         />
                       </div>
 
@@ -114,25 +204,25 @@ const UploadMedicalHistory = ({ open, setOpen }: UploadMedicalHistoryProps) => {
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-5 w-full px-2 md:px-5">
                         <CustomInputForm
                           labelName="Breathing Problems"
-                          inputName="breathingProblems"
+                          inputName="hasBreathingProblem"
                           register={register}
                           errors={errors}
                           inputType="select"
                           selectOptions={[
-                            { value: "Yes", label: "Yes" },
-                            { value: "No", label: "No" },
+                            { value: "true", label: "Yes" },
+                            { value: "false", label: "No" },
                           ]}
                         />
 
                         <CustomInputForm
                           labelName="Current Wound/Skin Problems"
-                          inputName="currentWoundOrSkinProblems"
+                          inputName="hasSkinProblem"
                           register={register}
                           errors={errors}
                           inputType="select"
                           selectOptions={[
-                            { value: "Yes", label: "Yes" },
-                            { value: "No", label: "No" },
+                            { value: "true", label: "Yes" },
+                            { value: "false", label: "No" },
                           ]}
                         />
                       </div>
@@ -143,23 +233,22 @@ const UploadMedicalHistory = ({ open, setOpen }: UploadMedicalHistoryProps) => {
 
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-5 w-full px-2 md:px-5">
                         <CustomInputForm
-                          labelName="Year"
-                          inputName="surgeryYear"
+                          labelName="Surgery or Hospitalization Date"
+                          inputName="hospitalizationDate"
                           register={register}
                           errors={errors}
-                          inputType="text"
-                          placeholderText="eg. 2024"
+                          inputType="date"
                         />
 
                         <CustomInputForm
                           labelName="Complications"
-                          inputName="complications"
+                          inputName="hadSurgeryComplication"
                           register={register}
                           errors={errors}
                           inputType="select"
                           selectOptions={[
-                            { value: "True", label: "True" },
-                            { value: "False", label: "False" },
+                            { value: "true", label: "True" },
+                            { value: "false", label: "False" },
                           ]}
                         />
                       </div>
@@ -170,16 +259,16 @@ const UploadMedicalHistory = ({ open, setOpen }: UploadMedicalHistoryProps) => {
                   <CustomFileUpload
                     setValue={setValue}
                     watch={watch}
-                    itemName="medicalHistoryAttachment"
-                    title="Upload medical history form"
-                    allowMultiple={true}
+                    itemName="formUrl"
+                    title="Upload medical history form (required)"
+                    allowMultiple={false}
                   />
 
                   {/* Submit form button */}
                   <UploadMedicalHistoryButton pending={pending} reset={reset} />
                 </div>
               </form>
-            </DialogDescription>
+            </div>
           </DialogHeader>
         </DialogContent>
       </Dialog>

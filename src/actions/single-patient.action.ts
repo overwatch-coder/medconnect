@@ -6,6 +6,7 @@ import { axiosInstance } from "@/lib/utils";
 import {
   IAppointment,
   IDiagnosisReport,
+  IMedicalHistory,
   IPrescription,
   ITreatmentPlan,
   IVisitLogs,
@@ -13,6 +14,7 @@ import {
 import {
   AppointmentType,
   DiagnosisReportType,
+  MedicalHistoryType,
   PrescriptionType,
   TreatmentPlanType,
   VisitLogsType,
@@ -654,6 +656,171 @@ export const deleteAppointment = async (
     return resData;
   } catch (error: any) {
     console.log({ error, in: "deleteAppointment catch" });
+    return error;
+  }
+};
+
+//  ====== MEDICAL HISTORY =======
+// Get All Medical History
+export const getMedicalHistory = async (
+  patientId: string
+): Promise<IMedicalHistory[]> => {
+  try {
+    const user = await currentUser();
+    if (!user) {
+      throw new Error("Unauthorized!");
+    }
+
+    const res = await axiosInstance.get(
+      `/patient/${patientId}/medical-history`,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${user.auth.token}`,
+        },
+      }
+    );
+
+    const resData = await res.data;
+
+    if (!resData?.status) {
+      throw new Error(resData?.message);
+    }
+
+    return resData?.data as IMedicalHistory[];
+  } catch (error: any) {
+    console.log({ error, in: "getMedicalHistory catch" });
+    return error;
+  }
+};
+
+// Get a single medical history
+export const getMedicalHistoryById = async (
+  patientId: string,
+  medicalHistoryId: string
+): Promise<IMedicalHistory> => {
+  try {
+    const user = await currentUser();
+
+    if (!user) {
+      throw new Error("User not found");
+    }
+
+    const res = await axiosInstance.get(
+      `/patient/${patientId}/medical-history/${medicalHistoryId}`,
+      {
+        headers: {
+          Authorization: `Bearer ${user?.auth.token}`,
+        },
+      }
+    );
+
+    const resData = await res.data;
+
+    if (resData?.status === "error") {
+      throw new Error(resData?.message);
+    }
+
+    return resData?.data as IMedicalHistory;
+  } catch (error: any) {
+    console.log({ error, in: "getMedicalHistoryById catch" });
+    return error;
+  }
+};
+
+// Create or Edit a medical history
+export const createOrEditMedicalHistory = async (
+  data: MedicalHistoryType,
+  patientId: string,
+  medicalHistoryId?: string
+): Promise<IMedicalHistory> => {
+  try {
+    const user = await currentUser();
+
+    if (!user) {
+      throw new Error("Unauthorized!");
+    }
+
+    const url = medicalHistoryId
+      ? `/patient/${patientId}/medical-history/${medicalHistoryId}`
+      : `/patient/${patientId}/medical-history/`;
+
+    console.log({ url, data, user, in: "createOrEditMedicalHistory url" });
+
+    const formData = {
+      ...data,
+      hadSurgeryComplication:
+        data.hadSurgeryComplication === "true" ? true : false,
+      wasSurgeryRequired: data.wasSurgeryRequired === "true" ? true : false,
+      hasBreathingProblem: data.hasBreathingProblem === "true" ? true : false,
+      hasSkinProblem: data.hasSkinProblem === "true" ? true : false,
+      formUrl: data.formUrl as string,
+    };
+
+    console.log({ formData, in: "createOrEditMedicalHistory formData" });
+
+    const res = await axiosInstance({
+      url: url,
+      method: medicalHistoryId ? "PATCH" : "POST",
+      data: formData,
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${user?.auth.token}`,
+      },
+    });
+
+    const resData = await res.data;
+
+    console.log({ resData, res, in: "createOrEditMedicalHistory resData" });
+
+    if (!resData?.status) {
+      console.log({ error: resData, in: "Error if" });
+      throw new Error(
+        resData?.message ||
+          `Error while ${medicalHistoryId ? "updating" : "creating"} medical history`
+      );
+    }
+
+    return resData?.data as IMedicalHistory;
+  } catch (error: any) {
+    console.log({
+      error,
+      data: error?.response?.data,
+      message: error?.respnse?.data?.message,
+      in: "createOrEditMedicalHistory catch",
+    });
+    return error;
+  }
+};
+
+// delete a medical history
+export const deleteMedicalHistory = async (
+  patientId: string,
+  medicalHistoryId: string
+) => {
+  try {
+    const user = await currentUser();
+    if (!user || !user.staff) {
+      throw new Error("Not authorized");
+    }
+
+    const res = await axiosInstance.delete(
+      `/patient/${patientId}/medical-history/${medicalHistoryId}`,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${user?.auth.token}`,
+        },
+      }
+    );
+
+    console.log({ res, in: "deleteMedicalHistory res" });
+
+    const resData = { status: true };
+
+    return resData;
+  } catch (error: any) {
+    console.log({ error, in: "deleteMedicalHistory catch" });
     return error;
   }
 };

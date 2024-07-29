@@ -225,6 +225,22 @@ export interface IStaff {
   __v: number;
 }
 
+// === MEDICAL HISTORY ===
+declare interface IMedicalHistory {
+  patientId: string;
+  description: string;
+  cause: string;
+  hospitalizationDate: string;
+  formUrl: string;
+  date: string;
+  hadSurgeryComplication: boolean;
+  wasSurgeryRequired: boolean;
+  hasBreathingProblem: boolean;
+  hasSkinProblem: boolean;
+  _id: string;
+  __v: number;
+}
+
 // === PRESCIPTION ===
 declare interface IPrescription {
   patientId: string;
@@ -268,6 +284,7 @@ declare interface IDiagnosisReport {
   followUpDate: string;
   notes: string;
   symptoms: string;
+  finalDiagnosis: string;
   recommendedTest: string;
   _id: string;
   diagnosisReportId: string;

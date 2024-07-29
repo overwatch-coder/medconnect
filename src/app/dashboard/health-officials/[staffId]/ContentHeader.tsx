@@ -1,18 +1,23 @@
+import { cn } from "@/lib/utils";
 import React from "react";
 
 type ContentHeaderProps = {
   title: string;
   children: React.ReactNode;
   handleClick?: React.MouseEventHandler<HTMLButtonElement>;
+  className?: string;
 };
 const ContentHeader = ({
   title,
   children,
   handleClick,
+  className,
 }: ContentHeaderProps) => {
   return (
     <div className="flex items-center justify-between gap-5">
-      <h2 className="text-secondary-gray font-bold">{title}</h2>
+      <h2 className={cn("text-secondary-gray font-bold", className)}>
+        {title}
+      </h2>
 
       <button
         onClick={handleClick}

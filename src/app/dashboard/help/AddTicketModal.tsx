@@ -19,16 +19,30 @@ import { Button } from "@/components/ui/button";
 import ClipLoader from "react-spinners/ClipLoader";
 import ImagePreview from "@/components/ImagePreview";
 import { TicketType } from "@/types/index";
+import RenderCustomError from "@/components/RenderCustomError";
+import { useMutateData } from "@/hooks/useFetch";
+import { createTicket } from "@/actions/tickets.action";
+import { toast } from "react-toastify";
+import { axiosInstance } from "@/lib/utils";
+import { useAuth } from "@/hooks";
+import { useQueryClient } from "@tanstack/react-query";
+import { useRouter } from "next/navigation";
 
 type AddTicketModalProps = {
   openModal: boolean;
   setShowAddTicketModal: React.Dispatch<React.SetStateAction<boolean>>;
+  refetchTickets: () => void;
 };
 
 const AddTicketModal = ({
   openModal,
   setShowAddTicketModal,
+  refetchTickets,
 }: AddTicketModalProps) => {
+  const [user] = useAuth();
+  const queryClient = useQueryClient();
+  const router = useRouter();
+
   const {
     register,
     reset,
@@ -43,12 +57,54 @@ const AddTicketModal = ({
 
   const attachements = watch("attachment");
 
-  const submitListingHandler: SubmitHandler<TicketType> = async (data) => {
-    console.log({ data });
+  const { mutateAsync, isError, error } = useMutateData({
+    mutationFn: async (data: TicketType) => createTicket(data),
+    config: {
+      queryKey: ["tickets"],
+    },
+  });
+
+  const submitForm: SubmitHandler<TicketType> = async (data) => {
+    if (!data.attachment?.length) {
+      toast.info("Please attach an image of the issue");
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append("image", data.attachment[0]);
+
+    const res = await axiosInstance.post("/upload", formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+        Authorization: `Bearer ${user?.auth.token}`,
+      },
+    });
+
+    const resData = await res.data;
+
+    const fileUrl = resData?.fileUrl
+      ? (resData?.fileUrl as string)
+      : "https://d140uiq1keqywy.cloudfront.net/06744b93015fd3083d32b863359723ab-large.png";
+
+    await mutateAsync(
+      { ...data, attachment: fileUrl },
+      {
+        onSuccess: () => {
+          toast.success("Ticket created successfully");
+          queryClient.invalidateQueries({
+            queryKey: ["tickets"],
+          });
+          setShowAddTicketModal(false);
+          refetchTickets();
+          reset();
+          router.refresh();
+        },
+      }
+    );
   };
 
   return (
-    <Dialog open={openModal}>
+    <Dialog open={openModal} onOpenChange={setShowAddTicketModal}>
       <DialogContent
         id="hide"
         className="flex flex-col gap-4 overflow-y-scroll scrollbar-hide h-screen"
@@ -72,8 +128,10 @@ const AddTicketModal = ({
           </DialogTitle>
 
           <DialogDescription className="flex flex-col gap-5 w-full">
+            <RenderCustomError isError={isError} error={error} />
+
             <form
-              onSubmit={handleSubmit(submitListingHandler)}
+              onSubmit={handleSubmit(submitForm)}
               className="flex flex-col gap-4"
               method="POST"
               encType="multipart/form-data"

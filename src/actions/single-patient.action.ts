@@ -282,6 +282,33 @@ export const deleteTreatmentPlan = async (
 };
 
 // === DIAGNOSIS REPORTS ===
+// get all diagnosis reports for all patients
+export const getAllDiagnosisReports = async (): Promise<IDiagnosisReport[]> => {
+  try {
+    const patients = await getChpsPatients();
+    if (!patients) {
+      throw new Error("No patients found");
+    }
+
+    const diagnosisReports: IDiagnosisReport[] = [];
+
+    for (const patient of patients) {
+      const diagnosisReportsForPatient = await getDiagnosisReports(patient._id);
+
+      if (!diagnosisReportsForPatient) {
+        throw new Error("No diagnosis reports found");
+      }
+
+      diagnosisReports.push(...diagnosisReportsForPatient);
+    }
+
+    return diagnosisReports;
+  } catch (error: any) {
+    console.log({ error, in: "getAllDiagnosisReports catch" });
+    return error;
+  }
+};
+
 // Get All Diagnosis Reports
 export const getDiagnosisReports = async (
   patientId: string
@@ -392,6 +419,33 @@ export const deleteDiagnosisReport = async (
 };
 
 // === VISIT LOGS ===
+// Get All Visit Logs from all patients
+export const getAllVisitLogs = async (): Promise<IVisitLogs[]> => {
+  try {
+    const patients = await getChpsPatients();
+    if (!patients) {
+      throw new Error("No patients found");
+    }
+
+    const visitLogs: IVisitLogs[] = [];
+
+    for (const patient of patients) {
+      const visitLogsForPatient = await getVisitLogs(patient._id);
+
+      if (!visitLogsForPatient) {
+        throw new Error("No visit logs found");
+      }
+
+      visitLogs.push(...visitLogsForPatient);
+    }
+
+    return visitLogs;
+  } catch (error: any) {
+    console.log({ error, in: "getAllVisitLogs catch" });
+    return error;
+  }
+};
+
 // Get All Visit logs
 export const getVisitLogs = async (
   patientId: string
@@ -422,7 +476,7 @@ export const getVisitLogs = async (
   }
 };
 
-// Create or Edit a diagnosis report
+// Create or Edit a visit log
 export const createOrEditVisitLog = async (
   data: VisitLogsType,
   patientId: string,
@@ -466,7 +520,7 @@ export const createOrEditVisitLog = async (
   }
 };
 
-// delete a diagnosis report
+// delete a visit log
 export const deleteVisitLog = async (patientId: string, visitLogId: string) => {
   try {
     const user = await currentUser();

@@ -361,3 +361,18 @@ declare interface IOutreachProgramChoice {
   outreachProgramId: string;
   chpsCompoundId: string;
 }
+
+// === TICKETS ===
+declare interface ITicket {
+  subject: string;
+  description: string;
+  imageUrl: string;
+  requestedById: string;
+  status: string;
+  priority: string;
+  _id: string;
+  ticketId: string;
+  createdAt: string;
+  updatedAt: string;
+  __v: number;
+}

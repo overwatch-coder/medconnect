@@ -9,7 +9,6 @@ import {
 } from "@/components/ui/dialog";
 import { X } from "lucide-react";
 import { MdOutlineQuestionMark } from "react-icons/md";
-import { MEDCONNECT_DASHBOARD_HELP_TICKETS as ticketsData } from "@/constants";
 import HelpTable from "@/app/dashboard/help/HelpTable";
 
 const HelpModal = () => {
@@ -45,7 +44,7 @@ const HelpModal = () => {
             </DialogClose>
           </DialogTitle>
 
-          <HelpTable tickets={ticketsData} />
+          <HelpTable />
         </DialogHeader>
       </DialogContent>
     </Dialog>

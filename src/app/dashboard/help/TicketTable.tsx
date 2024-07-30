@@ -10,16 +10,10 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { FaCircle } from "react-icons/fa";
+import { ITicket } from "@/types/backend";
 
 type TicketTableProps = {
-  filteredTickets: {
-    ticketId: string;
-    subject: string;
-    dateInitiated: string;
-    status: string;
-    statusColor: string;
-    dateCompleted: string;
-  }[];
+  filteredTickets: ITicket[];
 };
 
 const TicketTable = ({ filteredTickets }: TicketTableProps) => {
@@ -55,14 +49,24 @@ const TicketTable = ({ filteredTickets }: TicketTableProps) => {
               {ticket.subject}
             </TableCell>
             <TableCell className="text-secondary-gray font-semibold">
-              {ticket.dateInitiated}
+              {ticket.createdAt.split("T")[0]}
             </TableCell>
             <TableCell className="text-secondary-gray font-semibold flex items-center gap-2">
-              <FaCircle size={10} color={ticket.statusColor} />
+              <FaCircle
+                size={10}
+                className={
+                  ticket.status === "OPEN"
+                    ? "text-yellow-500"
+                    : "text-green-700"
+                }
+              />
               <span>{ticket.status}</span>
             </TableCell>
+
             <TableCell className="text-secondary-gray font-semibold">
-              {ticket.dateCompleted ? ticket.dateCompleted : "Not Completed"}
+              {ticket.status === "OPEN"
+                ? "Not Completed"
+                : ticket.updatedAt.split("T")[0]}
             </TableCell>
           </TableRow>
         ))}

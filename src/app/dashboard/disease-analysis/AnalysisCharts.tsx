@@ -1,37 +1,44 @@
 "use client";
 import BarChart from "@/app/dashboard/graphs/BarChart";
 import LineChart from "@/app/dashboard/graphs/LineChart";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { PieChart } from "lucide-react";
 import { AiOutlineLineChart } from "react-icons/ai";
 import DoughnutChart from "@/app/dashboard/graphs/DoughnutChart";
+import { IDiagnosisReport, IVisitLogs } from "@/types/backend";
+import { useFetch } from "@/hooks/useFetch";
+import {
+  getAllDiagnosisReports,
+  getAllVisitLogs,
+} from "@/actions/single-patient.action";
+import seedColor from "seed-color";
 
-const lineChartDataSets = [
-  {
-    label: "Malaria",
-    backgroundColor: "#FF0000",
-    borderColor: "#FF6347",
-    pointBackgroundColor: "#FF4500",
-    pointBorderColor: "#FF6347",
-    data: [95, 98, 99, 97, 96, 94, 95],
-  },
-  {
-    label: "Respiratory Infections",
-    backgroundColor: "#FFFF00",
-    borderColor: "#FFD700",
-    pointBackgroundColor: "#FFA500",
-    pointBorderColor: "#FFD700",
-    data: [50, 33, 52, 94, 135, 120, 100],
-  },
-  {
-    label: "Gastrointestinal Diseases",
-    backgroundColor: "#40E0D0",
-    borderColor: "#20B2AA",
-    pointBackgroundColor: "#48D1CC",
-    pointBorderColor: "#20B2AA",
-    data: [120, 130, 110, 115, 125, 135, 140],
-  },
-];
+// const lineChartDataSets = [
+//   {
+//     label: "Malaria",
+//     backgroundColor: "#FF0000",
+//     borderColor: "#FF6347",
+//     pointBackgroundColor: "#FF4500",
+//     pointBorderColor: "#FF6347",
+//     data: [95, 98, 99, 97, 96, 94, 95],
+//   },
+//   {
+//     label: "Respiratory Infections",
+//     backgroundColor: "#FFFF00",
+//     borderColor: "#FFD700",
+//     pointBackgroundColor: "#FFA500",
+//     pointBorderColor: "#FFD700",
+//     data: [50, 33, 52, 94, 135, 120, 100],
+//   },
+//   {
+//     label: "Gastrointestinal Diseases",
+//     backgroundColor: "#40E0D0",
+//     borderColor: "#20B2AA",
+//     pointBackgroundColor: "#48D1CC",
+//     pointBorderColor: "#20B2AA",
+//     data: [120, 130, 110, 115, 125, 135, 140],
+//   },
+// ];
 
 const lineChartLabels = [
   "Jan",
@@ -48,8 +55,100 @@ const lineChartLabels = [
   "Dec",
 ];
 
+const getMonthLabel = (date: string) =>
+  new Date(date).toLocaleDateString("en-US", {
+    timeZone: "UTC",
+    month: "long",
+  });
+
 const AnalysisCharts = () => {
+  // diagnosis reports data
+  const { data: diagnosisReportsData } = useFetch<IDiagnosisReport[]>({
+    queryKey: ["diagnosis-reports"],
+    queryFn: async () => await getAllDiagnosisReports(),
+    enabled: true,
+  });
+
+  // visit logs data
+  const { data: visitLogsData } = useFetch<IVisitLogs[]>({
+    queryKey: ["visit-logs"],
+    queryFn: async () => await getAllVisitLogs(),
+    enabled: true,
+  });
+
+  const [diagnosisReports, setDiagnosisReports] = useState<IDiagnosisReport[]>(
+    []
+  );
+  const [visitLogs, setVisitLogs] = useState<IVisitLogs[]>([]);
+
+  useEffect(() => {
+    if (diagnosisReportsData) {
+      setDiagnosisReports(diagnosisReportsData);
+    }
+
+    if (visitLogsData) {
+      setVisitLogs(visitLogsData);
+    }
+  }, [diagnosisReportsData, visitLogsData]);
+
   const [chartType, setChartType] = useState<"line" | "pie">("line");
+
+  // diagnosis reports line chart data
+  const lineChartDataSets = diagnosisReports.map((item) => {
+    return {
+      label:
+        item.finalDiagnosis.toLowerCase().charAt(0).toUpperCase() +
+        item.finalDiagnosis.toLowerCase().slice(1),
+      backgroundColor: seedColor(item.doctorName).toHex(),
+      borderColor: seedColor(item.diagnosisReportId).toHex(),
+      pointBackgroundColor: seedColor(item.date).toHex(),
+      pointBorderColor: seedColor(item._id).toHex(),
+      data: Array.from({ length: diagnosisReports.length }).map(
+        (_, i) =>
+          diagnosisReports.filter(
+            (report) =>
+              report.finalDiagnosis.toLowerCase() ===
+              item.finalDiagnosis.toLowerCase()
+          ).length
+      ),
+    };
+  });
+
+  // diagnosis reports data and labels
+  const diseaseAnalysisGraphLabel = Array.from(
+    new Set(diagnosisReports.map((item) => item.finalDiagnosis.toLowerCase()))
+  )
+    .sort()
+    .map((item) => item.charAt(0).toUpperCase() + item.slice(1));
+
+  const diseaseAnalysisGraphData = Array.from(
+    new Set(diagnosisReports.map((item) => item.finalDiagnosis.toLowerCase()))
+  )
+    .sort()
+    .map(
+      (item) =>
+        diagnosisReports.filter(
+          (report) => report.finalDiagnosis.toLowerCase() === item
+        ).length
+    );
+
+  const visitLogsByMonth = visitLogs.map((item) => ({
+    label: getMonthLabel(item.date).slice(0, 3),
+    data: Array.from({ length: visitLogs.length }).map(
+      (_, i) =>
+        visitLogs.filter(
+          (log) => getMonthLabel(log.date) === getMonthLabel(item.date)
+        ).length
+    ),
+    backgroundColor: seedColor(new Date(item.date).toDateString()).toHex(),
+    borderWidth: 1,
+  }));
+
+  // Convert the object to an array
+  const visitLogsGraphData = Object.values(visitLogsByMonth);
+
+  // Get the labels for the graph
+  const visitLogsGraphLabel = visitLogsByMonth.map((item) => item.label);
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-5 w-full">
@@ -83,30 +182,21 @@ const AnalysisCharts = () => {
           <div className="flex flex-col items-center w-full h-full pt-3">
             {chartType === "line" ? (
               <LineChart
-                labels={lineChartLabels.slice(
-                  0,
-                  lineChartDataSets[0].data.length
-                )}
+                labels={Array.from(
+                  new Set(lineChartDataSets.map((item) => item.label))
+                )
+                  .map((item) => item.charAt(0).toUpperCase() + item.slice(1))
+                  .map((item) => item.slice(0, 3))}
                 datasets={lineChartDataSets}
                 position="top"
               />
             ) : (
               <DoughnutChart
-                labels={[
-                  "Patient Visits",
-                  "Prescriptions Issued",
-                  "Services Utilized",
-                  "Common Diagnoses",
-                  "Appointments Scheduled",
-                ]}
-                data={[315, 125, 200, 200, 50]}
-                bgColors={[
-                  "#FF0000",
-                  "#FFFF00",
-                  "#40E0D0",
-                  "#FAB500",
-                  "#2D4763",
-                ]}
+                labels={diseaseAnalysisGraphLabel}
+                data={diseaseAnalysisGraphData}
+                bgColors={Array.from({
+                  length: diseaseAnalysisGraphData.length,
+                }).map((_, i) => seedColor((i + 1).toString()).toHex())}
               />
             )}
           </div>
@@ -122,15 +212,8 @@ const AnalysisCharts = () => {
             {/* Chart */}
             <div className="flex flex-col items-center w-full h-full pt-3">
               <BarChart
-                labels={["Jan", "Feb", "Mar"]}
-                datasets={[
-                  {
-                    label: "Jan",
-                    data: [65, 59, 80],
-                    backgroundColor: ["#964B00B2", "#964B00B2", "#964B00B2"],
-                    borderWidth: 1,
-                  },
-                ]}
+                labels={visitLogsGraphLabel.map((item) => item.slice(0, 3))}
+                datasets={visitLogsGraphData}
                 showLegend={false}
               />
             </div>

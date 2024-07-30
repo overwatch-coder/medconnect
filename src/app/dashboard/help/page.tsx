@@ -1,6 +1,5 @@
 import DashboardContentHeader from "@/app/dashboard/DashboardContentHeader";
 import HelpTable from "@/app/dashboard/help/HelpTable";
-import { MEDCONNECT_DASHBOARD_HELP_TICKETS as ticketsData } from "@/constants";
 import { Metadata } from "next";
 import React from "react";
 
@@ -19,7 +18,7 @@ const HelpAndSupport = () => {
       <DashboardContentHeader headerTitle="Help & Support" showDate={false} />
 
       <div className="flex flex-row flex-nowrap w-full h-full">
-        <HelpTable tickets={ticketsData} />
+        <HelpTable />
       </div>
     </div>
   );

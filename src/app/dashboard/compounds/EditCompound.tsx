@@ -34,6 +34,8 @@ import { z } from "zod";
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "react-toastify";
 import { Checkbox } from "@/components/ui/checkbox";
+import { axiosInstance } from "@/lib/utils";
+import { useAuth } from "@/hooks";
 
 type EditCompoundModalProps = {
   openModal: boolean;
@@ -61,6 +63,7 @@ const EditCompoundModal = ({
   compoundId,
   setEditCompoundId,
 }: EditCompoundModalProps) => {
+  const [user] = useAuth();
   const { data: compound, refetch: fetchCompound } = useFetch<ChpsCompound>({
     queryFn: async () => await getChpsById(compoundId),
     queryKey: ["compounds", compoundId],
@@ -115,11 +118,36 @@ const EditCompoundModal = ({
   });
 
   const submitForm: SubmitHandler<EditCompoundType> = async (data) => {
-    await mutateAsync(data, {
+    if (profilePicture && profilePicture.length > 0) {
+      const formData = new FormData();
+      formData.append("image", profilePicture[0]);
+
+      axiosInstance
+        .post("/upload", formData, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+            Authorization: `Bearer ${user?.auth.token}`,
+          },
+        })
+        .then((res) => {
+          if (res.status === 200) {
+            data.profilePictureUrl = res.data.fileUrl;
+          } else {
+            data.profilePictureUrl = compound?.profilePictureUrl;
+          }
+        });
+    }
+
+    console.log({ data, in: "EditCompoundForm submitForm" });
+
+    const { profilePicture: pic, ...rest } = data;
+
+    await mutateAsync(rest as EditCompoundType, {
       onSuccess: (data) => {
         queryClient.invalidateQueries({ queryKey: ["compounds"] });
+        queryClient.invalidateQueries({ queryKey: ["compounds", ""] });
 
-        fetchCompound();
+        fetchCompound({});
 
         toast.success("Compound updated successfully");
 
@@ -137,11 +165,6 @@ const EditCompoundModal = ({
       },
     });
   };
-
-  // if (!compound) {
-  //   router.replace("/dashboard/compounds");
-  //   return null;
-  // }
 
   return (
     <Dialog open={openModal}>

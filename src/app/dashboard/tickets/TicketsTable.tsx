@@ -16,15 +16,19 @@ import DeleteCompound from "@/app/dashboard/compounds/DeleteCompound";
 import EditCompoundModal from "@/app/dashboard/compounds/EditCompound";
 import { useRouter } from "next/navigation";
 import CustomFilterDropdown from "@/components/CustomFilterDropdown";
-import {
-  TicketStatus,
-  SuperAdminTicketType as TicketType,
-} from "@/types/index";
+import { TicketStatus } from "@/types/index";
 import { getStatusColor } from "@/lib/utils";
+import { ITicket } from "@/types/backend";
+import {
+  getAllChpsCompounds,
+  getChpsById,
+  getChpsCompound,
+} from "@/actions/chps-compound.action";
+import { useFetch } from "@/hooks/useFetch";
 
 type TicketsTableProps = {
-  filteredTickets: TicketType[];
-  setFilteredTickets: React.Dispatch<React.SetStateAction<TicketType[]>>;
+  filteredTickets: ITicket[];
+  setFilteredTickets: React.Dispatch<React.SetStateAction<ITicket[]>>;
 };
 
 const TicketsTable = ({
@@ -32,6 +36,17 @@ const TicketsTable = ({
   setFilteredTickets,
 }: TicketsTableProps) => {
   const [markedTicketId, setMarkedTicketId] = useState<string[]>([]);
+  const { data: chpsCompound } = useFetch({
+    queryKey: ["chps-compound"],
+    queryFn: async () => await getAllChpsCompounds(),
+  });
+
+  const getChpsCompound = (id: string) => {
+    if (!chpsCompound) return;
+
+    const cmpd = chpsCompound.find((cmpd) => cmpd._id === id);
+    return cmpd;
+  };
 
   // handle mark compound
   const handleMarkCompound = (id: string) => {
@@ -47,7 +62,7 @@ const TicketsTable = ({
     if (markedTicketId.length === filteredTickets.length) {
       setMarkedTicketId([]);
     } else {
-      setMarkedTicketId(filteredTickets.map((data) => data.ticketID));
+      setMarkedTicketId(filteredTickets.map((data) => data._id));
     }
   };
 
@@ -79,16 +94,18 @@ const TicketsTable = ({
 
       <TableBody className="scrollbar-hide">
         {filteredTickets.map((data) => {
-          const statusColor = getStatusColor(data.status as TicketStatus);
+          const statusColor = getStatusColor(
+            data.status.toLowerCase() as TicketStatus
+          );
 
           return (
-            <TableRow key={data.ticketID}>
+            <TableRow key={data._id}>
               <TableCell className="text-secondary-gray flex items-center gap-2 font-semibold">
                 <span
-                  onClick={() => handleMarkCompound(data.ticketID)}
+                  onClick={() => handleMarkCompound(data._id)}
                   className="cursor-pointer"
                 >
-                  {markedTicketId.includes(data.ticketID) ? (
+                  {markedTicketId.includes(data._id) ? (
                     <GrCheckboxSelected
                       size={15}
                       className="text-secondary-gray flex items-center gap-2 cursor-pointer"
@@ -100,10 +117,12 @@ const TicketsTable = ({
                     />
                   )}
                 </span>
-                <span>{data.requestedBy}</span>
+                <span className="capitalize">
+                  {getChpsCompound(data.requestedById)?.name}
+                </span>
               </TableCell>
               <TableCell className="text-secondary-gray font-semibold">
-                {data.ticketID}
+                {data.ticketId}
               </TableCell>
               <TableCell className="text-secondary-gray font-semibold">
                 {data.subject}
@@ -118,13 +137,14 @@ const TicketsTable = ({
                   className="p-2 rounded text-sm"
                   style={{
                     backgroundColor: statusColor,
+                    color: "white",
                   }}
                 >
                   {data.status}
                 </span>
               </TableCell>
               <TableCell className="text-secondary-gray font-semibold">
-                {data.createdAt}
+                {data.createdAt.split("T")[0]}
               </TableCell>
             </TableRow>
           );

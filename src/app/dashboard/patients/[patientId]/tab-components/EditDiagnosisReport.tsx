@@ -18,7 +18,6 @@ import { FormSectionHeader } from "@/app/dashboard/compounds/add-new/AddCompound
 import CustomInputForm from "@/components/CustomInputForm";
 import { toast } from "react-toastify";
 import { DiagnosisReportType } from "@/types/index";
-import CustomFileUpload from "@/components/CustomFileUpload";
 import { diagnosisReportSchema } from "@/schema/diagnosis-report.schema";
 import { IDiagnosisReport } from "@/types/backend";
 import { useQueryClient } from "@tanstack/react-query";
@@ -175,7 +174,7 @@ const EditDiagnosisReportForm = ({
                         />
                       </div>
 
-                      <div className="grid grid-cols-1 gap-5 w-full px-2 md:px-5">
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-5 w-full px-2 md:px-5">
                         <CustomInputForm
                           labelName="Symptoms"
                           inputName="symptoms"
@@ -186,6 +185,18 @@ const EditDiagnosisReportForm = ({
                           value={diagnosisReport?.symptoms}
                         />
 
+                        <CustomInputForm
+                          labelName="Final Diagnosis"
+                          inputName="finalDiagnosis"
+                          register={register}
+                          errors={errors}
+                          inputType="text"
+                          placeholderText="eg. Malaria"
+                          value={diagnosisReport?.finalDiagnosis}
+                        />
+                      </div>
+
+                      <div className="grid grid-cols-1 gap-5 w-full px-2 md:px-5">
                         <CustomInputForm
                           labelName="Notes"
                           inputName="notes"

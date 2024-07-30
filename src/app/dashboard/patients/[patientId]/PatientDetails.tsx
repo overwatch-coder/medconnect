@@ -88,7 +88,7 @@ const PatientDetails = ({ patient }: PatientDetailsProps) => {
             value={tabsMenu[1].value}
             className="mt-20 sm:mt-10 md:mt-5"
           >
-            <MedicalHistory />
+            <MedicalHistory patient={patient} />
           </TabsContent>
           <TabsContent
             value={tabsMenu[2].value}

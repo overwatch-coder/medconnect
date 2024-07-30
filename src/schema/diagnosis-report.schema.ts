@@ -7,4 +7,5 @@ export const diagnosisReportSchema = z.object({
   symptoms: z.string().trim().min(1, "Symptom is required"),
   recommendedTest: z.string().trim().min(1, "Recommended Tests is required"),
   notes: z.string().trim().min(1, "Notes is required"),
+  finalDiagnosis: z.string().trim().min(1, "Final Diagnosis is required"),
 });

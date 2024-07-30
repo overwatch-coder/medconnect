@@ -154,7 +154,7 @@ const UploadDiagnosisReport = ({
                         />
                       </div>
 
-                      <div className="grid grid-cols-1 gap-5 w-full px-2 md:px-5">
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-5 w-full px-2 md:px-5">
                         <CustomInputForm
                           labelName="Symptoms"
                           inputName="symptoms"
@@ -164,6 +164,17 @@ const UploadDiagnosisReport = ({
                           placeholderText="eg. Fever, Cough, Headache"
                         />
 
+                        <CustomInputForm
+                          labelName="Final Diagnosis"
+                          inputName="finalDiagnosis"
+                          register={register}
+                          errors={errors}
+                          inputType="text"
+                          placeholderText="eg. Malaria"
+                        />
+                      </div>
+
+                      <div className="grid grid-cols-1 gap-5 w-full px-2 md:px-5">
                         <CustomInputForm
                           labelName="Notes"
                           inputName="notes"

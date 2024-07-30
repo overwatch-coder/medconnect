@@ -1,33 +1,44 @@
 "use client";
 import { CirclePlus, Search } from "lucide-react";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import TicketTable from "@/app/dashboard/help/TicketTable";
 import AddTicketModal from "@/app/dashboard/help/AddTicketModal";
+import { ITicket } from "@/types/backend";
+import { useFetch } from "@/hooks/useFetch";
+import { RenderEmptyComponent } from "@/app/dashboard/health-officials/HealthOfficialsTable";
+import { getAllTickets } from "@/actions/tickets.action";
 
-type HelpTableProps = {
-  tickets: {
-    ticketId: string;
-    subject: string;
-    dateInitiated: string;
-    status: string;
-    statusColor: string;
-    dateCompleted: string;
-  }[];
-};
-
-const HelpTable = ({ tickets }: HelpTableProps) => {
-  const [filteredTickets, setFilteredTickets] = useState(tickets);
+const HelpTable = () => {
+  const {
+    data: tickets,
+    isLoading,
+    refetch: refetchTickets,
+  } = useFetch({
+    queryFn: async () => await getAllTickets(),
+    queryKey: ["tickets"],
+  });
+  const [filteredTickets, setFilteredTickets] = useState<ITicket[]>([]);
   const [showAddTicketModal, setShowAddTicketModal] = useState(false);
   const [searchTicket, setSearchTicket] = useState("");
 
+  useEffect(() => {
+    if (tickets) {
+      setFilteredTickets(tickets);
+    }
+  }, [tickets]);
+
   // handle search
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (!tickets) return;
+
     setSearchTicket(e.target.value);
     const query = e.target.value;
     if (query) {
-      const filtered = tickets.filter((ticket) =>
-        ticket.subject.toLowerCase().includes(query.toLowerCase())
+      const filtered = tickets.filter(
+        (ticket) =>
+          ticket.subject.toLowerCase().includes(query.toLowerCase()) ||
+          ticket.ticketId.toLowerCase().includes(query.toLowerCase())
       );
       setFilteredTickets(filtered);
     } else {
@@ -35,6 +46,10 @@ const HelpTable = ({ tickets }: HelpTableProps) => {
       setSearchTicket("");
     }
   };
+
+  if (isLoading) {
+    return <RenderEmptyComponent />;
+  }
 
   return (
     <section className="flex flex-col rounded w-full h-full">
@@ -92,6 +107,7 @@ const HelpTable = ({ tickets }: HelpTableProps) => {
       <AddTicketModal
         openModal={showAddTicketModal}
         setShowAddTicketModal={setShowAddTicketModal}
+        refetchTickets={refetchTickets}
       />
     </section>
   );

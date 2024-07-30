@@ -26,9 +26,15 @@ import { ClipLoader } from "react-spinners";
 import Link from "next/link";
 import DeleteModal from "@/components/DeleteModal";
 import { toast } from "react-toastify";
+import { useRouter } from "next/navigation";
 
 const CompoundsTable = () => {
-  const { data: compoundsData, isLoading } = useFetch<ChpsCompound[]>({
+  const router = useRouter();
+  const {
+    data: compoundsData,
+    isLoading,
+    refetch,
+  } = useFetch<ChpsCompound[]>({
     queryFn: async () => await getAllChpsCompounds(),
     queryKey: ["compounds"],
     enabled: true,
@@ -42,9 +48,11 @@ const CompoundsTable = () => {
 
   useEffect(() => {
     if (compoundsData) {
-      setFilteredCompoundsData(compoundsData);
+      setFilteredCompoundsData(compoundsData.reverse());
+      refetch();
+      router.refresh();
     }
-  }, [compoundsData]);
+  }, [compoundsData, refetch, router]);
 
   if (isLoading) {
     return (

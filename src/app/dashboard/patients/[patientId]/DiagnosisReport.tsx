@@ -130,11 +130,7 @@ const DiagnosisReport = ({ patient }: { patient: Patient }) => {
                   Final Diagnosis
                 </h3>
                 <p className="text-primary-gray/50 font-medium">
-                  {
-                    ["Malaria", "Diarrhea", "Fever", "Cough", "Headache"][
-                      Math.floor(Math.random() * 5)
-                    ]
-                  }
+                  {diagnosisReports[diagnosisReports.length - 1].finalDiagnosis}
                 </p>
               </div>
 

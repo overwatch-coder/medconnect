@@ -1,25 +1,16 @@
 import { z } from "zod";
 
 export const medicalHistorySchema = z.object({
-  problemStartDate: z.string().trim().min(1, "Date is required"),
-  problemDescription: z
+  description: z.string().trim().min(1, "Description is required"),
+  date: z.string().trim().min(1, "Date is required"),
+  cause: z.string().trim().min(1, "Cause is required"),
+  wasSurgeryRequired: z.string().default("false").optional(),
+  hasBreathingProblem: z.string().default("false").optional(),
+  hasSkinProblem: z.string().default("false").optional(),
+  hospitalizationDate: z
     .string()
     .trim()
-    .min(1, "Problem description is required"),
-  causeOfCurrentProblem: z
-    .string()
-    .trim()
-    .min(1, "Cause of current problem is required"),
-  surgeryRequirement: z
-    .string()
-    .trim()
-    .min(1, "Surgery requirement is required"),
-  breathingProblems: z.string().trim().min(1, "Breathing problems is required"),
-  currentWoundOrSkinProblems: z
-    .string()
-    .trim()
-    .min(1, "Current wound/skin problems is required"),
-  surgeryYear: z.string().trim().min(1, "Surgery year is required"),
-  complications: z.string().trim().min(1, "Complications is required"),
-  medicalHistoryAttachment: z.any().optional(),
+    .min(1, "Hospitalization date is required"),
+  hadSurgeryComplication: z.string().default("false").optional(),
+  formUrl: z.any().optional(),
 });

@@ -15,14 +15,23 @@ import { IoCheckboxOutline } from "react-icons/io5";
 import { LiaFemaleSolid, LiaMaleSolid } from "react-icons/lia";
 import { TableCell, TableRow } from "@/components/ui/table";
 import GenerateTable from "@/app/dashboard/GenerateTable";
-import { IAppointment, IPrescription, IStaff, Patient } from "@/types/backend";
+import {
+  IAppointment,
+  IDiagnosisReport,
+  IPrescription,
+  IStaff,
+  Patient,
+} from "@/types/backend";
 import { useFetch } from "@/hooks/useFetch";
 import { getChpsPatients } from "@/actions/patients.action";
 import { getStaffByCompoundId } from "@/actions/staff.action";
 import {
   getAllAppointments,
+  getAllDiagnosisReports,
   getAllPrescriptions,
 } from "@/actions/single-patient.action";
+import Link from "next/link";
+import seedColor from "seed-color";
 
 const AdminDashboard = () => {
   const [user] = useAuth();
@@ -55,10 +64,20 @@ const AdminDashboard = () => {
     enabled: true,
   });
 
+  // diagnosis reports data
+  const { data: diagnosisReportsData } = useFetch<IDiagnosisReport[]>({
+    queryKey: ["diagnosis-reports"],
+    queryFn: async () => await getAllDiagnosisReports(),
+    enabled: true,
+  });
+
   const [patients, setPatients] = useState<Patient[]>([]);
   const [healthOfficials, setHealthOfficials] = useState<IStaff[]>([]);
   const [appointments, setAppointments] = useState<IAppointment[]>([]);
   const [prescriptions, setPrescriptions] = useState<IPrescription[]>([]);
+  const [diagnosisReports, setDiagnosisReports] = useState<IDiagnosisReport[]>(
+    []
+  );
 
   useEffect(() => {
     if (patientData) {
@@ -78,7 +97,17 @@ const AdminDashboard = () => {
     if (prescriptionsData) {
       setPrescriptions(prescriptionsData);
     }
-  }, [appointmentsData, healthOfficialsData, patientData, prescriptionsData]);
+
+    if (diagnosisReportsData) {
+      setDiagnosisReports(diagnosisReportsData);
+    }
+  }, [
+    appointmentsData,
+    diagnosisReportsData,
+    healthOfficialsData,
+    patientData,
+    prescriptionsData,
+  ]);
 
   const [currentTablePage, setCurrentTablePage] = useState(1);
   const tableDataPerPage = 5;
@@ -88,6 +117,23 @@ const AdminDashboard = () => {
   const indexOfLastData = currentTablePage * tableDataPerPage;
   const indexOfFirstData = indexOfLastData - tableDataPerPage;
   const currentData = tableData.slice(indexOfFirstData, indexOfLastData);
+
+  const diseaseAnalysisGraphLabel = Array.from(
+    new Set(diagnosisReports.map((item) => item.finalDiagnosis.toLowerCase()))
+  )
+    .sort()
+    .map((item) => item.charAt(0).toUpperCase() + item.slice(1));
+
+  const diseaseAnalysisGraphData = Array.from(
+    new Set(diagnosisReports.map((item) => item.finalDiagnosis.toLowerCase()))
+  )
+    .sort()
+    .map(
+      (item) =>
+        diagnosisReports.filter(
+          (report) => report.finalDiagnosis.toLowerCase() === item
+        ).length
+    );
 
   return (
     <div className={`${isUserAdmin ? "hidden" : ""}`}>
@@ -343,7 +389,10 @@ const AdminDashboard = () => {
                 <span className="text-primary-green">80%</span>
               </div>
 
-              <button className="group flex items-center ml-auto w-auto gap-3 px-5">
+              <Link
+                href={"/dashboard/diagnostic-support"}
+                className="group flex items-center ml-auto w-auto gap-3 px-5"
+              >
                 <span className="group-hover:font-semibold">
                   Start a new diagnosis
                 </span>
@@ -351,7 +400,7 @@ const AdminDashboard = () => {
                   size={20}
                   className="text-primary-green group-hover:text-secondary-gray"
                 />
-              </button>
+              </Link>
             </div>
           </div>
         </aside>
@@ -382,15 +431,11 @@ const AdminDashboard = () => {
             {/* Graph Goes Here */}
             <div className="flex flex-col items-center">
               <DoughnutChart
-                labels={[
-                  "Malaria",
-                  "Respiratory Infections",
-                  "Gastrointestinal Diseases",
-                ]}
-                data={Array.from({ length: 3 }, (_, i) =>
-                  Math.floor(Math.random() * 300)
-                )}
-                bgColors={["#FF0000", "#FFFF00", "#40E0D0"]}
+                labels={diseaseAnalysisGraphLabel}
+                data={diseaseAnalysisGraphData}
+                bgColors={Array.from({
+                  length: diseaseAnalysisGraphData.length,
+                }).map((_, i) => seedColor((i + 1).toString()).toHex())}
               />
             </div>
           </div>

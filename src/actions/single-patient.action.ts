@@ -1,6 +1,10 @@
 "use server";
 
-import { getChpsPatients, getPatient } from "@/actions/patients.action";
+import {
+  getChpsPatients,
+  getPatient,
+  getPatients,
+} from "@/actions/patients.action";
 import { currentUser } from "@/actions/user.action";
 import { axiosInstance } from "@/lib/utils";
 import {
@@ -24,7 +28,10 @@ import {
 // Get All Prescriptions for all patients
 export const getAllPrescriptions = async (): Promise<IPrescription[]> => {
   try {
-    const patients = await getChpsPatients();
+    const user = await currentUser();
+    const patients = user?.isSuperAdmin
+      ? await getPatients()
+      : await getChpsPatients();
     if (!patients) {
       throw new Error("No patients found");
     }
@@ -285,7 +292,10 @@ export const deleteTreatmentPlan = async (
 // get all diagnosis reports for all patients
 export const getAllDiagnosisReports = async (): Promise<IDiagnosisReport[]> => {
   try {
-    const patients = await getChpsPatients();
+    const user = await currentUser();
+    const patients = user?.isSuperAdmin
+      ? await getPatients()
+      : await getChpsPatients();
     if (!patients) {
       throw new Error("No patients found");
     }
@@ -422,7 +432,10 @@ export const deleteDiagnosisReport = async (
 // Get All Visit Logs from all patients
 export const getAllVisitLogs = async (): Promise<IVisitLogs[]> => {
   try {
-    const patients = await getChpsPatients();
+    const user = await currentUser();
+    const patients = user?.isSuperAdmin
+      ? await getPatients()
+      : await getChpsPatients();
     if (!patients) {
       throw new Error("No patients found");
     }
@@ -553,7 +566,10 @@ export const deleteVisitLog = async (patientId: string, visitLogId: string) => {
 // get all appointments for all patients
 export const getAllAppointments = async (): Promise<IAppointment[]> => {
   try {
-    const patients = await getChpsPatients();
+    const user = await currentUser();
+    const patients = user?.isSuperAdmin
+      ? await getPatients()
+      : await getChpsPatients();
     if (!patients) {
       throw new Error("No patients found");
     }

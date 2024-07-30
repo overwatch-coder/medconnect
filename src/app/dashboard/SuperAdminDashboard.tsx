@@ -13,23 +13,65 @@ import { IoIosArrowRoundUp } from "react-icons/io";
 import { IoCheckboxOutline } from "react-icons/io5";
 import GenerateTable from "@/app/dashboard/GenerateTable";
 import { TableCell, TableRow } from "@/components/ui/table";
-import { ChpsCompound, IStaff } from "@/types/backend";
+import {
+  ChpsCompound,
+  IAppointment,
+  IDiagnosisReport,
+  IPrescription,
+  IStaff,
+  Patient,
+} from "@/types/backend";
 import { getAllStaff } from "@/actions/staff.action";
 import { getAllChpsCompounds } from "@/actions/chps-compound.action";
 import { useFetch } from "@/hooks/useFetch";
 import { RenderEmptyComponent } from "@/app/dashboard/health-officials/HealthOfficialsTable";
 import { ClipLoader } from "react-spinners";
+import { getPatients } from "@/actions/patients.action";
+import {
+  getAllAppointments,
+  getAllDiagnosisReports,
+  getAllPrescriptions,
+} from "@/actions/single-patient.action";
+import seedColor from "seed-color";
 
 const SuperAdminDashboard = () => {
   const [user] = useAuth();
+
+  // chps compounds
   const { data: chpsCompounds, isLoading: isLoadingChpsCompounds } = useFetch({
     queryKey: ["chps-compound"],
     queryFn: async () => await getAllChpsCompounds(),
   });
 
+  // health officials
   const { data: healthStaff, isLoading: isLoadingHealthStaff } = useFetch({
     queryKey: ["staff"],
     queryFn: async () => await getAllStaff(),
+  });
+
+  // patients
+  const { data: patients, isLoading: isLoadingPatients } = useFetch({
+    queryKey: ["patients"],
+    queryFn: async () => await getPatients(),
+  });
+
+  // appointments
+  const { data: appointments, isLoading: isLoadingAppointments } = useFetch({
+    queryKey: ["appointments"],
+    queryFn: async () => await getAllAppointments(),
+    enabled: true,
+  });
+
+  // prescriptions
+  const { data: prescriptions, isLoading: isLoadingPrescriptions } = useFetch({
+    queryKey: ["prescriptions"],
+    queryFn: async () => await getAllPrescriptions(),
+  });
+
+  // diagnosis
+  const { data: diagnosis, isLoading: isLoadingDiagnosis } = useFetch({
+    queryKey: ["diagnosis-reports"],
+    queryFn: async () => await getAllDiagnosisReports(),
   });
 
   const [totalChpsCompounds, setTotalChpsCompounds] = useState<ChpsCompound[]>(
@@ -38,6 +80,14 @@ const SuperAdminDashboard = () => {
   const [totalHealthOfficials, setTotalHealthOfficials] = useState<IStaff[]>(
     []
   );
+  const [totalPatients, setTotalPatients] = useState<Patient[]>([]);
+  const [totalAppointments, setTotalAppointments] = useState<IAppointment[]>(
+    []
+  );
+  const [totalPrescriptions, setTotalPrescriptions] = useState<IPrescription[]>(
+    []
+  );
+  const [totalDiagnosis, setTotalDiagnosis] = useState<IDiagnosisReport[]>([]);
 
   useEffect(() => {
     if (chpsCompounds) {
@@ -46,7 +96,26 @@ const SuperAdminDashboard = () => {
     if (healthStaff) {
       setTotalHealthOfficials(healthStaff);
     }
-  }, [chpsCompounds, healthStaff]);
+    if (patients) {
+      setTotalPatients(patients);
+    }
+    if (appointments) {
+      setTotalAppointments(appointments);
+    }
+    if (prescriptions) {
+      setTotalPrescriptions(prescriptions);
+    }
+    if (diagnosis) {
+      setTotalDiagnosis(diagnosis);
+    }
+  }, [
+    appointments,
+    chpsCompounds,
+    diagnosis,
+    healthStaff,
+    patients,
+    prescriptions,
+  ]);
 
   const isUserAdmin = user?.isSuperAdmin;
   const [currentTablePage, setCurrentTablePage] = useState(1);
@@ -58,13 +127,31 @@ const SuperAdminDashboard = () => {
   const indexOfFirstData = indexOfLastData - tableDataPerPage;
   const currentData = tableData.slice(indexOfFirstData, indexOfLastData);
 
-  if (isLoadingChpsCompounds || isLoadingHealthStaff) {
+  if (isLoadingChpsCompounds) {
     return (
       <RenderEmptyComponent>
         <ClipLoader size={30} loading={true} color="#2D4763" />
       </RenderEmptyComponent>
     );
   }
+
+  const donutChartLabels = [
+    "Patient Visits",
+    "Prescriptions Issued",
+    "Common Diagnosis",
+    "Appointments Scheduled",
+    "Total Chps Compounds",
+    "Health Officials",
+  ];
+
+  const donutChartData = [
+    totalPatients.length,
+    totalPrescriptions.length,
+    totalDiagnosis.length,
+    totalAppointments.length,
+    totalChpsCompounds.length,
+    totalHealthOfficials.length,
+  ];
 
   return (
     <div className={`${isUserAdmin ? "" : "hidden"}`}>
@@ -226,21 +313,11 @@ const SuperAdminDashboard = () => {
             {/* Graph */}
             <div className="flex flex-col items-center pt-5 w-full h-full">
               <DoughnutChart
-                labels={[
-                  "Patient Visits",
-                  "Prescriptions Issued",
-                  "Common Diagnoses",
-                  "Appointments Scheduled",
-                  "Services Utilized",
-                ]}
-                data={Array(5).fill(Math.floor(Math.random() * 100))}
-                bgColors={[
-                  "#FF0000",
-                  "#FFFF00",
-                  "#FAB500",
-                  "#2D4763",
-                  "#40E0D0",
-                ]}
+                labels={donutChartLabels}
+                data={donutChartData}
+                bgColors={Array.from({
+                  length: donutChartData.length,
+                }).map((_, i) => seedColor((i + 1).toString()).toHex())}
               />
             </div>
           </div>

@@ -15,65 +15,94 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import ClipLoader from "react-spinners/ClipLoader";
 import CustomInputForm from "@/components/CustomInputForm";
 import { toast } from "react-toastify";
-import { useMutation } from "@tanstack/react-query";
+import { useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks";
-import { SuperAdminTicketType as TicketType } from "@/types/index";
-import { superAdminTicketSchema as ticketSchema } from "@/schema/ticket.schema";
+import { ticketSchema } from "@/schema/ticket.schema";
+import { TicketType } from "@/types/index";
+import { useFetch, useMutateData } from "@/hooks/useFetch";
+import { createTicket, getAllTickets } from "@/actions/tickets.action";
+import CustomFileUpload from "@/components/CustomFileUpload";
+import { axiosInstance } from "@/lib/utils";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import RenderCustomError from "@/components/RenderCustomError";
 
-type AddTicketProps = {
-  tickets: TicketType[];
-};
+const AddTicket = () => {
+  const { refetch: refetchTickets } = useFetch({
+    queryKey: ["tickets"],
+    queryFn: async () => await getAllTickets(),
+    enabled: true,
+  });
 
-const AddTicket = ({ tickets }: AddTicketProps) => {
   const [user] = useAuth();
-
-  const newTicketNumber =
-    parseInt(tickets[tickets.length - 1].ticketID.split("T")[1]) + 1;
-
-  const newTicketNumberString =
-    newTicketNumber > 99
-      ? newTicketNumber.toString()
-      : newTicketNumber > 9
-        ? "0" + newTicketNumber
-        : "00" + newTicketNumber;
+  const queryClient = useQueryClient();
+  const router = useRouter();
+  const [open, setOpen] = useState(false);
 
   const {
     register,
+    watch,
+    setValue,
     reset,
-    formState: { errors },
+    formState: { errors, isSubmitting: pending },
     handleSubmit,
   } = useForm<TicketType>({
     resolver: zodResolver(ticketSchema),
-    defaultValues: {
-      userId: user?.auth.id,
-      ticketID: `T${newTicketNumberString}`,
-    },
     mode: "all",
   });
 
-  const { mutateAsync, isPending: pending } = useMutation({
-    mutationFn: async (data: TicketType) => {
-      console.log({ data });
-      return data;
-    },
-
-    onSuccess: (data) => {
-      toast.success("Ticket added successfully");
-      reset();
+  const { mutateAsync, isError, error } = useMutateData({
+    mutationFn: async (data: TicketType) => createTicket(data),
+    config: {
+      queryKey: ["tickets"],
     },
   });
 
-  const handleFormSubmit: SubmitHandler<TicketType> = async (data) => {
-    console.log({ data });
-    await mutateAsync(data);
+  const submitForm: SubmitHandler<TicketType> = async (data) => {
+    if (!data.attachment?.length) {
+      toast.info("Please attach an image of the issue");
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append("image", data.attachment[0]);
+
+    const res = await axiosInstance.post("/upload", formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+        Authorization: `Bearer ${user?.auth.token}`,
+      },
+    });
+
+    const resData = await res.data;
+
+    const fileUrl = resData?.fileUrl
+      ? (resData?.fileUrl as string)
+      : "https://d140uiq1keqywy.cloudfront.net/06744b93015fd3083d32b863359723ab-large.png";
+
+    await mutateAsync(
+      { ...data, attachment: fileUrl },
+      {
+        onSuccess: () => {
+          toast.success("Ticket created successfully");
+          queryClient.invalidateQueries({
+            queryKey: ["tickets"],
+          });
+          setOpen(false);
+          refetchTickets();
+          reset();
+          router.refresh();
+        },
+      }
+    );
   };
 
   return (
     <>
-      <Dialog>
-        <DialogTrigger asChild>
-          <Button className="bg-primary-green hover:bg-primary-green hover:scale-105 transition py-2 px-5 flex items-center gap-3 rounded-md text-white">
+      <Dialog open={open} onOpenChange={setOpen}>
+        <DialogTrigger asChild onClick={() => setOpen(true)}>
+          <Button className="bg-primary-green hover:bg-primary-green hover:scale-105 transition py-2 px-5 items-center gap-3 rounded-md text-white hidden">
             <PlusCircle className="text-white" size={20} />
             <span className="font-bold">Add Ticket</span>
           </Button>
@@ -86,11 +115,12 @@ const AddTicket = ({ tickets }: AddTicketProps) => {
           <DialogHeader className="overflow-y-scroll scrollbar-hide">
             <DialogTitle className="flex items-center justify-between">
               <span className="text-xl md:text-2xl text-secondary-gray font-bold">
-                Ticket {newTicketNumberString}
+                New Ticket
               </span>
               <DialogClose
                 onClick={() => {
                   reset();
+                  setOpen(false);
                 }}
               >
                 <X
@@ -100,35 +130,16 @@ const AddTicket = ({ tickets }: AddTicketProps) => {
               </DialogClose>
             </DialogTitle>
 
-            <DialogDescription className="flex flex-col gap-5 w-full">
+            <DialogDescription></DialogDescription>
+            <div className="flex flex-col gap-5 w-full">
+              <RenderCustomError isError={isError} error={error} />
+
               <form
-                onSubmit={handleSubmit(handleFormSubmit)}
+                onSubmit={handleSubmit(submitForm)}
                 className="flex flex-col gap-4 w-full"
                 method="POST"
               >
                 <div className="flex flex-col gap-5 pt-5 pb-10 h-full">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-5 w-full">
-                    <CustomInputForm
-                      labelName="Requested By"
-                      inputName="requestedBy"
-                      register={register}
-                      errors={errors}
-                      inputType="text"
-                      placeholderText="e.g John Doe"
-                    />
-
-                    <CustomInputForm
-                      labelName="Ticket ID"
-                      inputName="ticketID"
-                      register={register}
-                      errors={errors}
-                      inputType="text"
-                      value={newTicketNumberString}
-                      placeholderText="Enter ticket ID"
-                      disableField={true}
-                    />
-                  </div>
-
                   <div className="grid grid-cols-1 gap-5 w-full">
                     <CustomInputForm
                       labelName="Subject"
@@ -149,52 +160,13 @@ const AddTicket = ({ tickets }: AddTicketProps) => {
                     />
                   </div>
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-5 w-full">
-                    <CustomInputForm
-                      labelName="Priority"
-                      inputName="priority"
-                      register={register}
-                      errors={errors}
-                      inputType="select"
-                      selectOptions={[
-                        { label: "Low", value: "low" },
-                        { label: "Medium", value: "medium" },
-                        { label: "High", value: "high" },
-                        { label: "Urgent", value: "urgent" },
-                      ]}
-                    />
-
-                    <CustomInputForm
-                      labelName="Created At"
-                      inputName="createdAt"
-                      register={register}
-                      errors={errors}
-                      inputType="date"
-                    />
-                  </div>
-
                   <div className="grid grid-cols-1 gap-5 w-full">
-                    <CustomInputForm
-                      labelName="Status"
-                      inputName="status"
-                      register={register}
-                      errors={errors}
-                      inputType="select"
-                      selectOptions={[
-                        { label: "Open", value: "open" },
-                        { label: "Closed", value: "closed" },
-                        { label: "Pending", value: "pending" },
-                        { label: "In Progress", value: "in progress" },
-                        { label: "Critical", value: "critical" },
-                      ]}
-                    />
-
-                    <CustomInputForm
-                      labelName="User ID"
-                      inputName="userId"
-                      register={register}
-                      errors={errors}
-                      inputType="hidden"
+                    <CustomFileUpload
+                      itemName="attachment"
+                      title="Attachment"
+                      setValue={setValue}
+                      watch={watch}
+                      allowMultiple={false}
                     />
                   </div>
                 </div>
@@ -202,7 +174,7 @@ const AddTicket = ({ tickets }: AddTicketProps) => {
                 {/* Submit form button */}
                 <AddTicketButton pending={pending} reset={reset} />
               </form>
-            </DialogDescription>
+            </div>
           </DialogHeader>
         </DialogContent>
       </Dialog>

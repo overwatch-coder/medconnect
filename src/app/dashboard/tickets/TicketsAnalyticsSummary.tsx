@@ -1,12 +1,8 @@
-import { SuperAdminTicketType as TicketType } from "@/types/index";
+import { ITicket } from "@/types/backend";
 import React from "react";
 import { IoIosArrowRoundUp } from "react-icons/io";
 
-type TicketsAnalyticsSummaryProps = {
-  tickets: TicketType[];
-};
-
-const TicketsAnalyticsSummary = ({ tickets }: TicketsAnalyticsSummaryProps) => {
+const TicketsAnalyticsSummary = ({ tickets }: { tickets: ITicket[] }) => {
   return (
     <div className="flex flex-col gap-2 w-full">
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-5">
@@ -17,10 +13,12 @@ const TicketsAnalyticsSummary = ({ tickets }: TicketsAnalyticsSummaryProps) => {
           </h2>
 
           <p className="font-bold text-2xl relative text-primary-green">
-            <span>150</span>
+            <span>{tickets.length}</span>
             <span className="text-xs text-secondary-gray absolute bottom-0 left-10 flex items-center gap-1">
               <IoIosArrowRoundUp size={10} className="text-red-500" />{" "}
-              <span className="text-red-500">20%</span>
+              <span className="text-red-500">
+                {Math.floor(Math.random() * 100)}%
+              </span>
             </span>
           </p>
         </div>
@@ -32,7 +30,9 @@ const TicketsAnalyticsSummary = ({ tickets }: TicketsAnalyticsSummaryProps) => {
           </h2>
 
           <p className="font-bold text-2xl relative text-primary-green">
-            <span>100</span>
+            <span>
+              {tickets.filter((ticket) => ticket.status === "OPEN").length}
+            </span>
             <span className="text-xs text-secondary-gray absolute bottom-0 left-10 flex items-center gap-1">
               <IoIosArrowRoundUp size={10} className="text-red-500" />{" "}
               <span className="text-red-500">5%</span>
@@ -48,7 +48,9 @@ const TicketsAnalyticsSummary = ({ tickets }: TicketsAnalyticsSummaryProps) => {
           </h2>
 
           <p className="font-bold text-2xl relative text-primary-green">
-            <span>100</span>
+            <span>
+              {tickets.filter((ticket) => ticket.status === "CLOSED").length}
+            </span>
             <span className="text-xs text-secondary-gray absolute bottom-0 left-10 flex items-center gap-1">
               <IoIosArrowRoundUp size={10} className="text-red-500" />{" "}
               <span className="text-red-500">10%</span>
@@ -63,11 +65,11 @@ const TicketsAnalyticsSummary = ({ tickets }: TicketsAnalyticsSummaryProps) => {
           </h2>
 
           <p className="font-bold text-2xl relative text-primary-green">
-            <span>2 hours</span>
+            <span>{Math.floor(Math.random() * 10)} hours</span>
           </p>
 
           <p className="text-xs text-primary-gray/50">
-            <span> -15 minutes</span>
+            <span> - {Math.floor(Math.random() * 10)} minutes</span>
           </p>
         </div>
       </div>

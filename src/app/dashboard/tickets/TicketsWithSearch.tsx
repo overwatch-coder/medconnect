@@ -1,25 +1,21 @@
 "use client";
-import OutreachProgramCard from "@/app/dashboard/outreach-programs/OutreachProgramCard";
+import { getAllTickets } from "@/actions/tickets.action";
+import { RenderEmptyComponent } from "@/app/dashboard/health-officials/HealthOfficialsTable";
 import TicketsTable from "@/app/dashboard/tickets/TicketsTable";
 import CustomFilterDropdown from "@/components/CustomFilterDropdown";
-import DeleteModal from "@/components/DeleteModal";
-import { SuperAdminTicketType as TicketType } from "@/types/index";
-import { Search, Trash2 } from "lucide-react";
-import React, { useState } from "react";
-import { toast } from "react-toastify";
-
-type TicketsWithSearchProps = {
-  tickets: TicketType[];
-};
+import { useFetch } from "@/hooks/useFetch";
+import { ITicket } from "@/types/backend";
+import { Search } from "lucide-react";
+import React, { useEffect, useState } from "react";
 
 type FilterOptions = {
-  value: keyof TicketType;
+  value: keyof ITicket;
   label: string;
 };
 
 const filterOptions: FilterOptions[] = [
   {
-    value: "ticketID",
+    value: "ticketId",
     label: "Ticket ID",
   },
   {
@@ -31,26 +27,34 @@ const filterOptions: FilterOptions[] = [
     label: "Priority",
   },
   {
-    value: "requestedBy",
-    label: "Requested By",
+    value: "subject",
+    label: "Subject",
   },
 ];
 
-const TicketsWithSearch = ({ tickets }: TicketsWithSearchProps) => {
-  const [filterBy, setFilterBy] = useState("Category");
-  const [filteredTickets, setFilteredTickets] = useState(tickets);
+const TicketsWithSearch = ({ tickets }: { tickets: ITicket[] }) => {
+  const [filterBy, setFilterBy] = useState("Subject");
+  const [filteredTickets, setFilteredTickets] = useState<ITicket[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
+
+  useEffect(() => {
+    if (tickets) {
+      setFilteredTickets(tickets);
+    }
+  }, [tickets]);
 
   // Handle search
   const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (!tickets) return;
+
     setSearchTerm(event.target.value);
 
     const filtered = tickets.filter(
       (ticket) =>
-        ticket.ticketID
+        ticket.ticketId
           .toLowerCase()
           .includes(event.target.value.toLowerCase()) ||
-        ticket.requestedBy
+        ticket.requestedById
           .toLowerCase()
           .includes(event.target.value.toLowerCase()) ||
         ticket.status
@@ -114,17 +118,17 @@ const TicketsWithSearch = ({ tickets }: TicketsWithSearchProps) => {
 
       {/* Outreach Programs */}
       <div className="flex flex-col gap-5 w-full h-full">
-        {filteredTickets.length === 0 ? (
+        {filteredTickets.length > 0 ? (
+          <TicketsTable
+            filteredTickets={filteredTickets}
+            setFilteredTickets={setFilteredTickets}
+          />
+        ) : (
           <div className="flex flex-col items-center justify-center gap-5 h-full w-full">
             <p className="text-secondary-gray font-semibold">
               No tickets found.
             </p>
           </div>
-        ) : (
-          <TicketsTable
-            filteredTickets={filteredTickets}
-            setFilteredTickets={setFilteredTickets}
-          />
         )}
       </div>
     </>

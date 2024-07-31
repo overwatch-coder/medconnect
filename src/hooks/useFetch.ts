@@ -22,7 +22,6 @@ export const useFetch = <TData>({
     enabled: enabled,
     refetchOnWindowFocus: "always",
     refetchInterval: 1000 * 60, // 1 minutes
-    staleTime: 1000 * 60, // 1 minutes
     gcTime: 1000 * 60 * 10, // 10 minutes
   });
 
@@ -48,7 +47,7 @@ export const useMutateData = <TData, TResponse = Record<string, unknown>>({
     mutationFn: mutationFn,
     mutationKey: config.queryKey,
     onSuccess: (data: TResponse | null) => {
-      console.log({ data, in: "useMutateData success" });
+      // console.log({ data, in: "useMutateData success" });
 
       if (config.reset) {
         config.reset({});

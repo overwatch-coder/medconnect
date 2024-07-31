@@ -40,7 +40,7 @@ const AddCompoundForm = () => {
   const {
     register,
     reset,
-    formState: { errors },
+    formState: { errors, isSubmitting: pending },
     handleSubmit,
     watch,
     setValue,
@@ -58,12 +58,10 @@ const AddCompoundForm = () => {
 
   const profilePicture = watch("profilePicture");
 
-  const {
-    mutateAsync,
-    isPending: pending,
-    error,
-    isError,
-  } = useMutateData<CompoundType, IChpsCompound>({
+  const { mutateAsync, error, isError } = useMutateData<
+    CompoundType,
+    IChpsCompound
+  >({
     mutationFn: async (data: CompoundType) => createChpsCompound(data),
     config: {
       queryKey: ["compounds"],
@@ -77,23 +75,19 @@ const AddCompoundForm = () => {
       const formData = new FormData();
       formData.append("image", profilePicture[0]);
 
-      axiosInstance
-        .post("/upload", formData, {
-          headers: {
-            "Content-Type": "multipart/form-data",
-            Authorization: `Bearer ${user?.auth.token}`,
-          },
-        })
-        .then((res) => {
-          if (res.status === 200) {
-            data.profilePictureUrl = res.data.fileUrl;
-          } else {
-            data.profilePictureUrl = "";
-          }
-        });
-    }
+      const res = await axiosInstance.post("/upload", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+          Authorization: `Bearer ${user?.auth.token}`,
+        },
+      });
 
-    console.log({ data, in: "AddCompoundForm submitAddCompound" });
+      const resData = await res.data;
+
+      data.profilePictureUrl =
+        resData?.fileUrl ||
+        "https://d140uiq1keqywy.cloudfront.net/bc370c0ad6918107a4f7e30db2941a03-dashboard-header.svg";
+    }
 
     const { profilePicture: pic, ...rest } = data;
 

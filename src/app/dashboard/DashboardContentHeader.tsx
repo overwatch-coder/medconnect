@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 import { CirclePlus } from "lucide-react";
 import Link from "next/link";
 import React from "react";
@@ -10,6 +11,7 @@ type DashboardContentHeaderProps = {
   buttonName?: string;
   buttonLink?: string;
   children?: React.ReactNode;
+  className?: string;
 };
 
 const DashboardContentHeader = ({
@@ -19,9 +21,12 @@ const DashboardContentHeader = ({
   buttonName,
   buttonLink,
   children,
+  className,
 }: DashboardContentHeaderProps) => {
   return (
-    <section className="flex items-center justify-between py-3">
+    <section
+      className={cn("flex items-center justify-between py-3", className)}
+    >
       <h2 className="text-secondary-gray capitalize text-xl md:text-2xl font-semibold">
         {headerTitle}
       </h2>

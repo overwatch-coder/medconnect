@@ -91,7 +91,7 @@ const AnalysisCharts = () => {
     }
   }, [diagnosisReportsData, visitLogsData]);
 
-  const [chartType, setChartType] = useState<"line" | "pie">("line");
+  const [chartType, setChartType] = useState<"line" | "pie">("pie");
 
   // diagnosis reports line chart data
   const lineChartDataSets = diagnosisReports.map((item) => {
@@ -191,13 +191,15 @@ const AnalysisCharts = () => {
                 position="top"
               />
             ) : (
-              <DoughnutChart
-                labels={diseaseAnalysisGraphLabel}
-                data={diseaseAnalysisGraphData}
-                bgColors={Array.from({
-                  length: diseaseAnalysisGraphData.length,
-                }).map((_, i) => seedColor((i + 1).toString()).toHex())}
-              />
+              <div className="flex flex-col items-center md:w-1/2 h-full">
+                <DoughnutChart
+                  labels={diseaseAnalysisGraphLabel}
+                  data={diseaseAnalysisGraphData}
+                  bgColors={Array.from({
+                    length: diseaseAnalysisGraphData.length,
+                  }).map((_, i) => seedColor((i + 1).toString()).toHex())}
+                />
+              </div>
             )}
           </div>
         </div>

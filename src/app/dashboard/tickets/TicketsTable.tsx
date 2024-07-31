@@ -25,6 +25,7 @@ import {
   getChpsCompound,
 } from "@/actions/chps-compound.action";
 import { useFetch } from "@/hooks/useFetch";
+import UpdateTicket from "@/app/dashboard/tickets/UpdateTicket";
 
 type TicketsTableProps = {
   filteredTickets: ITicket[];
@@ -89,6 +90,7 @@ const TicketsTable = ({
           <TableHead className="text-white">Priority</TableHead>
           <TableHead className="text-white">Status</TableHead>
           <TableHead className="text-white">Created At</TableHead>
+          <TableHead className="text-white">Action</TableHead>
         </TableRow>
       </TableHeader>
 
@@ -145,6 +147,9 @@ const TicketsTable = ({
               </TableCell>
               <TableCell className="text-secondary-gray font-semibold">
                 {data.createdAt.split("T")[0]}
+              </TableCell>
+              <TableCell className="text-secondary-gray font-semibold">
+                <UpdateTicket ticket={data} />
               </TableCell>
             </TableRow>
           );

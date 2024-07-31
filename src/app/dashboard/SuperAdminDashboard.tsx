@@ -44,32 +44,31 @@ const SuperAdminDashboard = () => {
   });
 
   // health officials
-  const { data: healthStaff, isLoading: isLoadingHealthStaff } = useFetch({
+  const { data: healthStaff } = useFetch({
     queryKey: ["staff"],
     queryFn: async () => await getAllStaff(),
   });
 
   // patients
-  const { data: patients, isLoading: isLoadingPatients } = useFetch({
+  const { data: patients } = useFetch({
     queryKey: ["patients"],
     queryFn: async () => await getPatients(),
   });
 
   // appointments
-  const { data: appointments, isLoading: isLoadingAppointments } = useFetch({
+  const { data: appointments } = useFetch({
     queryKey: ["appointments"],
     queryFn: async () => await getAllAppointments(),
-    enabled: true,
   });
 
   // prescriptions
-  const { data: prescriptions, isLoading: isLoadingPrescriptions } = useFetch({
+  const { data: prescriptions } = useFetch({
     queryKey: ["prescriptions"],
     queryFn: async () => await getAllPrescriptions(),
   });
 
   // diagnosis
-  const { data: diagnosis, isLoading: isLoadingDiagnosis } = useFetch({
+  const { data: diagnosis } = useFetch({
     queryKey: ["diagnosis-reports"],
     queryFn: async () => await getAllDiagnosisReports(),
   });
@@ -266,7 +265,7 @@ const SuperAdminDashboard = () => {
                 setCurrentPage={setCurrentTablePage}
                 dataPerPage={tableDataPerPage}
               >
-                {currentData.map((data, idx) => (
+                {currentData.reverse().map((data, idx) => (
                   <TableRow key={idx}>
                     <TableCell className="text-secondary-gray font-semibold">
                       {data.name}

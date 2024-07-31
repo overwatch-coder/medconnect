@@ -7,7 +7,6 @@ import { useAuth } from "@/hooks";
 import { settingsSchema } from "@/schema/setting.schema";
 import { SettingsType } from "@/types/index";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Edit } from "lucide-react";
 import Image from "next/image";
 import React, { useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
@@ -280,10 +279,10 @@ const AccountSettingFormHeader = ({ title }: { title: string }) => {
     <div className="flex items-center justify-between gap-5">
       <h2 className="text-secondary-gray text-lg font-semibold">{title}</h2>
 
-      <Button className="flex items-center gap-2 p-4 rounded-full bg-transparent hover:bg-transparent border border-primary-gray/50">
+      {/* <Button className="flex items-center gap-2 p-4 rounded-full bg-transparent hover:bg-transparent border border-primary-gray/50">
         <span className="text-primary-gray/50">Edit</span>
         <Edit size={15} className="text-primary-gray/50" />
-      </Button>
+      </Button> */}
     </div>
   );
 };
@@ -317,7 +316,7 @@ const AccountSettingsFormButton = ({
           {pending ? (
             <ClipLoader size={28} loading={pending} color="white" />
           ) : (
-            "Update"
+            "Save"
           )}
         </Button>
       </div>

@@ -50,7 +50,11 @@ export const getChpsPatients = async (chpsId?: string): Promise<Patient[]> => {
 
     return data;
   } catch (error: any) {
-    console.log({ error, data: error?.response?.data, in: "getChpsPatients error" });
+    console.log({
+      error,
+      data: error?.response?.data,
+      in: "getChpsPatients error",
+    });
     return error;
   }
 };
@@ -62,13 +66,14 @@ export const getPatient = async (
   try {
     const user = await currentUser();
 
-    if (!user || !user.staff) {
+    if (!user) {
       throw new Error("Not authorized");
     }
 
-    const patients = (await getChpsPatients(
-      user?.staff?.chpsCompoundId
-    )) as Patient[];
+    const patients = user?.isSuperAdmin
+      ? await getPatients()
+      : await getChpsPatients(user?.staff?.chpsCompoundId);
+
     const patient = patients.find((patient) => patient._id === patientId);
 
     if (!patient) {

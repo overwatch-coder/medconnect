@@ -309,7 +309,7 @@ const GetCompoundsTable = ({
               </Link>
             </TableCell>
             <TableCell className="text-secondary-gray uppercase font-semibold">
-              {data._id.slice(18)}
+              {`MDC${data.name.split(" ")[0].charAt(0)}${data.name.split(" ")[1].charAt(0)}${data._id.slice(18)}`}
             </TableCell>
             <TableCell className="text-secondary-gray font-semibold">
               {data.location}

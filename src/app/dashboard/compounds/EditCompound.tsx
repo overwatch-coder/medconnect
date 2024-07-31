@@ -78,7 +78,7 @@ const EditCompoundModal = ({
 
   const {
     register,
-    formState: { errors },
+    formState: { errors, isSubmitting: pending },
     handleSubmit,
     watch,
     setValue,
@@ -103,13 +103,10 @@ const EditCompoundModal = ({
 
   const profilePicture = watch("profilePicture");
 
-  const {
-    mutateAsync,
-    isPending: pending,
-    error,
-    reset,
-    isError,
-  } = useMutateData<EditCompoundType, ChpsCompound>({
+  const { mutateAsync, error, reset, isError } = useMutateData<
+    EditCompoundType,
+    ChpsCompound
+  >({
     mutationFn: async (data: EditCompoundType) =>
       updateChpsCompound(data, compoundId),
     config: {
@@ -122,23 +119,19 @@ const EditCompoundModal = ({
       const formData = new FormData();
       formData.append("image", profilePicture[0]);
 
-      axiosInstance
-        .post("/upload", formData, {
-          headers: {
-            "Content-Type": "multipart/form-data",
-            Authorization: `Bearer ${user?.auth.token}`,
-          },
-        })
-        .then((res) => {
-          if (res.status === 200) {
-            data.profilePictureUrl = res.data.fileUrl;
-          } else {
-            data.profilePictureUrl = compound?.profilePictureUrl;
-          }
-        });
-    }
+      const res = await axiosInstance.post("/upload", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+          Authorization: `Bearer ${user?.auth.token}`,
+        },
+      });
 
-    console.log({ data, in: "EditCompoundForm submitForm" });
+      const resData = await res.data;
+
+      data.profilePictureUrl = resData?.fileUrl || compound?.profilePictureUrl;
+    } else {
+      data.profilePictureUrl = compound?.profilePictureUrl;
+    }
 
     const { profilePicture: pic, ...rest } = data;
 
@@ -161,7 +154,7 @@ const EditCompoundModal = ({
         router.replace(`/dashboard/compounds/${compoundId}`);
       },
       onError: (err) => {
-        toast.error("Something went wrong while adding compound");
+        toast.error("Something went wrong while updating compound");
       },
     });
   };

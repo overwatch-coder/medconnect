@@ -37,10 +37,17 @@ const CompoundDetails = ({ id, compoundData }: CompoundDetailsProps) => {
         {/* Profile Header */}
         <div className="rounded-md border border-secondary-gray/50 w-full p-4 flex items-center gap-5">
           <Image
-            src="/assets/icons/dashboard-header.svg"
+            src={
+              compoundData?.profilePictureUrl ??
+              "/assets/icons/dashboard-header.svg"
+            }
             alt="avatar"
             width={100}
             height={100}
+            onError={(e) => {
+              e.currentTarget.onerror = null;
+              e.currentTarget.src = "/assets/icons/dashboard-header.svg";
+            }}
           />
           <p className="flex flex-col gap-1 text-white md:text-secondary-gray">
             <span className="font-bold text-lg capitalize">

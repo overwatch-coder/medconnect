@@ -115,7 +115,7 @@ export const createChpsCompound = async (
 
     const formatData = {
       ...data,
-      profilePictureUrl: data.profilePictureUrl || "",
+      profilePictureUrl: data.profilePictureUrl as string,
       availableServices: data.availableServices
         ? data.availableServices.split(",")
         : [],
@@ -168,7 +168,7 @@ export const updateChpsCompound = async (
 
     const formatData = {
       ...data,
-      profilePictureUrl: data.profilePictureUrl || "",
+      profilePictureUrl: data.profilePictureUrl as string,
       availableServices: data.availableServices
         ? data.availableServices.split(",")
         : [],

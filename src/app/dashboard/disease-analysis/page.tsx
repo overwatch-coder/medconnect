@@ -18,6 +18,7 @@ const DiseaseAnalysis = () => {
       <DashboardContentHeader
         headerTitle={"Disease Outbreak Analysis"}
         showDate={false}
+        className="flex flex-col sm:flex-row items-start sm:items-center gap-4"
       >
         <AnalysisPeriodDropdown />
       </DashboardContentHeader>

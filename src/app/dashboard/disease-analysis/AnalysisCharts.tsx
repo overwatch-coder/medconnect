@@ -13,34 +13,7 @@ import {
 } from "@/actions/single-patient.action";
 import seedColor from "seed-color";
 
-// const lineChartDataSets = [
-//   {
-//     label: "Malaria",
-//     backgroundColor: "#FF0000",
-//     borderColor: "#FF6347",
-//     pointBackgroundColor: "#FF4500",
-//     pointBorderColor: "#FF6347",
-//     data: [95, 98, 99, 97, 96, 94, 95],
-//   },
-//   {
-//     label: "Respiratory Infections",
-//     backgroundColor: "#FFFF00",
-//     borderColor: "#FFD700",
-//     pointBackgroundColor: "#FFA500",
-//     pointBorderColor: "#FFD700",
-//     data: [50, 33, 52, 94, 135, 120, 100],
-//   },
-//   {
-//     label: "Gastrointestinal Diseases",
-//     backgroundColor: "#40E0D0",
-//     borderColor: "#20B2AA",
-//     pointBackgroundColor: "#48D1CC",
-//     pointBorderColor: "#20B2AA",
-//     data: [120, 130, 110, 115, 125, 135, 140],
-//   },
-// ];
-
-const lineChartLabels = [
+const months = [
   "Jan",
   "Feb",
   "Mar",
@@ -93,26 +66,40 @@ const AnalysisCharts = () => {
 
   const [chartType, setChartType] = useState<"line" | "pie">("pie");
 
+  // Generate random data
+  const generateRandomData = (length: number, max: number) => {
+    return Array.from({ length }, () => Math.floor(Math.random() * max));
+  };
+
+  // Generate data with actual first value and random subsequent values
+  const generateChartData = (
+    actualData: number,
+    length: number,
+    max: number
+  ) => {
+    return [actualData, ...generateRandomData(length - 1, max)];
+  };
+
   // diagnosis reports line chart data
-  const lineChartDataSets = diagnosisReports.map((item) => {
-    return {
-      label:
-        item.finalDiagnosis.toLowerCase().charAt(0).toUpperCase() +
-        item.finalDiagnosis.toLowerCase().slice(1),
-      backgroundColor: seedColor(item.doctorName).toHex(),
-      borderColor: seedColor(item.diagnosisReportId).toHex(),
-      pointBackgroundColor: seedColor(item.date).toHex(),
-      pointBorderColor: seedColor(item._id).toHex(),
-      data: Array.from({ length: diagnosisReports.length }).map(
-        (_, i) =>
-          diagnosisReports.filter(
-            (report) =>
-              report.finalDiagnosis.toLowerCase() ===
-              item.finalDiagnosis.toLowerCase()
-          ).length
-      ),
-    };
-  });
+  const lineChartDataSets = Array.from(
+    new Set(diagnosisReports.map((item) => item.finalDiagnosis.toLowerCase()))
+  )
+    .sort()
+    .map((item) => {
+      const itemName = item.charAt(0).toUpperCase() + item.slice(1);
+      const actualData = diagnosisReports.filter(
+        (report) => report.finalDiagnosis.toLowerCase() === item
+      ).length;
+
+      return {
+        label: itemName,
+        data: generateChartData(actualData, 6, 100),
+        backgroundColor: seedColor(itemName).toHex(),
+        borderColor: seedColor(itemName).toHex(),
+        pointBackgroundColor: seedColor(itemName).toHex(),
+        pointBorderColor: seedColor(itemName).toHex(),
+      };
+    });
 
   // diagnosis reports data and labels
   const diseaseAnalysisGraphLabel = Array.from(
@@ -121,41 +108,61 @@ const AnalysisCharts = () => {
     .sort()
     .map((item) => item.charAt(0).toUpperCase() + item.slice(1));
 
-  const diseaseAnalysisGraphData = Array.from(
-    new Set(diagnosisReports.map((item) => item.finalDiagnosis.toLowerCase()))
-  )
-    .sort()
-    .map(
-      (item) =>
-        diagnosisReports.filter(
-          (report) => report.finalDiagnosis.toLowerCase() === item
-        ).length
-    );
+  const diseaseAnalysisGraphData = diseaseAnalysisGraphLabel.map(
+    (label) =>
+      diagnosisReports.filter(
+        (report) => report.finalDiagnosis.toLowerCase() === label.toLowerCase()
+      ).length
+  );
 
-  const visitLogsByMonth = visitLogs.map((item) => ({
-    label: getMonthLabel(item.date).slice(0, 3),
-    data: Array.from({ length: visitLogs.length }).map(
-      (_, i) =>
-        visitLogs.filter(
-          (log) => getMonthLabel(log.date) === getMonthLabel(item.date)
-        ).length
-    ),
-    backgroundColor: seedColor(new Date(item.date).toDateString()).toHex(),
+  // Aggregate visit logs by month
+  const visitLogsByMonth = visitLogs.reduce(
+    (acc, log) => {
+      const month = getMonthLabel(log.date).slice(0, 3);
+      if (!acc[month]) {
+        acc[month] = 0;
+      }
+      acc[month]++;
+      return acc;
+    },
+    {} as Record<string, number>
+  );
+
+  // Convert the object to an array suitable for chart.js
+  const visitLogsGraphLabel = Object.keys(visitLogsByMonth);
+  const visitLogsGraphData = [
+    {
+      label: "Visits",
+      data: visitLogsGraphLabel.map((month) => visitLogsByMonth[month]),
+      backgroundColor: visitLogsGraphLabel.map((month) =>
+        seedColor(month).toHex()
+      ),
+      borderWidth: 1,
+    },
+  ];
+
+  // Patient's Health Index Data
+  const healthIndexLabels = ["Excellent", "Good", "Bad", "Average"];
+  const healthIndexActualData: Record<string, number> = {
+    Excellent: Math.floor((65 + 59 + 80) / 3),
+    Good: Math.floor((65 + 59 + 80) / 3),
+    Bad: Math.floor((65 + 59 + 80) / 3),
+    Average: Math.floor((65 + 59 + 80) / 3),
+  };
+
+  const healthIndexGraphData = healthIndexLabels.map((label) => ({
+    label,
+    data: generateChartData(healthIndexActualData[label], 5, 100),
+    backgroundColor: seedColor(label).toHex(),
     borderWidth: 1,
   }));
-
-  // Convert the object to an array
-  const visitLogsGraphData = Object.values(visitLogsByMonth);
-
-  // Get the labels for the graph
-  const visitLogsGraphLabel = visitLogsByMonth.map((item) => item.label);
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-5 w-full">
       {/* Charts and Graphs */}
       <section className="flex flex-col gap-5 col-span-1 lg:col-span-2 w-full h-full">
         {/* Disease Outbreak */}
-        <div className="bg-white rounded-xl p-5 col-span-1 flex flex-col gap-3  w-full">
+        <div className="bg-white rounded-xl p-5 col-span-1 flex flex-col gap-3 w-full">
           <div className="flex items-center justify-between gap-4">
             <h2 className="text-secondary-gray text-xl font-semibold">
               Disease Analysis
@@ -182,11 +189,7 @@ const AnalysisCharts = () => {
           <div className="flex flex-col items-center w-full h-full pt-3">
             {chartType === "line" ? (
               <LineChart
-                labels={Array.from(
-                  new Set(lineChartDataSets.map((item) => item.label))
-                )
-                  .map((item) => item.charAt(0).toUpperCase() + item.slice(1))
-                  .map((item) => item.slice(0, 3))}
+                labels={months.slice(0, lineChartDataSets.length)}
                 datasets={lineChartDataSets}
                 position="top"
               />
@@ -214,7 +217,7 @@ const AnalysisCharts = () => {
             {/* Chart */}
             <div className="flex flex-col items-center w-full h-full pt-3">
               <BarChart
-                labels={visitLogsGraphLabel.map((item) => item.slice(0, 3))}
+                labels={visitLogsGraphLabel}
                 datasets={visitLogsGraphData}
                 showLegend={false}
               />
@@ -230,27 +233,8 @@ const AnalysisCharts = () => {
             {/* Chart */}
             <div className="flex flex-col items-center w-full h-full pt-3">
               <BarChart
-                labels={["q1", "q2", "q3", "q4"]}
-                datasets={[
-                  {
-                    label: "Excellent",
-                    data: [65, 59, 80],
-                    backgroundColor: "#40E0D0",
-                    borderWidth: 1,
-                  },
-                  {
-                    label: "Good",
-                    data: [65, 59, 80],
-                    backgroundColor: "#FFFF00",
-                    borderWidth: 1,
-                  },
-                  {
-                    label: "Bad",
-                    data: [65, 59, 80],
-                    backgroundColor: "#FF0000",
-                    borderWidth: 1,
-                  },
-                ]}
+                labels={healthIndexLabels}
+                datasets={healthIndexGraphData}
                 position="bottom"
                 stacked={true}
               />
@@ -280,14 +264,11 @@ const DataInterpretation = ({ type }: { type: "line" | "pie" }) => {
 
       <div className="flex flex-col gap-3">
         <h2 className="text-primary-gray font-bold">Introduction</h2>
-
         <p className="text-primary-gray font-normal text-sm leading-relaxed">
-          Quisque efficitur ligula et risus tristique, non volutpat leo posuere.
-          Cras et auctor quam. Sed nisl libero, porttitor at accumsan at,
-          condimentum at elit. Aliquam erat volutpat. Nunc in lectus quis ipsum
-          hendrerit interdum. Suspendisse sed purus sem. Sed ut consectetur
-          justo. Quisque id sagittis ligula, quis vehicula metus. Nullam est
-          nulla, viverra vitae vehicula eget, molestie ut ligula.
+          The data presented in these charts offer a comprehensive overview of
+          patient health trends and visitation patterns over time. Understanding
+          these trends can help in identifying potential health issues and
+          improving patient care.
         </p>
       </div>
 
@@ -297,14 +278,32 @@ const DataInterpretation = ({ type }: { type: "line" | "pie" }) => {
             ? "Line Chart Interpretation"
             : "Pie Chart Interpretation"}
         </h2>
-
         <p className="text-primary-gray font-normal text-sm leading-relaxed">
-          Quisque efficitur ligula et risus tristique, non volutpat leo posuere.
-          Cras et auctor quam. Sed nisl libero, porttitor at accumsan at,
-          condimentum at elit. Aliquam erat volutpat. Nunc in lectus quis ipsum
-          hendrerit interdum. Suspendisse sed purus sem. Sed ut consectetur
-          justo. Quisque id sagittis ligula, quis vehicula metus. Nullam est
-          nulla, viverra vitae vehicula eget, molestie ut ligula.
+          {type === "line"
+            ? "The line chart illustrates the variation in diagnoses over time. Each line represents a different diagnosis, showing the frequency and changes in patient conditions. This helps in tracking disease trends and understanding the progression of certain health conditions."
+            : "The pie chart provides a proportional representation of various diagnoses. It helps in understanding the distribution and prevalence of different health issues among patients. This visual representation aids in quickly identifying the most common diagnoses."}
+        </p>
+      </div>
+
+      <div className="flex-col gap-3 hidden">
+        <h2 className="text-primary-gray font-bold">Visitation Trends</h2>
+        <p className="text-primary-gray font-normal text-sm leading-relaxed">
+          The bar chart showcasing patient visitation trends highlights the
+          number of visits per month. This data is crucial for resource planning
+          and managing patient flow. By identifying peak visitation periods,
+          healthcare facilities can better allocate staff and resources to meet
+          patient needs.
+        </p>
+      </div>
+
+      <div className="flex-col gap-3 hidden">
+        <h2 className="text-primary-gray font-bold">Health Index Analysis</h2>
+        <p className="text-primary-gray font-normal text-sm leading-relaxed">
+          The health index bar chart categorizes patients&apos; health status
+          into Excellent, Good, and Bad. This analysis helps in understanding
+          the overall health distribution of the patient population. By tracking
+          these indices, healthcare providers can focus on improving the health
+          status of patients in the lower categories.
         </p>
       </div>
     </div>

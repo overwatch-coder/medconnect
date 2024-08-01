@@ -101,6 +101,8 @@ export const createOrEditPatient = async (
 
     const dataForBackend = {
       ...data.general,
+      profilePictureUrl:
+        "https://d140uiq1keqywy.cloudfront.net/bc370c0ad6918107a4f7e30db2941a03-dashboard-header.svg",
       additional: {
         ...data.additional,
         allergies: data.additional.allergies

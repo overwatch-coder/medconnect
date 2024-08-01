@@ -32,7 +32,7 @@ const GeneralInformation = ({ patient }: GeneralInformationProps) => {
         <div className="flex flex-col gap-2">
           {/* Image and Name */}
           <div className="grid grid-cols-2 place-content-start place-items-start text-sm py-5">
-            {patient.profilePictureUrl ? (
+            {/* {patient.profilePictureUrl ? (
               <Image
                 src={patient.profilePictureUrl}
                 alt={patient.firstName + " " + patient.lastName}
@@ -40,14 +40,14 @@ const GeneralInformation = ({ patient }: GeneralInformationProps) => {
                 height={100}
                 className="rounded-full object-cover"
               />
-            ) : (
-              <div className="w-24 h-24 bg-primary-green/10 rounded-full flex items-center justify-center">
-                <p className="text-primary-gray text-xl font-bold">
-                  {patient.firstName.charAt(0)}
-                  {patient.lastName.charAt(0)}
-                </p>
-              </div>
-            )}
+            ) : ( */}
+            <div className="w-24 h-24 bg-primary-green/10 rounded-full flex items-center justify-center">
+              <p className="text-primary-gray text-xl font-bold">
+                {patient.firstName.charAt(0)}
+                {patient.lastName.charAt(0)}
+              </p>
+            </div>
+            {/* )} */}
 
             <div className="flex flex-col gap-1">
               <h2 className="text-base font-bold text-secondary-gray">

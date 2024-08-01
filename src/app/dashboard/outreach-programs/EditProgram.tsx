@@ -63,6 +63,7 @@ const EditProgram = ({ program, setPrograms }: EditProgramProps) => {
   const {
     register,
     reset,
+    watch,
     formState: { errors },
     handleSubmit,
   } = useForm<OutreachProgramType>({
@@ -82,6 +83,8 @@ const EditProgram = ({ program, setPrograms }: EditProgramProps) => {
     mode: "all",
   });
 
+  const title = watch("title");
+
   const {
     mutateAsync,
     isPending: pending,
@@ -92,6 +95,11 @@ const EditProgram = ({ program, setPrograms }: EditProgramProps) => {
       createOrEditOutreachProgram(data, program._id),
     config: {
       queryKey: ["outreach-programs"],
+    },
+    notificationData: {
+      type: "Outreach Program Update",
+      title: "Outreach Program has been updated",
+      description: `The program ${title} has been updated successfully`,
     },
   });
 

@@ -39,12 +39,15 @@ const AddInventory = () => {
   const {
     register,
     reset,
+    watch,
     formState: { errors },
     handleSubmit,
   } = useForm<InventoryType>({
     resolver: zodResolver(inventorySchema),
     mode: "all",
   });
+
+  const productName = watch("productName");
 
   const {
     mutateAsync,
@@ -55,6 +58,11 @@ const AddInventory = () => {
     mutationFn: async (data: InventoryType) => createOrEditInventory(data),
     config: {
       queryKey: ["inventory"],
+    },
+    notificationData: {
+      type: "New Inventory",
+      title: "New inventory has been added",
+      description: `The inventory ${productName} has been added successfully`,
     },
   });
 

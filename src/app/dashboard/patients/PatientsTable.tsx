@@ -9,15 +9,13 @@ import { useFetch } from "@/hooks/useFetch";
 import { getChpsPatients } from "@/actions/patients.action";
 import { RenderEmptyComponent } from "@/app/dashboard/health-officials/HealthOfficialsTable";
 import { ClipLoader } from "react-spinners";
-import { useAuth } from "@/hooks";
 
 export type PatientsDataType = (typeof patientsData)[number];
 
 const PatientsTable = () => {
-  const [user] = useAuth();
   const { data: patientData, ...query } = useFetch<Patient[]>({
-    queryKey: ["patients", user?.staff?.chpsCompoundId!],
-    queryFn: async () => await getChpsPatients(user?.staff?.chpsCompoundId!),
+    queryKey: ["patients"],
+    queryFn: async () => await getChpsPatients(),
   });
 
   const [filteredPatients, setFilteredPatients] = useState<Patient[]>([]);

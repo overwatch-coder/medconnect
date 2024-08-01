@@ -102,6 +102,7 @@ const EditCompoundModal = ({
   });
 
   const profilePicture = watch("profilePicture");
+  const name = watch("name");
 
   const { mutateAsync, error, reset, isError } = useMutateData<
     EditCompoundType,
@@ -111,6 +112,11 @@ const EditCompoundModal = ({
       updateChpsCompound(data, compoundId),
     config: {
       queryKey: ["compounds"],
+    },
+    notificationData: {
+      type: "Compound Update",
+      title: "Compound details have been updated",
+      description: `The compound ${name} has been updated successfully`,
     },
   });
 

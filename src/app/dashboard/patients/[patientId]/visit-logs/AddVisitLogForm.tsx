@@ -41,12 +41,16 @@ const AddVisitLogForm = ({
   const {
     register,
     reset,
+    watch,
     formState: { errors },
     handleSubmit,
   } = useForm<VisitLogsType>({
     resolver: zodResolver(visitLogsSchema),
     mode: "all",
   });
+
+  const date = watch("date");
+  const purpose = watch("purpose");
 
   const {
     mutateAsync,
@@ -58,6 +62,15 @@ const AddVisitLogForm = ({
       createOrEditVisitLog(data, patient._id, undefined),
     config: {
       queryKey: ["patients", "visit-logs", patient._id],
+    },
+    notificationData: {
+      type: "New Visit Log",
+      title: "New visit log has been added",
+      description: `A new entry has been added to the visit log for ${purpose} on ${new Date(
+        date
+      ).toLocaleDateString("en-US", {
+        dateStyle: "full",
+      })}`,
     },
   });
 

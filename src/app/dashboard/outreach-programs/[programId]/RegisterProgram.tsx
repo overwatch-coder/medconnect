@@ -20,6 +20,7 @@ import { IOutreachProgram } from "@/types/backend";
 import { useMutateData } from "@/hooks/useFetch";
 import { submitOutreachProgramParticipation } from "@/actions/outreach-programs.actions";
 import RenderCustomError from "@/components/RenderCustomError";
+import { useAuth } from "@/hooks";
 
 // Register Program
 export const RegisterProgramSchema = z.object({
@@ -33,10 +34,15 @@ export type RegisterProgramSchemaType = z.infer<typeof RegisterProgramSchema>;
 
 const RegisterProgram = ({ program }: { program: IOutreachProgram }) => {
   const [open, setOpen] = useState(false);
+  const [user] = useAuth();
+  const userName = user?.isSuperAdmin
+    ? user?.admin?.name
+    : user?.staff?.fullName;
 
   const {
     register,
     handleSubmit,
+    watch,
     reset,
     formState: { errors },
   } = useForm<RegisterProgramSchemaType>({
@@ -49,11 +55,18 @@ const RegisterProgram = ({ program }: { program: IOutreachProgram }) => {
     mode: "all",
   });
 
+  const choice = watch("choice");
+
   const { mutateAsync, isPending, error, isError } = useMutateData({
     mutationFn: async (data: RegisterProgramSchemaType) =>
       submitOutreachProgramParticipation(data),
     config: {
       queryKey: ["outreach-programs", program._id],
+    },
+    notificationData: {
+      type: "Support/Participate",
+      title: "Someone has registered to participate in the program",
+      description: `${userName} has registered to participate in the program ${program.title}`,
     },
   });
 

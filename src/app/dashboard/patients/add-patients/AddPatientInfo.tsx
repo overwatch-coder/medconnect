@@ -37,6 +37,7 @@ const AddPatientInfo = ({ open, setOpen }: AddPatientInfoProps) => {
   const {
     register,
     reset,
+    watch,
     formState: { errors },
     handleSubmit,
     trigger,
@@ -44,6 +45,9 @@ const AddPatientInfo = ({ open, setOpen }: AddPatientInfoProps) => {
     resolver: zodResolver(patientSchema),
     mode: "all",
   });
+
+  const firstName = watch("general.firstName");
+  const lastName = watch("general.lastName");
 
   const handleNextStep = async () => {
     const valid = await trigger(
@@ -70,6 +74,11 @@ const AddPatientInfo = ({ open, setOpen }: AddPatientInfoProps) => {
     config: {
       queryKey: ["patients"],
       reset: reset,
+    },
+    notificationData: {
+      type: "New Patient Added",
+      title: "New Patient has been added successfully",
+      description: `A new patient, ${firstName} ${lastName}, has been registered into the system. Please ensure all details are verified and updated.`,
     },
   });
 

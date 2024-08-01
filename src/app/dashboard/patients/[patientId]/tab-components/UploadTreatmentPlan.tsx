@@ -59,6 +59,11 @@ const UploadTreatmentPlan = ({
     config: {
       queryKey: ["patients", "treatment-plans", patientId],
     },
+    notificationData: {
+      type: "New Treatment Plan",
+      title: "New treatment plan has been added",
+      description: `A new treatment plan has been added successfully`,
+    },
   });
 
   const handleFormSubmit: SubmitHandler<TreatmentPlanType> = async (data) => {

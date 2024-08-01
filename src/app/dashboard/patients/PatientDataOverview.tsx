@@ -1,6 +1,6 @@
 "use client";
 import { getChpsPatients } from "@/actions/patients.action";
-import { useAuth, usePatients } from "@/hooks";
+import { usePatients } from "@/hooks";
 import { useFetch } from "@/hooks/useFetch";
 import { Patient } from "@/types/backend";
 import React, { useEffect, useState } from "react";
@@ -8,10 +8,9 @@ import { IoIosArrowRoundDown, IoIosArrowRoundUp } from "react-icons/io";
 import { LiaFemaleSolid, LiaMaleSolid } from "react-icons/lia";
 
 const PatientDataOverview = () => {
-  const [user] = useAuth();
   const { data: patientData } = useFetch<Patient[]>({
-    queryKey: ["patients", user?.staff?.chpsCompoundId!],
-    queryFn: async () => await getChpsPatients(user?.staff?.chpsCompoundId!),
+    queryKey: ["patients"],
+    queryFn: async () => await getChpsPatients(),
   });
 
   const [patients, setPatients] = useState<Patient[]>([]);

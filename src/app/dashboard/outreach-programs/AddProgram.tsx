@@ -43,12 +43,15 @@ const AddProgram = () => {
   const {
     register,
     reset,
+    watch,
     formState: { errors },
     handleSubmit,
   } = useForm<OutreachProgramType>({
     resolver: zodResolver(outreachProgramSchema),
     mode: "all",
   });
+
+  const title = watch("title");
 
   const {
     mutateAsync,
@@ -60,6 +63,11 @@ const AddProgram = () => {
       createOrEditOutreachProgram(data),
     config: {
       queryKey: ["outreach-programs"],
+    },
+    notificationData: {
+      type: "New Outreach Program",
+      title: "New outreach program has been added",
+      description: `The program ${title} has been added successfully`,
     },
   });
 

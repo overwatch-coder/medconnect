@@ -71,6 +71,11 @@ const GeneratePatientsTable = ({
     config: {
       queryKey: ["patients"],
     },
+    notificationData: {
+      type: "Patient Deletion",
+      title: "Patient has been deleted",
+      description: `A patient has been deleted from the system successfully`,
+    },
   });
 
   // Handle delete

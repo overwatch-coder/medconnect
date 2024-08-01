@@ -52,10 +52,17 @@ const AddTicket = () => {
     mode: "all",
   });
 
+  const subject = watch("subject");
+
   const { mutateAsync, isError, error } = useMutateData({
     mutationFn: async (data: TicketType) => createTicket(data),
     config: {
       queryKey: ["tickets"],
+    },
+    notificationData: {
+      type: "New Ticket",
+      title: "New ticket has been created",
+      description: `A ticket with subject ${subject} has been created successfully`,
     },
   });
 

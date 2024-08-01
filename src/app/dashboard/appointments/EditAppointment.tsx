@@ -78,12 +78,16 @@ const EditAppointment = ({
     },
     notificationData: {
       type: "Appointment Scheduled",
-      title: "Appointment schedule has been updated",
-      description: `An appointment has been scheduled for ${appointment.patient.firstName + " " + appointment.patient.lastName} with ${official} on ${new Date(
-        date
-      ).toLocaleDateString("en-US", {
-        dateStyle: "full",
-      })}`,
+      title: isClosed
+        ? "Appointment marked as completed"
+        : "Appointment scheduled",
+      description: isClosed
+        ? `The appointment for ${appointment.patient.firstName + " " + appointment.patient.lastName} with ${official} has been marked as completed`
+        : `An appointment has been scheduled for ${appointment.patient.firstName + " " + appointment.patient.lastName} with ${official} on ${new Date(
+            date
+          ).toLocaleDateString("en-US", {
+            dateStyle: "full",
+          })}`,
     },
   });
 

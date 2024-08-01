@@ -74,7 +74,7 @@ const AppProvider = ({
 
     setInterval(() => {
       refetchNotifications();
-    }, moment.duration(30, "seconds").asMilliseconds());
+    }, moment.duration(5, "seconds").asMilliseconds());
   }, [refetchNotifications]);
 
   const values = {

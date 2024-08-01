@@ -46,6 +46,7 @@ const AddHealthOfficialInfo = ({
   const {
     register,
     reset,
+    watch,
     formState: { errors },
     handleSubmit,
   } = useForm<HealthStaffType>({
@@ -55,6 +56,9 @@ const AddHealthOfficialInfo = ({
     },
     mode: "all",
   });
+
+  const name = watch("fullName");
+  const position = watch("position");
 
   const {
     mutateAsync,
@@ -66,6 +70,11 @@ const AddHealthOfficialInfo = ({
     config: {
       queryKey: ["staff", user?.staff?.chpsCompoundId!],
       reset: reset,
+    },
+    notificationData: {
+      type: "New Staff",
+      title: "New staff has been added",
+      description: `The staff ${name} has been added successfully and will be working as ${position} in the compound`,
     },
   });
 
@@ -93,13 +102,16 @@ const AddHealthOfficialInfo = ({
 
   return (
     <>
-      <Dialog open={open} onOpenChange={(open) => {
-        if (open === false) {
-          reset();
-        }
+      <Dialog
+        open={open}
+        onOpenChange={(open) => {
+          if (open === false) {
+            reset();
+          }
 
-        setOpen(open);
-      }}>
+          setOpen(open);
+        }}
+      >
         <DialogContent
           id="hide"
           className="flex flex-col gap-4 w-full max-w-[90vw] md:max-w-[50vw] max-h-[95vh] h-full overflow-hidden"

@@ -23,13 +23,19 @@ import {
 import { useMutateData } from "@/hooks/useFetch";
 import { submitOutreachProgramParticipation } from "@/actions/outreach-programs.actions";
 import RenderCustomError from "@/components/RenderCustomError";
+import { useAuth } from "@/hooks";
 
 const BecomeASupporter = ({ program }: { program: IOutreachProgram }) => {
   const [open, setOpen] = useState(false);
+  const [user] = useAuth();
+  const userName = user?.isSuperAdmin
+    ? user?.admin?.name
+    : user?.staff?.fullName;
 
   const {
     register,
     handleSubmit,
+    watch,
     reset,
     formState: { errors },
   } = useForm<RegisterProgramSchemaType>({
@@ -41,11 +47,18 @@ const BecomeASupporter = ({ program }: { program: IOutreachProgram }) => {
     mode: "all",
   });
 
+  const choice = watch("choice");
+
   const { mutateAsync, isPending, error, isError } = useMutateData({
     mutationFn: async (data: RegisterProgramSchemaType) =>
       submitOutreachProgramParticipation(data),
     config: {
       queryKey: ["outreach-programs", program._id],
+    },
+    notificationData: {
+      type: "Support/Participate",
+      title: "Someone has volunteered to support the program",
+      description: `${userName} has volunteered to support the program ${program.title}`,
     },
   });
 

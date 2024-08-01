@@ -49,6 +49,7 @@ const EditPatientInfo = ({
   const {
     register,
     reset,
+    watch,
     formState: { errors },
     handleSubmit,
     trigger,
@@ -68,6 +69,9 @@ const EditPatientInfo = ({
     mode: "all",
   });
 
+  const firstName = watch("general.firstName");
+  const lastName = watch("general.lastName");
+
   const {
     mutateAsync,
     isPending: pending,
@@ -78,6 +82,11 @@ const EditPatientInfo = ({
     config: {
       queryKey: ["patients", patient._id],
       reset: reset,
+    },
+    notificationData: {
+      type: "Patient Update",
+      title: "Patient has been updated",
+      description: `The details of the patient, ${firstName} ${lastName}, has been updated successfully`,
     },
   });
 

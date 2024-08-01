@@ -57,6 +57,7 @@ const AddCompoundForm = () => {
   });
 
   const profilePicture = watch("profilePicture");
+  const name = watch("name");
 
   const { mutateAsync, error, isError } = useMutateData<
     CompoundType,
@@ -65,6 +66,11 @@ const AddCompoundForm = () => {
     mutationFn: async (data: CompoundType) => createChpsCompound(data),
     config: {
       queryKey: ["compounds"],
+    },
+    notificationData: {
+      type: "New Compound",
+      title: "New compound has been added",
+      description: `The compound ${name} has been added successfully`,
     },
   });
 

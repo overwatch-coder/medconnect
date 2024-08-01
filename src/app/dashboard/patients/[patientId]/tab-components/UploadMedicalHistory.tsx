@@ -66,6 +66,11 @@ const UploadMedicalHistory = ({
     config: {
       queryKey: ["patients", "medical-history", patientId],
     },
+    notificationData: {
+      type: "New Medical History",
+      title: "New medical history has been added",
+      description: `A new medical history has been added successfully`,
+    },
   });
 
   const handleFormSubmit: SubmitHandler<MedicalHistoryType> = async (data) => {

@@ -49,6 +49,7 @@ const EditHealthOfficialInfo = ({
   const {
     register,
     reset,
+    watch,
     formState: { errors },
     handleSubmit,
   } = useForm<HealthStaffType>({
@@ -59,6 +60,9 @@ const EditHealthOfficialInfo = ({
     },
     mode: "all",
   });
+
+  const name = watch("fullName");
+  const position = watch("position");
 
   const {
     mutateAsync,
@@ -71,6 +75,11 @@ const EditHealthOfficialInfo = ({
     config: {
       queryKey: ["staff", user?.staff?.chpsCompoundId!],
       reset: reset,
+    },
+    notificationData: {
+      type: "Staff Update",
+      title: "Existing staff has been updated",
+      description: `The details of the staff with name ${name}, position ${position} has been updated successfully`,
     },
   });
 

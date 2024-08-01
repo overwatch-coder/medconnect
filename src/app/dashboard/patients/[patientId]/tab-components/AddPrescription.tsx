@@ -42,12 +42,15 @@ const AddPrescription = ({
   const {
     register,
     reset,
+    watch,
     formState: { errors },
     handleSubmit,
   } = useForm<PrescriptionType>({
     resolver: zodResolver(prescriptionSchema),
     mode: "all",
   });
+
+  const medicationName = watch("medicationName");
 
   const {
     mutateAsync,
@@ -59,6 +62,11 @@ const AddPrescription = ({
       createOrEditPrescription(data, patientId, undefined),
     config: {
       queryKey: ["patients", "prescriptions", patientId],
+    },
+    notificationData: {
+      type: "New Prescription",
+      title: "New prescription has been added",
+      description: `The prescription ${medicationName} has been added successfully`,
     },
   });
 

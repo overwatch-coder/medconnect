@@ -39,8 +39,8 @@ const AdminDashboard = () => {
 
   // patients data
   const { data: patientData } = useFetch<Patient[]>({
-    queryKey: ["patients", user?.staff?.chpsCompoundId!],
-    queryFn: async () => await getChpsPatients(user?.staff?.chpsCompoundId!),
+    queryKey: ["patients"],
+    queryFn: async () => await getChpsPatients(),
   });
 
   // health officials data

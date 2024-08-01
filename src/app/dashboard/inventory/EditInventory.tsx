@@ -37,6 +37,7 @@ const EditInventory = ({ inventory, refetchInventory }: EditInventoryProps) => {
   const {
     register,
     reset,
+    watch,
     formState: { errors },
     handleSubmit,
   } = useForm<InventoryType>({
@@ -54,6 +55,8 @@ const EditInventory = ({ inventory, refetchInventory }: EditInventoryProps) => {
     mode: "all",
   });
 
+  const productName = watch("productName");
+
   const {
     mutateAsync,
     isPending: pending,
@@ -64,6 +67,11 @@ const EditInventory = ({ inventory, refetchInventory }: EditInventoryProps) => {
       createOrEditInventory(data, inventory._id),
     config: {
       queryKey: ["inventory"],
+    },
+    notificationData: {
+      type: "Inventory Update",
+      title: "Inventory has been updated",
+      description: `The inventory ${productName} has been updated successfully`,
     },
   });
 

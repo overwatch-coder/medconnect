@@ -1,3 +1,4 @@
+import mongoose from "mongoose";
 import { ErrorResponse, SuccessResponse } from "./index.d";
 
 // === AUTHENTICATION ===
@@ -375,4 +376,14 @@ declare interface ITicket {
   createdAt: string;
   updatedAt: string;
   __v: number;
+}
+
+// === NOTIFICATIONS ===
+declare interface INotification extends mongoose.Document {
+  type: string;
+  title: string;
+  description: string;
+  timeAgo: string;
+  typeColor: string;
+  isRead: boolean;
 }

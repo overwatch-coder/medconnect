@@ -76,6 +76,15 @@ const EditAppointment = ({
     config: {
       queryKey: ["appointments"],
     },
+    notificationData: {
+      type: "Appointment Scheduled",
+      title: "Appointment schedule has been updated",
+      description: `An appointment has been scheduled for ${appointment.patient.firstName + " " + appointment.patient.lastName} with ${official} on ${new Date(
+        date
+      ).toLocaleDateString("en-US", {
+        dateStyle: "full",
+      })}`,
+    },
   });
 
   const handleFormSubmit: SubmitHandler<AppointmentType> = async (data) => {

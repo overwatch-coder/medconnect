@@ -18,7 +18,7 @@ import CustomInputForm from "@/components/CustomInputForm";
 import { toast } from "react-toastify";
 import { AppointmentType } from "@/types/index";
 import { appointmentSchema } from "@/schema/appointment.schema";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useQueryClient } from "@tanstack/react-query";
 import { useFetch, useMutateData } from "@/hooks/useFetch";
 import { IAppointment, Patient } from "@/types/backend";
 import {
@@ -27,8 +27,10 @@ import {
 } from "@/actions/single-patient.action";
 import { getChpsPatients } from "@/actions/patients.action";
 import RenderCustomError from "@/components/RenderCustomError";
+import { useAuth } from "@/hooks";
 
 const AddAppointment = () => {
+  const [user] = useAuth();
   const { refetch: refetchAppointments } = useFetch<IAppointment[]>({
     queryFn: async () => getAllAppointments(),
     queryKey: ["appointments"],
@@ -64,6 +66,9 @@ const AddAppointment = () => {
   });
 
   const patientId = watch("patientId");
+  const patient = patients.filter((patient) => patient._id === patientId)[0];
+  const official = watch("official");
+  const date = watch("date");
 
   const {
     mutateAsync,
@@ -75,6 +80,15 @@ const AddAppointment = () => {
       createOrEditAppointment(data, patientId, undefined),
     config: {
       queryKey: ["appointments"],
+    },
+    notificationData: {
+      type: "Appointment Scheduled",
+      title: "Appointment has been scheduled",
+      description: `An appointment has been scheduled for ${patient?.firstName + " " + patient?.lastName} with ${official} on ${new Date(
+        date
+      ).toLocaleDateString("en-US", {
+        dateStyle: "full",
+      })}`,
     },
   });
 

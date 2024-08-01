@@ -7,28 +7,61 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { MEDCONNECT_DASHBOARD_NOTIFICATIONS as notifications } from "@/constants";
+import { useNotification } from "@/hooks";
+import { usePostNotification } from "@/lib/post-notification";
 import { Bell, X } from "lucide-react";
+import { useEffect, useState } from "react";
+import moment from "moment-timezone";
+
+const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+moment.tz.setDefault(timezone);
 
 const NotificationsModal = () => {
+  const { unreadNotifications, notifications, setUnreadNotifications } =
+    useNotification();
+  const { postNotification } = usePostNotification();
+  const [isOpen, setIsOpen] = useState(false);
+
+  useEffect(() => {
+    if (unreadNotifications === 0) return;
+
+    if (isOpen) {
+      postNotification(
+        {
+          type: "Notification",
+          title: "New Notification",
+          description: "You have a new notification",
+        },
+        true
+      ).then((res) => {
+        console.log({ res, in: "NotificationsModal useEffect success" });
+        setUnreadNotifications(0);
+      });
+    }
+  }, [isOpen, postNotification, setUnreadNotifications, unreadNotifications]);
+
   return (
-    <Dialog>
-      <DialogTrigger>
+    <Dialog open={isOpen} onOpenChange={setIsOpen}>
+      <DialogTrigger onClick={() => setIsOpen(true)}>
         {/* Mobile Menu */}
         <p className="hover:scale-105 bg-white/30 md:hidden relative flex items-center gap-3 p-4 transition rounded">
           <Bell size={20} className={"text-white"} />
           <span className={"text-white text-base"}>Notifications</span>
-          <span className="top-5 right-2 absolute flex flex-col items-center w-5 h-5 text-sm text-center text-white bg-red-500 rounded-full">
-            4
-          </span>
+          {unreadNotifications > 0 && (
+            <span className="top-5 right-2 absolute flex flex-col items-center w-5 h-5 text-sm text-center text-white bg-red-500 rounded-full">
+              {unreadNotifications}
+            </span>
+          )}
         </p>
 
         {/* Desktop Menu */}
         <p className="hover:scale-105 bg-secondary-gray/10 md:flex relative flex-col items-center hidden p-4 transition rounded-full">
           <Bell size={20} className={"text-secondary-gray"} />
-          <span className="absolute top-0 right-0 flex flex-col items-center w-5 h-5 text-sm text-center text-white bg-red-500 rounded-full">
-            4
-          </span>
+          {unreadNotifications > 0 && (
+            <span className="absolute top-0 right-0 flex flex-col items-center w-5 h-5 text-sm text-center text-white bg-red-500 rounded-full">
+              {unreadNotifications}
+            </span>
+          )}
         </p>
       </DialogTrigger>
 
@@ -55,7 +88,7 @@ const NotificationsModal = () => {
               {notifications.length === 0 && (
                 <div className="flex flex-col items-center justify-center h-full">
                   <p className="text-secondary-gray text-lg font-bold text-center">
-                    No messages available at the moment
+                    No notifications available at the moment
                   </p>
                 </div>
               )}
@@ -80,13 +113,13 @@ const NotificationsModal = () => {
                         </p>
 
                         <p className="text-secondary-gray/50 text-sm sm:hidden font-semibold">
-                          {notice.timeAgo}
+                          {moment(new Date(notice.timeAgo)).fromNow()}
                         </p>
                       </div>
                     </div>
 
                     <p className="hidden sm:block text-secondary-gray/50 text-sm font-semibold">
-                      {notice.timeAgo}
+                      {moment(new Date(notice.timeAgo)).fromNow()}
                     </p>
                   </div>
                 </div>

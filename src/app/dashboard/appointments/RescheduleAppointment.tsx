@@ -62,6 +62,7 @@ const RescheduleAppointment = ({
   });
 
   const date = watch("date");
+  const official = watch("official");
 
   const {
     mutateAsync,
@@ -73,6 +74,15 @@ const RescheduleAppointment = ({
       createOrEditAppointment(data, appointment.patientId, appointment._id),
     config: {
       queryKey: ["appointments"],
+    },
+    notificationData: {
+      type: "Appointment Rescheduled",
+      title: "Appointment schedule has been changed",
+      description: `An appointment has been scheduled for ${appointment.patient.firstName + " " + appointment.patient.lastName} with ${official} on ${new Date(
+        date
+      ).toLocaleDateString("en-US", {
+        dateStyle: "full",
+      })}`,
     },
   });
 
